@@ -37,7 +37,7 @@ task compileC(type: Exec) {
     group "Build"
     description "Compiles the C sources."
     commandLine 'gcc', '-shared', '-L' + "${buildDir}/libs/libslsqp_solver.so",
-        '-fPIC', '-c', '-o', output, '-I', System.properties['java.home'] + "/include",
+        '-fPIC', '-o', output, '-I', System.properties['java.home'] + "/include",
         '-I', System.properties['java.home'] + "/include/linux", src, '-lslsqp_solver'
     dependsOn compileFortran
 }
