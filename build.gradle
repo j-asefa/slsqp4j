@@ -23,29 +23,39 @@ task prepareLibs(type: Exec) {
 
 task compileFortran(type: Exec) {
     def src = file("src/main/fortran/slsqp_solver.f")
-    def output = file("${buildDir}/libs/libslsqp_solver.so")
+    def obj = file("${buildDir}/libs/sqp_solver.o")
     group "Build"
     description "Compiles the Fortran sources."
-    commandLine 'gfortran-9', '-shared', '-O2', src, '-o', output, '-fPIC'
+    commandLine 'gfortran-9', '-fPIC', '-o', obj, '-c', src
     dependsOn prepareLibs
 }
 
 task compileC(type: Exec) {
     def src = file("src/jni/c/jni.c")
-    def output = file("${buildDir}/libs/libjni.so")
+    def obj = file("${buildDir}/libs/jni.o")
 
     group "Build"
     description "Compiles the C sources."
-    commandLine 'gcc', '-shared', '-L' + "${buildDir}/libs/libslsqp_solver.so",
-        '-fPIC', '-o', output, '-I', System.properties['java.home'] + "/include",
-        '-I', System.properties['java.home'] + "/include/linux", src, '-lslsqp_solver'
+    commandLine 'gcc', '-fPIC', '-c', '-o', obj, '-I', System.properties['java.home'] + "/include",
+        '-I', System.properties['java.home'] + "/include/linux", src
     dependsOn compileFortran
+}
+
+task buildJniLib(type: Exec) {
+    def c_obj = file("${buildDir}/libs/jni.o")
+    def fortran_obj = file("${buildDir}/libs/sqp_solver.o")
+    def output = file("${buildDir}/libs/libjni.so")
+
+    group "Build"
+    description "Builds the JNI library."
+    commandLine 'gcc', '-shared', c_obj, fortran_obj, '-o', output
+    dependsOn compileC
 }
 
 task copySharedLibraries(type: Copy) {
     from "$buildDir/libs/libjni.so"
     into 'src/main/resources'
-    dependsOn compileC
+    dependsOn buildJniLib
 }
 
 sourceSets {
