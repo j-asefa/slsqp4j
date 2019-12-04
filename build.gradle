@@ -1,0 +1,101 @@
+plugins {
+    id 'java'
+    id 'c'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile files('src/main/resources/')
+}
+
+task prepareFortran(type: Exec) {
+    commandLine 'mkdir', '-p', "${buildDir}/fortran"
+}
+
+task prepareC(type: Exec) {
+    commandLine 'mkdir', '-p', "${buildDir}/c"
+}
+
+task prepareLibs(type: Exec) {
+    commandLine 'mkdir', '-p', "${buildDir}/libs"
+}
+
+task compileFortran(type: Exec) {
+    def src = file("src/main/fortran/slsqp.f")
+    def obj = file("${buildDir}/fortran/slsqp.o")
+    group "Build"
+    description "Compiles the Fortran sources."
+    commandLine 'gfortran-9', '-fPIC', '-o', obj, '-c', src
+    dependsOn prepareFortran
+}
+
+task compileC(type: Exec) {
+    def src = file("src/jni/c/jni.c")
+    def obj = file("${buildDir}/c/jni.o")
+
+    group "Build"
+    description "Compiles the C sources."
+    commandLine 'gcc', '-fPIC', '-c', '-o', obj, '-I', System.properties['java.home'] + "/include",
+        '-I', System.properties['java.home'] + "/include/linux", src
+    dependsOn prepareC
+}
+
+task generateSharedLibraries(type: Exec) {
+    def fortranSrc = file("${buildDir}/fortran/slsqp.o")
+    def cSrc = file("${buildDir}/c/jni.o")
+    def output = file("${buildDir}/libs/libslsqp.so")
+    group "Build"
+    description "Compiles the Fortran sources."
+    commandLine 'gcc', '-shared', fortranSrc, cSrc, '-o', output
+    dependsOn compileFortran, compileC, prepareLibs
+}
+
+/*model {
+    components {
+        jni(NativeLibrarySpec) {
+            binaries {
+                all {
+                    cCompiler.args "-O2"
+                    cCompiler.args "-I" + System.properties['java.home'] + "/include"
+                    cCompiler.args "-I" + System.properties['java.home'] + "/include/linux"
+                }
+            }
+        }
+    }
+}*/
+
+
+task copySharedLibraries(type: Copy) {
+    from "$buildDir/libs/libslsqp.so"
+    into 'src/main/resources'
+    dependsOn generateSharedLibraries
+}
+
+/*task prepareJniLib(type: Exec) {
+    commandLine 'mkdir', '-p', "${buildDir}/libs"
+}
+
+task buildJniLib(type: Exec) {
+    group "Build"
+    description "Builds the JNI library."
+    commandLine(
+        'gcc', "${buildDir}/fortran/slsqp.o", "${buildDir}/c/jni.o", '-o', 'main', '-lgfortran')
+    dependsOn compileFortran, compileC
+}*/
+
+sourceSets {
+    java {
+        resources.srcDirs += ['src/main/resources']
+    }
+}
+
+compileJava.dependsOn 'copySharedLibraries'
