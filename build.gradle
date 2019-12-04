@@ -17,44 +17,63 @@ dependencies {
     compile files('src/main/resources/')
 }
 
+task prepareC(type: Exec) {
+    commandLine 'mkdir', '-p', "${buildDir}/c"
+}
+
+task prepareFortran(type: Exec) {
+    commandLine 'mkdir', '-p', "${buildDir}/fortran"
+}
+
 task prepareLibs(type: Exec) {
     commandLine 'mkdir', '-p', "${buildDir}/libs"
 }
 
 task compileFortran(type: Exec) {
     def src = file("src/main/fortran/slsqp_solver.f")
-    def obj = file("${buildDir}/libs/sqp_solver.o")
+    def obj = file("${buildDir}/fortran/slsqp_solver.o")
     group "Build"
     description "Compiles the Fortran sources."
     commandLine 'gfortran-9', '-fPIC', '-o', obj, '-c', src
-    dependsOn prepareLibs
+    dependsOn prepareFortran
+}
+
+task generateJniHeaders(type: Exec) {
+    def compFile = file("src/main/java/com/example/stl/Stl.java")
+    def jniHeadersDir = file("${buildDir}/c/jni-headers")
+    group "Build"
+    description "Generates the JNI headers."
+    commandLine 'javac' ,'-h', jniHeadersDir, compFile
+        'com.example.stl.Stl'
+    dependsOn classes, prepareC
 }
 
 task compileC(type: Exec) {
     def src = file("src/jni/c/jni.c")
-    def obj = file("${buildDir}/libs/jni.o")
+    def obj = file("${buildDir}/c/jni.o")
 
     group "Build"
     description "Compiles the C sources."
     commandLine 'gcc', '-fPIC', '-c', '-o', obj, '-I', System.properties['java.home'] + "/include",
         '-I', System.properties['java.home'] + "/include/linux", src
-    dependsOn compileFortran
+    dependsOn generateJniHeaders
 }
 
 task buildJniLib(type: Exec) {
-    def c_obj = file("${buildDir}/libs/jni.o")
-    def fortran_obj = file("${buildDir}/libs/sqp_solver.o")
+    def c_obj = file("${buildDir}/c/jni.o")
+    def fortran_obj = file("${buildDir}/fortran/slsqp_solver.o")
     def output = file("${buildDir}/libs/libjni.so")
 
     group "Build"
     description "Builds the JNI library."
     commandLine 'gcc', '-shared', c_obj, fortran_obj, '-o', output
-    dependsOn compileC
+    dependsOn compileFortran, compileC, prepareLibs
 }
 
 task copySharedLibraries(type: Copy) {
     from "$buildDir/libs/libjni.so"
     into 'src/main/resources'
+    //remove 'src/main/java/com/example/stl/Stl.class'
     dependsOn buildJniLib
 }
 
@@ -64,4 +83,4 @@ sourceSets {
     }
 }
 
-compileJava.dependsOn 'copySharedLibraries'
+build.dependsOn 'copySharedLibraries'

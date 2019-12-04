@@ -12,8 +12,6 @@ public class Stl {
 
     }
 
-    public static native long currentTimeNanos();
-
     // Native C method that we want to be able to call from Java.
     public static native int slsqp(
         int m, // standard int

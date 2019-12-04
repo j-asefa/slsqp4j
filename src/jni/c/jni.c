@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <jni.h>
 
-extern void slsqp(
+extern void slsqp_(
     int m, // standard int
     int meq, // standard int
     int la, // la = len(c). check len(c) >= la
@@ -159,7 +159,7 @@ JNIEXPORT jint JNICALL Java_com_example_stl_Stl_slsqp(
     }
 
     // Call the Fortran routine.
-    slsqp(
+    slsqp_(
         m,
         meq,
         la,
