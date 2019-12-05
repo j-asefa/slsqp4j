@@ -6,3 +6,4 @@ core
 *.log
 *.class
 *.o
+*.so
