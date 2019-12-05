@@ -1,6 +1,3 @@
-clean.doFirst {
-    delete file("src/main/resources/libslsqp_solver.so")
-}
 task prepareC(type: Exec) {
     commandLine 'mkdir', '-p', "${buildDir}/c"
 }
@@ -14,7 +11,7 @@ task prepareLibs(type: Exec) {
 }
 
 task compileFortran(type: Exec) {
-    def src = file("src/jni/fortran/slsqp_solver.f90")
+    def src = file("src/jni/fortran/slsqp_solver.f")
     def obj = file("${buildDir}/fortran/slsqp_solver.o")
     group "Build"
     description "Compiles the Fortran sources."
@@ -50,7 +47,7 @@ task buildJniLib(type: Exec) {
 
     group "Build"
     description "Builds the JNI library."
-    commandLine 'gcc', '-shared', c_obj, fortran_obj, '-o', output
+    commandLine 'gcc', '-shared', '-o', output, c_obj, fortran_obj, '-L/usr/lib/gcc/x86_64-linux-gnu/9/', '-lgfortran'
     dependsOn compileFortran, compileC, prepareLibs
 }
 
