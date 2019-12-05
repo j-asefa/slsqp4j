@@ -30,8 +30,8 @@ task prepareLibs(type: Exec) {
 }
 
 task compileFortran(type: Exec) {
-    def src = file("src/main/fortran/slsqp_solver.f")
-    def obj = file("${buildDir}/fortran/slsqp_solver.o")
+    def src = file("src/main/fortran/square_cube.f90")
+    def obj = file("${buildDir}/fortran/square_cube.o")
     group "Build"
     description "Compiles the Fortran sources."
     commandLine 'gfortran-9', '-fPIC', '-o', obj, '-c', src
@@ -40,17 +40,17 @@ task compileFortran(type: Exec) {
 
 task generateJniHeaders(type: Exec) {
     def compFile = file("src/main/java/com/example/stl/Stl.java")
-    def jniHeadersDir = file("${buildDir}/c/jni-headers")
+    def square_cubeHeadersDir = file("${buildDir}/c/square_cube-headers")
     group "Build"
     description "Generates the JNI headers."
-    commandLine 'javac' ,'-h', jniHeadersDir, compFile
+    commandLine 'javac' ,'-h', square_cubeHeadersDir, compFile
         'com.example.stl.Stl'
     dependsOn classes, prepareC
 }
 
 task compileC(type: Exec) {
-    def src = file("src/jni/c/jni.c")
-    def obj = file("${buildDir}/c/jni.o")
+    def src = file("src/jni/c/square_cube.c")
+    def obj = file("${buildDir}/c/square_cube.o")
 
     group "Build"
     description "Compiles the C sources."
@@ -60,9 +60,9 @@ task compileC(type: Exec) {
 }
 
 task buildJniLib(type: Exec) {
-    def c_obj = file("${buildDir}/c/jni.o")
-    def fortran_obj = file("${buildDir}/fortran/slsqp_solver.o")
-    def output = file("${buildDir}/libs/libjni.so")
+    def c_obj = file("${buildDir}/c/square_cube.o")
+    def fortran_obj = file("${buildDir}/fortran/square_cube.o")
+    def output = file("${buildDir}/libs/libsquare_cube.so")
 
     group "Build"
     description "Builds the JNI library."
@@ -71,7 +71,7 @@ task buildJniLib(type: Exec) {
 }
 
 task copySharedLibraries(type: Copy) {
-    from "$buildDir/libs/libjni.so"
+    from "$buildDir/libs/libsquare_cube.so"
     into 'src/main/resources'
     //remove 'src/main/java/com/example/stl/Stl.class'
     dependsOn buildJniLib

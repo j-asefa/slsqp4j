@@ -5,3 +5,4 @@ out/
 core
 *.log
 *.class
+*.o

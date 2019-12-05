@@ -4,7 +4,15 @@ public class Main
 {
     public static void main(String[] args)
     {
-        final int result = Stl.slsqp(
+        int i = 2;
+        int[] isquare = {0};
+        int[] icube = {0};
+        System.out.println("i = " + i);
+        Stl.square_cube(i, isquare, icube);
+
+        System.out.println("isquare = " + isquare[0]);
+        System.out.println("icube = " + icube[0]);
+        /*final int result = Stl.slsqp(
             1,
             2,
             1,
@@ -41,6 +49,6 @@ public class Main
             new int[]{2},
             new int[]{1},
             new int[]{0}
-        );
+        );*/
     }
 }

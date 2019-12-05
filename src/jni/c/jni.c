@@ -140,6 +140,7 @@ JNIEXPORT jint JNICALL Java_com_example_stl_Stl_slsqp(
     jint *n2_array = (*env)->GetIntArrayElements(env, n2, 0);
     jint *n3_array = (*env)->GetIntArrayElements(env, n3, 0);
 
+
     double **local2Darray = (double**) malloc(sizeof(double*) * la);
     int i;
     for (i = 0; i < la; i++)
@@ -157,6 +158,8 @@ JNIEXPORT jint JNICALL Java_com_example_stl_Stl_slsqp(
         (*env)->ReleaseDoubleArrayElements(env, oneDim, element, 0);
         (*env)->DeleteLocalRef(env, oneDim);
     }
+
+
 
     // Call the Fortran routine.
     slsqp_(

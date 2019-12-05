@@ -12,6 +12,8 @@ public class Stl {
 
     }
 
+    public static native void square_cube(int i, int[] isquare, int[] icube);
+
     // Native C method that we want to be able to call from Java.
     public static native int slsqp(
         int m, // standard int
@@ -86,6 +88,6 @@ public class Stl {
 
     static
     {
-        loadLib("/libjni.so");
+        loadLib("/libsquare_cube.so");
     }
 }
