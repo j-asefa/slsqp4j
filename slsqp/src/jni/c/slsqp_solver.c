@@ -153,14 +153,7 @@ JNIEXPORT jint JNICALL Java_com_example_slsqp_Slsqp_slsqp(
          jdoubleArray oneDim = (jdoubleArray)(*env)->GetObjectArrayElement(env, a, i);
          jdouble *element = (*env)->GetDoubleArrayElements(env, oneDim, 0);
         for (j = 0; j < n + 1; j++) {
-            if (j = i)
-            {
-                local2Darray[i][j] = 1;//element[j];
-            }
-            else
-            {
-                local2Darray[i][j] = 0;
-            }
+            local2Darray[i][j] = element[j];
         }
         (*env)->ReleaseDoubleArrayElements(env, oneDim, element, 0);
         (*env)->DeleteLocalRef(env, oneDim);
