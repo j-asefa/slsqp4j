@@ -10,7 +10,7 @@ extern void square_cube_(
     int* icube
 );
 
-JNIEXPORT void JNICALL Java_com_example_stl_Stl_square_1cube
+JNIEXPORT void JNICALL Java_com_example_square_1cube_SquareCube_square_1cube
   (JNIEnv *env, jclass cl, jint i, jintArray isquare, jintArray icube)
 {
     int i_int = i;

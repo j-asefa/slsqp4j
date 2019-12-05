@@ -1,2 +1,4 @@
 rootProject.name = 'sqslp_in_java'
+include 'example'
+include 'slsqp'
 

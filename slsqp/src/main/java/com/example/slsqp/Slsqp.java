@@ -1,18 +1,17 @@
-package com.example.stl;
+package com.example.slsqp;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class Stl {
+public class Slsqp
+{
 
-    private Stl()
+    private Slsqp()
     {
 
     }
-
-    public static native void square_cube(int i, int[] isquare, int[] icube);
 
     // Native C method that we want to be able to call from Java.
     public static native int slsqp(
@@ -56,7 +55,7 @@ public class Stl {
 
     private static void loadLib(String lib)
     {
-        try (InputStream is = Stl.class.getResourceAsStream(lib))
+        try (InputStream is = Slsqp.class.getResourceAsStream(lib))
         {
             File tempLib = null;
             final int dot = lib.indexOf('.');
@@ -88,6 +87,6 @@ public class Stl {
 
     static
     {
-        loadLib("/libsquare_cube.so");
+        loadLib("/libslsqp_solver.so");
     }
 }

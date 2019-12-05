@@ -5,14 +5,14 @@
 #include <jni.h>
 
 extern void slsqp_(
-    int m, // standard int
-    int meq, // standard int
-    int la, // la = len(c). check len(c) >= la
-    int n, // n = len(x). check len(x) >= n
+    int* m, // standard int
+    int* meq, // standard int
+    int* la, // la = len(c). check len(c) >= la
+    int* n, // n = len(x). check len(x) >= n
     double *x, // array of length n    ---  value is returned to caller
     double *xl, // array of length n
     double *xu, // array of length n
-    double f, // standard double
+    double* f, // standard double
     double *c, // array of length la
     double *g, // array of length n + 1
     double **a, // matrix of dims (la, n + 1)
@@ -20,9 +20,9 @@ extern void slsqp_(
     int *iter, // standard int -- value is returned to caller
     int *mode, // standard int -- value is returned to caller
     double *w, // array of length l_w
-    int l_w, // standard int. check len(w) >= l_w
+    int* l_w, // standard int. check len(w) >= l_w
     int *jw, // array of length l_jw
-    int l_jw, // standard int. check len(jw) >= l_jw
+    int* l_jw, // standard int. check len(jw) >= l_jw
     double *alpha, // standard double  -- value is returned to caller
     double *f0, // standard double -- value is returned to caller
     double *gs, // standard double -- value is returned to caller
@@ -43,7 +43,7 @@ extern void slsqp_(
     int *n3 // standard int -- value is returned to caller
 );
 
-JNIEXPORT jint JNICALL Java_com_example_stl_Stl_slsqp(
+JNIEXPORT jint JNICALL Java_com_example_slsqp_Slsqp_slsqp(
       JNIEnv *env,         /* interface pointer */
       jclass cl,         /* "this" pointer */
       jint m, // standard int
@@ -153,7 +153,14 @@ JNIEXPORT jint JNICALL Java_com_example_stl_Stl_slsqp(
          jdoubleArray oneDim = (jdoubleArray)(*env)->GetObjectArrayElement(env, a, i);
          jdouble *element = (*env)->GetDoubleArrayElements(env, oneDim, 0);
         for (j = 0; j < n + 1; j++) {
-            local2Darray[i][j] = element[j];
+            if (j = i)
+            {
+                local2Darray[i][j] = 1;//element[j];
+            }
+            else
+            {
+                local2Darray[i][j] = 0;
+            }
         }
         (*env)->ReleaseDoubleArrayElements(env, oneDim, element, 0);
         (*env)->DeleteLocalRef(env, oneDim);
@@ -163,14 +170,14 @@ JNIEXPORT jint JNICALL Java_com_example_stl_Stl_slsqp(
 
     // Call the Fortran routine.
     slsqp_(
-        m,
-        meq,
-        la,
-        n,
+        &m,
+        &meq,
+        &la,
+        &n,
         x_array,
         xl_array,
         xu_array,
-        f,
+        &f,
         c_array,
         g_array,
         local2Darray,
@@ -178,9 +185,9 @@ JNIEXPORT jint JNICALL Java_com_example_stl_Stl_slsqp(
         iter_array,
         mode_array,
         w_array,
-        l_w,
+        &l_w,
         jw_array,
-        l_jw,
+        &l_jw,
         alpha_array,
         f0_array,
         gs_array,

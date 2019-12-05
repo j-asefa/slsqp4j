@@ -1,0 +1,66 @@
+task prepareC(type: Exec) {
+    commandLine 'mkdir', '-p', "${buildDir}/c"
+}
+
+task prepareFortran(type: Exec) {
+    commandLine 'mkdir', '-p', "${buildDir}/fortran"
+}
+
+task prepareLibs(type: Exec) {
+    commandLine 'mkdir', '-p', "${buildDir}/libs"
+}
+
+task compileFortran(type: Exec) {
+    def src = file("src/jni/fortran/slsqp_solver.f")
+    def obj = file("${buildDir}/fortran/slsqp_solver.o")
+    group "Build"
+    description "Compiles the Fortran sources."
+    commandLine 'gfortran-9', '-fPIC', '-o', obj, '-c', src
+    dependsOn prepareFortran
+}
+
+task generateJniHeaders(type: Exec) {
+    def compFile = file("src/main/java/com/example/slsqp/Slsqp.java")
+    def slsqp_solverHeadersDir = file("${buildDir}/c/slsqp_solver-headers")
+    def class_output_dir = file("${buildDir}/classes/java/main/com/example/slsqp")
+    group "Build"
+    description "Generates the JNI headers."
+    commandLine 'javac' ,'-h', slsqp_solverHeadersDir, compFile, '-d', class_output_dir
+    dependsOn classes, prepareC
+}
+
+task compileC(type: Exec) {
+    def src = file("src/jni/c/slsqp_solver.c")
+    def obj = file("${buildDir}/c/slsqp_solver.o")
+
+    group "Build"
+    description "Compiles the C sources."
+    commandLine 'gcc', '-fPIC', '-c', '-o', obj, '-I', System.properties['java.home'] + "/include",
+        '-I', System.properties['java.home'] + "/include/linux", src
+    dependsOn generateJniHeaders
+}
+
+task buildJniLib(type: Exec) {
+    def c_obj = file("${buildDir}/c/slsqp_solver.o")
+    def fortran_obj = file("${buildDir}/fortran/slsqp_solver.o")
+    def output = file("${buildDir}/libs/libslsqp_solver.so")
+
+    group "Build"
+    description "Builds the JNI library."
+    commandLine 'gcc', '-shared', c_obj, fortran_obj, '-o', output
+    dependsOn compileFortran, compileC, prepareLibs
+}
+
+task copySharedLibraries(type: Copy) {
+    from "$buildDir/libs/libslsqp_solver.so"
+    into 'src/main/resources'
+    dependsOn buildJniLib
+}
+
+sourceSets {
+    java {
+        resources.srcDirs += ['src/main/resources']
+    }
+}
+
+build.dependsOn 'copySharedLibraries'
