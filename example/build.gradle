@@ -64,3 +64,4 @@ sourceSets {
 }
 
 build.dependsOn 'copySharedLibraries'
+test.dependsOn 'copySharedLibraries'
