@@ -41,10 +41,10 @@ task compileFortran(type: Exec) {
 task generateJniHeaders(type: Exec) {
     def compFile = file("src/main/java/com/example/stl/Stl.java")
     def square_cubeHeadersDir = file("${buildDir}/c/square_cube-headers")
+    def class_output_dir = file("${buildDir}/classes/java/main/com/example/stl")
     group "Build"
     description "Generates the JNI headers."
-    commandLine 'javac' ,'-h', square_cubeHeadersDir, compFile
-        'com.example.stl.Stl'
+    commandLine 'javac' ,'-h', square_cubeHeadersDir, compFile, '-d', class_output_dir
     dependsOn classes, prepareC
 }
 
