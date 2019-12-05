@@ -159,8 +159,6 @@ JNIEXPORT jint JNICALL Java_com_example_slsqp_Slsqp_slsqp(
         (*env)->DeleteLocalRef(env, oneDim);
     }
 
-
-
     // Call the Fortran routine.
     slsqp_(
         &m,
@@ -200,6 +198,43 @@ JNIEXPORT jint JNICALL Java_com_example_slsqp_Slsqp_slsqp(
         n2_array,
         n3_array
     );
+
+    for (i = 0; i < la; i++) {
+        jdoubleArray doubleArray = (*env)->NewDoubleArray(env, n + 1);
+        (*env)->SetDoubleArrayRegion(env, doubleArray, 0, n + 1, local2Darray[i]);
+        (*env)->SetObjectArrayElement(env, a, i, doubleArray);
+        (*env)->DeleteLocalRef(env, doubleArray);
+    }
+
+
+    (*env)->SetDoubleArrayRegion(env, x, 0, 1, x_array);
+    (*env)->SetDoubleArrayRegion(env, xl, 0, 1, xl_array);
+    (*env)->SetDoubleArrayRegion(env, xu, 0, 1, xu_array);
+    (*env)->SetDoubleArrayRegion(env, c, 0, 1, c_array);
+    (*env)->SetDoubleArrayRegion(env, g, 0, 1, g_array);
+    (*env)->SetDoubleArrayRegion(env, acc, 0, 1, acc_array);
+    (*env)->SetIntArrayRegion(env, iter, 0, 1, iter_array);
+    (*env)->SetIntArrayRegion(env, mode, 0, 1, mode_array);
+    (*env)->SetDoubleArrayRegion(env, w, 0, 1, w_array);
+    (*env)->SetIntArrayRegion(env, jw, 0, 1, jw_array);
+    (*env)->SetDoubleArrayRegion(env, alpha, 0, 1, alpha_array);
+    (*env)->SetDoubleArrayRegion(env, f0, 0, 1, f0_array);
+    (*env)->SetDoubleArrayRegion(env, gs, 0, 1, gs_array);
+    (*env)->SetDoubleArrayRegion(env, h1, 0, 1, h1_array);
+    (*env)->SetDoubleArrayRegion(env, h2, 0, 1, h2_array);
+    (*env)->SetDoubleArrayRegion(env, h3, 0, 1, h3_array);
+    (*env)->SetDoubleArrayRegion(env, h4, 0, 1, h4_array);
+    (*env)->SetDoubleArrayRegion(env, t, 0, 1, t_array);
+    (*env)->SetDoubleArrayRegion(env, t0, 0, 1, t0_array);
+    (*env)->SetDoubleArrayRegion(env, tol, 0, 1, tol_array);
+    (*env)->SetIntArrayRegion(env, iexact, 0, 1, iexact_array);
+    (*env)->SetIntArrayRegion(env, incons, 0, 1, incons_array);
+    (*env)->SetIntArrayRegion(env, ireset, 0, 1, ireset_array);
+    (*env)->SetIntArrayRegion(env, itermx, 0, 1, itermx_array);
+    (*env)->SetIntArrayRegion(env, line, 0, 1, line_array);
+    (*env)->SetIntArrayRegion(env, n1, 0, 1, n1_array);
+    (*env)->SetIntArrayRegion(env, n2, 0, 1, n2_array);
+    (*env)->SetIntArrayRegion(env, n3, 0, 1, n3_array);
 
     for (i = 0; i < la; i++)
     {
@@ -243,5 +278,6 @@ JNIEXPORT jint JNICALL Java_com_example_slsqp_Slsqp_slsqp(
     (*env)->ReleaseIntArrayElements(env, n1, n1_array, JNI_ABORT);
     (*env)->ReleaseIntArrayElements(env, n2, n2_array, JNI_ABORT);
     (*env)->ReleaseIntArrayElements(env, n3, n3_array, JNI_ABORT);
+
     return 0;
 }
