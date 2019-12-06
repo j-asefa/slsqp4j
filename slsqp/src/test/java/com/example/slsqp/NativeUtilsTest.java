@@ -84,8 +84,8 @@ public class NativeUtilsTest
             jw[i] = i;
         }
 
-        final Func constraintFunc = new ConstraintFunc();
-        final Func inputFunc = new InputFunc();
+        final Vector2ScalarFunc constraintFunc = new ConstraintFunc();
+        final Vector2ScalarFunc inputFunc = new InputFunc();
         double ftol = 1.0E-6;
         double[] acc = new double[]{ftol};
 

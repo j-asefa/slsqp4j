@@ -3,14 +3,14 @@ package com.example.slsqp;
 public class Cjac
 {
     private double epsilon = Math.sqrt(Math.ulp(1));
-    private Func func;
+    private Vector2VectorFunc func;
 
-    public Cjac(Func func)
+    public Cjac(Vector2VectorFunc func)
     {
         this.func = func;
     }
 
-    public Func getFunc()
+    public Vector2VectorFunc getFunc()
     {
         return func;
     }
@@ -20,9 +20,9 @@ public class Cjac
         return approx_jacobian(x, func);
     }
 
-    private double[][] approx_jacobian(double[] x, Func func)
+    private double[][] approx_jacobian(double[] x, Vector2VectorFunc func)
     {
-        double[] f0 = new double[]{func.func(x)};
+        double[] f0 = func.func(x);
 
         double[][] jac = new double[x.length][f0.length];
         double[] dx = new double[x.length];
@@ -35,7 +35,10 @@ public class Cjac
             {
                 add[j] = x[j] + dx[j];
             }
-            jac[i] = new double[] {(func.func(add) - f0[0]) / epsilon};
+            for (int j = 0; j < f0.length; j++)
+            {
+                jac[i][j] = func.func(add)[j] - f0[j] / epsilon;
+            }
             dx[i] = 0;
         }
         return transpose(jac);

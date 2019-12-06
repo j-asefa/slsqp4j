@@ -38,8 +38,8 @@ public class Slsqp
     private int[] n1; // standard int -- value is returned to caller
     private int[] n2; // standard int -- value is returned to caller
     private int[] n3; // standard int -- value is returned to caller
-    private Func constraintFunc;
-    private Func inputFunc;
+    private Vector2VectorFunc constraintFunc;
+    private Vector2VectorFunc inputFunc;
 
     public Slsqp(
         int m,
@@ -78,8 +78,8 @@ public class Slsqp
         int[] n1,
         int[] n2,
         int[] n3,
-        Func constraintFunc,
-        Func inputFunc
+        Vector2VectorFunc constraintFunc,
+        Vector2VectorFunc inputFunc
     )
     {
         this.m = m;
@@ -159,17 +159,16 @@ public class Slsqp
         final Cjac constraintCjac = new Cjac(constraintFunc);
         final Cjac inputCjac = new Cjac(inputFunc);
 
-        double[] c = new double[la];
-        double[] g = new double[n + 1];
+        c = new double[la];
+        g = new double[n + 1];
 
-        double fx = inputFunc.func(x);
+        double[] fx = inputFunc.func(x);
         while (true)
         {
             if (mode[0] == 0 || mode[0] == 1)
             {
                 fx = inputFunc.func(x);
-                double ceq = constraintFunc.func(x);
-                c = new double[] {ceq};
+                c = constraintFunc.func(x);
             }
             if (mode[0] == 0 || mode[0] == -1)
             {
@@ -182,8 +181,7 @@ public class Slsqp
                 g[n] = 0;
 
 
-                double ceq = constraintFunc.func(x);
-                c = new double[] {ceq};
+                c = constraintFunc.func(x);
 
                 a = constraintCjac.jacobian(x);
             }
@@ -196,7 +194,7 @@ public class Slsqp
             System.out.println("x = " + x[0]);
             System.out.println("xl = " + xl[0]);
             System.out.println("xu = " + xu[0]);
-            System.out.println("f = " + fx);
+            System.out.println("f = " + fx[0]);
             System.out.println("c = " + c[0]);
             System.out.println("g = " + g[0] + ", " + g[1]);
             for (int i = 0; i < la; i++)
@@ -240,7 +238,7 @@ public class Slsqp
                 x,
                 xl,
                 xu,
-                fx,
+                fx[0],
                 c,
                 g,
                 a,
@@ -321,10 +319,4 @@ public class Slsqp
             }
         }
     }
-
-    private Cjac cjacFactory(Func func)
-    {
-        return new Cjac(func);
-    }
-
 }

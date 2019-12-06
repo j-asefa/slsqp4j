@@ -1,7 +1,7 @@
 package com.example.slsqp;
 
 @FunctionalInterface
-public interface Func
+public interface Vector2ScalarFunc
 {
     double func(double[] x);
 }

@@ -2,16 +2,16 @@ package com.example.slsqp;
 
 public class Constraint
 {
-    private Func func;
+    private Vector2ScalarFunc func;
     private ConstraintType constraintType;
 
-    public Constraint(Func func, ConstraintType constraintType)
+    public Constraint(Vector2ScalarFunc func, ConstraintType constraintType)
     {
         this.func = func;
         this.constraintType = constraintType;
     }
 
-    public Func getFunc()
+    public Vector2ScalarFunc getFunc()
     {
         return func;
     }
