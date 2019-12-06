@@ -2,7 +2,7 @@ package com.example.slsqp;
 
 public class Jacobian
 {
-    private static double epsilon = Math.sqrt(Math.ulp(1));
+    public static double epsilon = Math.sqrt(Math.ulp((double)1)); // 1.4901161193847656e-08
 
     public static double[][] approx_jacobian(double[] x, Vector2VectorFunc func)
     {
@@ -21,7 +21,7 @@ public class Jacobian
             }
             for (int j = 0; j < f0.length; j++)
             {
-                jac[i][j] = func.func(add)[j] - f0[j] / epsilon;
+                jac[i][j] = (func.func(add)[j] - f0[j]) / epsilon;
             }
             dx[i] = 0;
         }
@@ -30,7 +30,7 @@ public class Jacobian
 
     public static double[][] approx_jacobian(double[] x, Vector2ScalarFunc func)
     {
-        double[] f0 = new double[]{func.func(x)};
+        double f0 = func.func(x);
 
         double[][] jac = new double[x.length][1];
         double[] dx = new double[x.length];
@@ -43,7 +43,8 @@ public class Jacobian
             {
                 add[j] = x[j] + dx[j];
             }
-            jac[i][0] = func.func(add) - f0[0] / epsilon;
+
+            jac[i][0] = (func.func(add) - f0) / epsilon;
             dx[i] = 0;
         }
         return transpose(jac);

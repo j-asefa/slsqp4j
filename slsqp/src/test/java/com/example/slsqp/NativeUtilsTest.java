@@ -39,8 +39,8 @@ public class NativeUtilsTest
     @Test
     public void testSlsqp()
     {
-        double[] xl = new double[]{0, 100};
-        double[] xu = new double[]{0, 5};
+        double[] xl = new double[]{0, 0};
+        double[] xu = new double[]{100, 5};
 
         double[] x = new double[]{0, 0};
         int n = x.length;

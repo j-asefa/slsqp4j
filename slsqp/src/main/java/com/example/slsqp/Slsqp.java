@@ -123,7 +123,6 @@ public class Slsqp
 
     public void solveSlsqp()
     {
-
         while (true)
         {
             if (mode[0] == 0 || mode[0] == 1)
@@ -152,9 +151,9 @@ public class Slsqp
             System.out.println("meq = " + meq);
             System.out.println("la = " + la);
             System.out.println("n = " + n);
-            System.out.println("x = " + x[0]);
-            System.out.println("xl = " + xl[0]);
-            System.out.println("xu = " + xu[0]);
+            System.out.println("x = " + x[0] + ", " + x[1]);
+            System.out.println("xl = " + xl[0] + ", " + xl[1]);
+            System.out.println("xu = " + xu[0] + ", " + xu[0]);
             System.out.println("f = " + fx);
             System.out.println("c = " + c[0]);
             System.out.println("g = " + g[0] + ", " + g[1]);
@@ -235,9 +234,9 @@ public class Slsqp
             System.out.println("meq = " + meq);
             System.out.println("la = " + la);
             System.out.println("n = " + n);
-            System.out.println("x = " + x[0]);
-            System.out.println("xl = " + xl[0]);
-            System.out.println("xu = " + xu[0]);
+            System.out.println("x = " + x[0] + ", " + x[1]);
+            System.out.println("xl = " + xl[0] + ", " + xl[1]);
+            System.out.println("xu = " + xu[0] + ", " + xu[0]);
             System.out.println("f = " + fx);
             System.out.println("c = " + c[0]);
             System.out.println("g = " + g[0] + ", " + g[1]);
