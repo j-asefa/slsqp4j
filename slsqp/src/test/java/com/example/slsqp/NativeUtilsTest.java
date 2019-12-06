@@ -50,7 +50,8 @@ public class NativeUtilsTest
         int n_1 = n + 1;
         int mineq = m - meq + n_1 + n_1;
 
-        int l_w = (3 * n_1 + m) * (n_1 + 1) + (n_1 - meq + 1) * (mineq + 2) + 2 * mineq + (n_1 + mineq) * (n_1 - meq) + 2 * meq + n_1 * n / 2 + 2 * m + 3 * n + 4 * n_1 + 1;
+        int l_w = (3 * n_1 + m) * (n_1 + 1) + (n_1 - meq + 1) * (mineq + 2) + 2 * mineq + (n_1 + mineq) * (n_1 - meq) +
+            2 * meq + n_1 * n / 2 + 2 * m + 3 * n + 4 * n_1 + 1;
         int l_jw = Math.max(mineq, n_1 - meq);
 
         double[] w = new double[l_w];

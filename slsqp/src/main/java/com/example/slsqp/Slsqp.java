@@ -134,10 +134,7 @@ public class Slsqp
             {
                 double[][] fprime = Jacobian.approx_jacobian(x, inputFunc);
 
-                for (int i = 0; i < n; i++)
-                {
-                    g[i] = fprime[0][i];
-                }
+                System.arraycopy(fprime[0], 0, g, 0, n);
                 g[n] = 0;
 
 
