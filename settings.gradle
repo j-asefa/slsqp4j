@@ -1,4 +1,4 @@
-rootProject.name = 'sqslp_in_java'
+rootProject.name = 'java_fortran_tests'
 include 'example'
 include 'slsqp'
 
