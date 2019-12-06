@@ -9,7 +9,6 @@ public class Slsqp
     private double[] x; // array of length n    ---  value is returned to caller
     private double[] xl; // array of length n
     private double[] xu; // array of length n
-    private double f; // standard double
     private double[] c; // array of length la
     private double[] g; // array of length n + 1
     private double[][] a; // matrix of dims (la; n + 1)
@@ -39,7 +38,9 @@ public class Slsqp
     private int[] n2; // standard int -- value is returned to caller
     private int[] n3; // standard int -- value is returned to caller
     private Vector2VectorFunc constraintFunc;
-    private Vector2VectorFunc inputFunc;
+    private Vector2ScalarFunc inputFunc;
+
+    private double fx;
 
     public Slsqp(
         int m,
@@ -49,7 +50,6 @@ public class Slsqp
         double[] x,
         double[] xl,
         double[] xu,
-        double f,
         double[] c,
         double[] g,
         double[][] a,
@@ -79,7 +79,7 @@ public class Slsqp
         int[] n2,
         int[] n3,
         Vector2VectorFunc constraintFunc,
-        Vector2VectorFunc inputFunc
+        Vector2ScalarFunc inputFunc
     )
     {
         this.m = m;
@@ -89,7 +89,6 @@ public class Slsqp
         this.x = x;
         this.xl = xl;
         this.xu = xu;
-        this.f = f;
         this.c = c;
         this.g = g;
         this.a = a;
@@ -124,45 +123,7 @@ public class Slsqp
 
     public void solveSlsqp()
     {
-        m = meq;
-        int n_1 = n + 1;
-        int mineq = m - meq+ n_1 + n_1;
 
-        l_w = (3*n_1+m)*(n_1+1) + (n_1-meq+1)*(mineq+2) + 2*mineq + (n_1+mineq)*(n_1-meq) + 2*meq + n_1*n/2 + 2*m + 3*n + 4*n_1 + 1;
-        l_jw = Math.max(mineq, n_1-meq);
-
-        for (int i = 0; i < la; i++)
-        {
-            for (int j = 0; j < n + 1; j++)
-            {
-                if (i == j)
-                {
-                    a[i][j] = 0.5;
-                }
-                else
-                {
-                    a[i][j] = 0.7;
-                }
-            }
-        }
-
-        for (int i = 0; i < l_w; i++)
-        {
-            w[i] = i;
-        }
-
-        for (int i = 0; i < l_jw; i++)
-        {
-            jw[i] = i;
-        }
-
-        final Cjac constraintCjac = new Cjac(constraintFunc);
-        final Cjac inputCjac = new Cjac(inputFunc);
-
-        c = new double[la];
-        g = new double[n + 1];
-
-        double[] fx = inputFunc.func(x);
         while (true)
         {
             if (mode[0] == 0 || mode[0] == 1)
@@ -172,7 +133,7 @@ public class Slsqp
             }
             if (mode[0] == 0 || mode[0] == -1)
             {
-                double[][] fprime = inputCjac.jacobian(x);
+                double[][] fprime = Jacobian.approx_jacobian(x, inputFunc);
 
                 for (int i = 0; i < n; i++)
                 {
@@ -183,7 +144,7 @@ public class Slsqp
 
                 c = constraintFunc.func(x);
 
-                a = constraintCjac.jacobian(x);
+                a = Jacobian.approx_jacobian(x, constraintFunc);
             }
 
             System.out.println(" ************* BEFORE ******************");
@@ -194,7 +155,7 @@ public class Slsqp
             System.out.println("x = " + x[0]);
             System.out.println("xl = " + xl[0]);
             System.out.println("xu = " + xu[0]);
-            System.out.println("f = " + fx[0]);
+            System.out.println("f = " + fx);
             System.out.println("c = " + c[0]);
             System.out.println("g = " + g[0] + ", " + g[1]);
             for (int i = 0; i < la; i++)
@@ -238,7 +199,7 @@ public class Slsqp
                 x,
                 xl,
                 xu,
-                fx[0],
+                fx,
                 c,
                 g,
                 a,
