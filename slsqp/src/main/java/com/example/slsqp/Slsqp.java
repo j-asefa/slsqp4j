@@ -177,14 +177,18 @@ public class Slsqp implements SlsqpSolver
         if (objectiveFuncJacobian == null)
         {
             fprime = wrappedObjectiveFunction.approx_jacobian(x);
-        } else
+        }
+        else
         {
             fprime = objectiveFuncJacobian;
         }
 
-
         final double[] xl = new double[n]; // lower bounds
         final double[] xu = new double[n]; // upper bounds
+
+        computeBounds(n, bounds, xl, xu);
+
+        clip(x, xl, xu);
 
         int[] mode = new int[] {0};
 
@@ -203,14 +207,18 @@ public class Slsqp implements SlsqpSolver
         int la = Math.max(1, m);
 
         int mineq = m - meq + n_1 + n_1;
-        int l_w = (3 * n_1 + m) * (n_1 + 1) + (n_1 - meq + 1) * (mineq + 2) + 2 * mineq + (n_1 + mineq) * (n_1 - meq) +
-            2 * meq + n_1 + ((n + 1) * n);
+        /*int l_w = (3 * n_1 + m) * (n_1 + 1) + (n_1 - meq + 1) * (mineq + 2) + 2 * mineq + (n_1 + mineq) * (n_1 - meq) +
+            2 * meq + n_1 + ((n + 1) * n);*/
+
+        int l_w = (3 * n_1 + m) * (n_1 + 1) +
+            (n_1 - meq + 1) * (mineq + 2) + 2 * mineq +
+            (n_1 + mineq) * (n_1 - meq) + 2 * meq +
+            n_1 * n / 2 + 2 * m + 3 * n + 4 * n_1 + 1;
+
         int l_jw = mineq;
 
         double[] w = new double[l_w];
-        Arrays.fill(w, 0);
         int[] jw = new int[l_jw];
-        Arrays.fill(jw, 0);
 
         final int iter = maxIterations;
 
@@ -277,7 +285,8 @@ public class Slsqp implements SlsqpSolver
                                 if (constraintJac[j].length > 1)
                                 {
                                     a[j][i] = constraintJac[j][l]; // a is in column-major order
-                                } else
+                                }
+                                else
                                 {
                                     a[j][i] = constraintJac[j][0];
                                 }
@@ -309,15 +318,9 @@ public class Slsqp implements SlsqpSolver
                                     a[j][i] = constraintJac[j][0];
                                 }
                             }
-
                         }
                         i += jacDim2;
                     }
-                }
-                // fill last column with zeros
-                for (int k = 0; k < la; k++)
-                {
-                    a[n][k] = 0;
                 }
             }
 

@@ -117,6 +117,28 @@ public class SlsqpTests
     }
 
     @Test
+    public void test_minimize_equality_given()
+    {
+        final double[] x = new double[] {-1, 1};
+        final Slsqp slsqp = new Slsqp(new TestUtil.Fun(), new TestUtil.Jac().apply(x), x);
+        final List<VectorConstraint> constraints = new ArrayList<>();
+        final VectorConstraint constraint = new VectorConstraint(ConstraintType.EQ, new TestUtil.Fecon(), null);
+        constraints.add(constraint);
+        final OptimizeResult result = slsqp.minimize_slsqp_with_vector_constraints(
+            null,
+            -1,
+            constraints,
+            defaultTol,
+            defaultMaxIter,
+            null
+        );
+        final double[] resX = result.x;
+        final double[] expected = {1, 1};
+        assertArrayEquals(resX, expected);
+        assertTrue(result.success);
+    }
+
+    @Test
     public void test_no_op_slsqp()
     {
         final double[] x = new double[]{-1, -1};
