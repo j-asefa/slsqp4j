@@ -47,7 +47,7 @@ public class TestUtil
                 sign = arg[0];
             }
 
-            return sign * 2*x*y + 2*x - Math.pow(x, 2) - 2 * Math.pow(y, 2);
+            return sign * (2*x*y + 2*x - Math.pow(x, 2) - 2 * Math.pow(y, 2));
         }
     }
 
@@ -69,8 +69,8 @@ public class TestUtil
             {
                 sign = arg[0];
             }
-            double dfdx = sign * -2 * x + 2 * y + 2;
-            double dfdy = sign * 2 * x - 4 * y;
+            double dfdx = sign * (-2 * x + 2 * y + 2);
+            double dfdy = sign * (2 * x - 4 * y);
             return new double[] {dfdx, dfdy};
         }
     }
@@ -93,12 +93,12 @@ public class TestUtil
         }
     }
 
-    public static final class FprimeEconScalar implements Vector2ScalarFunc
+    public static final class FprimeEconScalar implements Vector2VectorFunc
     {
         @Override
-        public double apply(double[] x, double... arg)
+        public double[] apply(double[] x, double... arg)
         {
-            return new FprimeEcon().apply(x, arg)[0];
+            return new FprimeEcon().apply(x, arg);
         }
     }
 

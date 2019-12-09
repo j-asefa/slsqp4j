@@ -164,7 +164,7 @@ public class NativeUtils
         int[] n2,
         int[] n3)
     {
-        int n = x.length;
+        /*int n = x.length;
         int l_w = w.length;
         int l_jw = jw.length;
         System.out.println(" ************* BEFORE ******************");
@@ -172,12 +172,37 @@ public class NativeUtils
         System.out.println("meq = " + meq);
         System.out.println("la = " + la);
         System.out.println("n = " + n);
-        System.out.println("x = " + x[0] + ", " + x[1]);
-        System.out.println("xl = " + xl[0] + ", " + xl[1]);
-        System.out.println("xu = " + xu[0] + ", " + xu[0]);
+        for (int i = 0; i < n; i++)
+        {
+            System.out.print("x[" + i + "] = " + x[i]);
+        }
+        System.out.println();
+
+        for (int i = 0; i < n; i++)
+        {
+            System.out.print("xl[" + i + "] = " + xl[i]);
+        }
+        System.out.println();
+        for (int i = 0; i < n; i++)
+        {
+            System.out.print("xu[" + i + "] = " + xu[i]);
+        }
+        System.out.println();
+
         System.out.println("f = " + fx[0]);
-        System.out.println("c = " + (c.length > 0 ? c[0] : 0));
-        System.out.println("g = " + g[0] + ", " + g[1]);
+
+        for (int i = 0; i < c.length; i++)
+        {
+            System.out.print("c[" + i+ "] = " + c[i] + " ");
+        }
+        System.out.println();
+
+        for (int i = 0; i < g.length; i++)
+        {
+            System.out.print("g[" + i+ "] = " + g[i] + " ");
+        }
+        System.out.println();
+
         for (int i = 0; i < n + 1; i++)
         {
             for (int j = 0; j < la; j++)
@@ -188,10 +213,17 @@ public class NativeUtils
         }
         System.out.println("iter = " + majiter[0]);
         System.out.println("mode = " + mode[0]);
-        System.out.println("w = " + w[0]);
         System.out.println("l_w = " + l_w);
-        System.out.println("jw = " + jw[0]);
+        for (int i = 0; i < l_w; i++)
+        {
+            System.out.print("w[" + i + "] = " + w[i] + " ");
+        }
+        System.out.println();
         System.out.println("l_jw = " + l_jw);
+        for (int i = 0; i < l_jw; i++)
+        {
+            System.out.print("jw[" + i + "] = " + jw[i] + " ");
+        }
         System.out.println("alpha = " + alpha[0]);
         System.out.println("f0 = " + f0[0]);
         System.out.println("gs = " + gs[0]);
@@ -209,22 +241,47 @@ public class NativeUtils
         System.out.println("line = " + line[0]);
         System.out.println("n1 = " + n1[0]);
         System.out.println("n2 = " + n2[0]);
-        System.out.println("n3 = " + n3[0]);
+        System.out.println("n3 = " + n3[0]);*/
 
         slsqp(m, meq, la, x.length, x, xl, xu, fx[0], c, g, a, acc, majiter, mode, w, w.length, jw, jw.length,
             alpha, f0, gs, h1, h2, h3, h4, t, t0, tol, iexact, incons, ireset, itermx, line, n1, n2, n3);
 
-        System.out.println(" ************* AFTER ******************");
+        /*System.out.println(" ************* AFTER ******************");
         System.out.println("m = " + m);
         System.out.println("meq = " + meq);
         System.out.println("la = " + la);
         System.out.println("n = " + n);
-        System.out.println("x = " + x[0] + ", " + x[1]);
-        System.out.println("xl = " + xl[0] + ", " + xl[1]);
-        System.out.println("xu = " + xu[0] + ", " + xu[0]);
+        for (int i = 0; i < n; i++)
+        {
+            System.out.print("x[" + i + "] = " + x[i]);
+        }
+        System.out.println();
+
+        for (int i = 0; i < n; i++)
+        {
+            System.out.print("xl[" + i + "] = " + xl[i]);
+        }
+        System.out.println();
+        for (int i = 0; i < n; i++)
+        {
+            System.out.print("xu[" + i + "] = " + xu[i]);
+        }
+        System.out.println();
+
         System.out.println("f = " + fx[0]);
-        System.out.println("c = " + c[0]);
-        System.out.println("g = " + g[0] + ", " + g[1]);
+
+        for (int i = 0; i < c.length; i++)
+        {
+            System.out.print("c[" + i+ "] = " + c[i] + " ");
+        }
+        System.out.println();
+
+        for (int i = 0; i < g.length; i++)
+        {
+            System.out.print("g[" + i+ "] = " + g[i] + " ");
+        }
+        System.out.println();
+
         for (int i = 0; i < n + 1; i++)
         {
             for (int j = 0; j < la; j++)
@@ -235,10 +292,17 @@ public class NativeUtils
         }
         System.out.println("iter = " + majiter[0]);
         System.out.println("mode = " + mode[0]);
-        System.out.println("w = " + w[0]);
         System.out.println("l_w = " + l_w);
-        System.out.println("jw = " + jw[0]);
+        for (int i = 0; i < l_w; i++)
+        {
+            System.out.print("w[" + i + "] = " + w[i] + " ");
+        }
+        System.out.println();
         System.out.println("l_jw = " + l_jw);
+        for (int i = 0; i < l_jw; i++)
+        {
+            System.out.print("jw[" + i + "] = " + jw[i] + " ");
+        }
         System.out.println("alpha = " + alpha[0]);
         System.out.println("f0 = " + f0[0]);
         System.out.println("gs = " + gs[0]);
@@ -256,7 +320,7 @@ public class NativeUtils
         System.out.println("line = " + line[0]);
         System.out.println("n1 = " + n1[0]);
         System.out.println("n2 = " + n2[0]);
-        System.out.println("n3 = " + n3[0]);
+        System.out.println("n3 = " + n3[0]);*/
     }
 
     public static void slsqp_no_op(

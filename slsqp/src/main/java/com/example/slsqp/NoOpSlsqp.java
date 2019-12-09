@@ -60,7 +60,7 @@ public class NoOpSlsqp implements SlsqpSolver
         int maxIterations,
         CallBackFunc callBackFunc)
     {
-        final WrappedScalarFunction wrappedObjectiveFunction = new WrappedScalarFunction(objectiveFunc, sign);
+        final WrappedScalarFunction wrappedObjectiveFunction = new WrappedScalarFunction(objectiveFunc);
         final int n = x.length;
 
         int n_1 = n + 1;
@@ -69,11 +69,11 @@ public class NoOpSlsqp implements SlsqpSolver
         if (objectiveFuncJacobian == null)
         {
             fprime = wrappedObjectiveFunction.approx_jacobian(x);
-        } else
+        }
+        else
         {
             fprime = objectiveFuncJacobian;
         }
-
 
         final double[] xl = new double[n]; // lower bounds
         final double[] xu = new double[n]; // upper bounds
@@ -127,6 +127,14 @@ public class NoOpSlsqp implements SlsqpSolver
 
         if (mode[0] == 0 || mode[0] == -1)
         {
+            if (objectiveFuncJacobian == null)
+            {
+                fprime = wrappedObjectiveFunction.approx_jacobian(x);
+            }
+            else
+            {
+                fprime = objectiveFuncJacobian;
+            }
             System.arraycopy(fprime, 0, g, 0, n);
             g[n] = 0;
             for (int i = 0; i < scalarConstraintList.size(); i++)
@@ -153,7 +161,7 @@ public class NoOpSlsqp implements SlsqpSolver
             callBackFunc.callback(Arrays.copyOf(x, x.length));
         }
 
-        return new OptimizeResult(x, fx, g, mode[0], 0, 0, mode[0], mode[0] == 0, a);
+        return new OptimizeResult(x, fx, g, mode[0], 1, mode[0], mode[0] == 0, a);
     }
 
     @Override
@@ -165,7 +173,7 @@ public class NoOpSlsqp implements SlsqpSolver
         int maxIterations,
         CallBackFunc callBackFunc)
     {
-        final WrappedScalarFunction wrappedObjectiveFunction = new WrappedScalarFunction(objectiveFunc, sign);
+        final WrappedScalarFunction wrappedObjectiveFunction = new WrappedScalarFunction(objectiveFunc);
         final int n = x.length;
 
         int n_1 = n + 1;
@@ -333,6 +341,6 @@ public class NoOpSlsqp implements SlsqpSolver
         }
 
         }
-        return new OptimizeResult(x, fx, g, mode[0], 0, 0, mode[0], mode[0] == 0, a);
+        return new OptimizeResult(x, fx, g, mode[0], 1, mode[0], mode[0] == 0, a);
     }
 }

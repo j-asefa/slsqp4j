@@ -19,9 +19,11 @@ public class SlsqpTests
     final double defaultTol = 1.0E-6;
     final int defaultMaxIter = 100;
 
+    // Scalar tests
+
     // this test case and the one below it are taken from the example at
     // https://stackoverflow.com/questions/26882087/python-scipy-optimization-minimize-using-slsqp-showing-maximized-results
-    /*@Test
+    @Test
     public void testSymmetricInput()
     {
         double[] xl = new double[]{0, 0};
@@ -47,7 +49,7 @@ public class SlsqpTests
         int maxIter = 100;
         final OptimizeResult result = slsqp.minimize_slsqp_with_scalar_constraints(
             bounds,
-            0,
+            1,
             constraintList,
             tolerance,
             maxIter,
@@ -66,7 +68,7 @@ public class SlsqpTests
 
         final double[][] bounds = new double[][] {xl, xu};
 
-        double[] x = new double[]{1, 0};
+        double[] x = new double[] {0.2, 0.9};
         final ScalarConstraint scalarConstraint = new ScalarConstraint(
             ConstraintType.EQ,
             new TestUtil.TestConstraintFunc(),
@@ -84,47 +86,30 @@ public class SlsqpTests
         int maxIter = 100;
         final OptimizeResult result = slsqp.minimize_slsqp_with_scalar_constraints(
             bounds,
-            0,
+            1,
             constraintList,
             tolerance,
             maxIter,
             null
         );
 
-        assertTrue(Math.abs(result.x[0] - 5) < TestUtil.ERROR);
-        assertTrue(Math.abs(result.x[1] - 3.18634e-14) < TestUtil.ERROR);
-    }*/
-
-    @Test
-    public void test_minimize_equality_approximated()
-    {
-        final Slsqp slsqp = new Slsqp(new TestUtil.Fun(), null, new double[]{-1, -1});
-        final List<VectorConstraint> constraints = new ArrayList<>();
-        final VectorConstraint constraint = new VectorConstraint(ConstraintType.EQ, new TestUtil.Fecon(), null);
-        constraints.add(constraint);
-        final OptimizeResult result = slsqp.minimize_slsqp_with_vector_constraints(
-            null,
-            -1,
-            constraints,
-            defaultTol,
-            defaultMaxIter,
-            null
-        );
-        final double[] resX = result.x;
-        final double[] expected = {1, 1};
-        assertArrayEquals(resX, expected);
+        assertTrue(Math.abs(result.x[0] - 1.99840144e-14) < TestUtil.ERROR);
+        assertTrue(Math.abs(result.x[1] - 5) < TestUtil.ERROR);
         assertTrue(result.success);
     }
 
     @Test
-    public void test_minimize_equality_given()
+    public void test_minimize_equality_given_cons_scalar()
     {
         final double[] x = new double[] {-1, 1};
-        final Slsqp slsqp = new Slsqp(new TestUtil.Fun(), new TestUtil.Jac().apply(x), x);
-        final List<VectorConstraint> constraints = new ArrayList<>();
-        final VectorConstraint constraint = new VectorConstraint(ConstraintType.EQ, new TestUtil.Fecon(), null);
+        final Slsqp slsqp = new Slsqp(new TestUtil.Fun(), new TestUtil.Jac(), x);
+        final List<ScalarConstraint> constraints = new ArrayList<>();
+        final ScalarConstraint constraint = new ScalarConstraint(
+            ConstraintType.EQ,
+            new TestUtil.FeconScalar(),
+            new TestUtil.FprimeEconScalar().apply(x));
         constraints.add(constraint);
-        final OptimizeResult result = slsqp.minimize_slsqp_with_vector_constraints(
+        final OptimizeResult result = slsqp.minimize_slsqp_with_scalar_constraints(
             null,
             -1,
             constraints,
@@ -134,7 +119,92 @@ public class SlsqpTests
         );
         final double[] resX = result.x;
         final double[] expected = {1, 1};
-        assertArrayEquals(resX, expected);
+        assertTrue(Math.abs(result.x[0] - expected[0]) < TestUtil.ERROR);
+        assertTrue(Math.abs(result.x[1] - expected[1]) < TestUtil.ERROR);
+        assertTrue(result.success);
+    }
+
+    @Test
+    public void test_scalar_constraints()
+    {
+        final double[] x = new double[] {3};
+
+        final Vector2ScalarFunc inputFunc = (x1, arg) -> Math.pow(x1[0], 2);
+
+        final Vector2ScalarFunc constraintFunc = (x1, arg) -> x1[0] - 1;
+
+        final Slsqp slsqp = new Slsqp(inputFunc, null, x);
+
+        final List<ScalarConstraint> constraints = new ArrayList<>();
+        final ScalarConstraint constraint = new ScalarConstraint(
+            ConstraintType.INEQ,
+            constraintFunc,
+            null);
+        constraints.add(constraint);
+        final OptimizeResult result = slsqp.minimize_slsqp_with_scalar_constraints(
+            null,
+            1,
+            constraints,
+            defaultTol,
+            defaultMaxIter,
+            null
+        );
+        final double[] resX = result.x;
+        final double[] expected = {1};
+        assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
+        assertTrue(result.success);
+    }
+
+    @Test
+    public void test_infeasible_initial()
+    {
+        double[] x = new double[] {10};
+
+        final Vector2ScalarFunc inputFunc = (x1, arg) -> Math.pow(x1[0], 2) - 2*x1[0] + 1;
+
+        final Vector2ScalarFunc constraintFunc1 = (x1, arg) -> 0 - x1[0];
+        final ScalarConstraint constraint1 = new ScalarConstraint(ConstraintType.INEQ, constraintFunc1, null);
+        final List<ScalarConstraint> constraintList1 = new ArrayList<>();
+        constraintList1.add(constraint1);
+
+        final Vector2ScalarFunc constraintFunc2 = (x1, arg) -> x1[0] - 2;
+        final ScalarConstraint constraint2 = new ScalarConstraint(ConstraintType.INEQ, constraintFunc2, null);
+        final List<ScalarConstraint> constraintList2 = new ArrayList<>();
+        constraintList2.add(constraint2);
+
+        final Vector2ScalarFunc constraintFunc3 = (x1, arg) -> x1[0] + 1;
+        final ScalarConstraint constraint3 = new ScalarConstraint(ConstraintType.INEQ, constraintFunc3, null);
+        final List<ScalarConstraint> constraintList3 = new ArrayList<>();
+        constraintList3.add(constraint3);
+        constraintList3.add(constraint1);
+
+        Slsqp slsqp = new Slsqp(inputFunc, null, x);
+        OptimizeResult result = slsqp.minimize_slsqp_with_scalar_constraints(
+            null,
+            1,
+            constraintList1,
+            defaultTol,
+            defaultMaxIter,
+            null
+        );
+        double[] resX = result.x;
+        double[] expected = {0};
+        assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
+        assertTrue(result.success);
+
+        x = new double[] {-10};
+        slsqp = new Slsqp(inputFunc, null, x);
+        result = slsqp.minimize_slsqp_with_scalar_constraints(
+            null,
+            1,
+            constraintList2,
+            defaultTol,
+            defaultMaxIter,
+            null
+        );
+        resX = result.x;
+        expected = new double[]{2};
+        assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
         assertTrue(result.success);
     }
 
@@ -167,4 +237,50 @@ public class SlsqpTests
             }
         }
     }
+
+    // Vector tests
+
+    /*@Test
+    public void test_minimize_equality_approximated()
+    {
+        final Slsqp slsqp = new Slsqp(new TestUtil.Fun(), null, new double[]{-1, 1});
+        final List<VectorConstraint> constraints = new ArrayList<>();
+        final VectorConstraint constraint = new VectorConstraint(ConstraintType.EQ, new TestUtil.Fecon(), null);
+        constraints.add(constraint);
+        final OptimizeResult result = slsqp.minimize_slsqp_with_vector_constraints(
+            null,
+            -1,
+            constraints,
+            defaultTol,
+            defaultMaxIter,
+            null
+        );
+        final double[] resX = result.x;
+        final double[] expected = {1, 1};
+        assertArrayEquals(resX, expected);
+        assertTrue(result.success);
+    }
+
+    @Test
+    public void test_minimize_equality_given()
+    {
+        final double[] x = new double[] {-1, 1};
+        final Slsqp slsqp = new Slsqp(new TestUtil.Fun(), new TestUtil.Jac(), x);
+        final List<VectorConstraint> constraints = new ArrayList<>();
+        final VectorConstraint constraint = new VectorConstraint(ConstraintType.EQ, new TestUtil.Fecon(), null);
+        constraints.add(constraint);
+        final OptimizeResult result = slsqp.minimize_slsqp_with_vector_constraints(
+            null,
+            -1,
+            constraints,
+            defaultTol,
+            defaultMaxIter,
+            null
+        );
+        final double[] resX = result.x;
+        final double[] expected = {1, 1};
+        assertArrayEquals(resX, expected);
+        assertTrue(result.success);
+    }*/
+
 }

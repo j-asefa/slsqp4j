@@ -6,8 +6,7 @@ public class OptimizeResult
     public final double fx;
     public final double[] jac;
     public final int status;
-    public final int nfev;
-    public final int njev;
+    public final int numIters;
     public final int exit_mode;
     public final boolean success;
     public double[][] a;
@@ -17,8 +16,7 @@ public class OptimizeResult
         double fx,
         double[] jac,
         int status,
-        int nfev,
-        int njev,
+        int numIters,
         int exit_mode,
         boolean success,
         double[][] a
@@ -27,9 +25,8 @@ public class OptimizeResult
         this.x = x;
         this.fx = fx;
         this.jac = jac;
+        this.numIters = numIters;
         this.status = status;
-        this.nfev = nfev;
-        this.njev = njev;
         this.exit_mode = exit_mode;
         this.success = success;
         this.a = a;

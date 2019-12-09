@@ -207,16 +207,16 @@ JNIEXPORT jint JNICALL Java_com_example_slsqp_util_NativeUtils_slsqp(
 
     free(local2Darray);
 
-    (*env)->SetDoubleArrayRegion(env, x, 0, 1, x_array);
-    (*env)->SetDoubleArrayRegion(env, xl, 0, 1, xl_array);
-    (*env)->SetDoubleArrayRegion(env, xu, 0, 1, xu_array);
-    (*env)->SetDoubleArrayRegion(env, c, 0, 1, c_array);
-    (*env)->SetDoubleArrayRegion(env, g, 0, 1, g_array);
+    (*env)->SetDoubleArrayRegion(env, x, 0, n, x_array);
+    (*env)->SetDoubleArrayRegion(env, xl, 0, n, xl_array);
+    (*env)->SetDoubleArrayRegion(env, xu, 0, n, xu_array);
+    (*env)->SetDoubleArrayRegion(env, c, 0, la, c_array);
+    (*env)->SetDoubleArrayRegion(env, g, 0, n + 1, g_array);
     (*env)->SetDoubleArrayRegion(env, acc, 0, 1, acc_array);
     (*env)->SetIntArrayRegion(env, iter, 0, 1, iter_array);
     (*env)->SetIntArrayRegion(env, mode, 0, 1, mode_array);
-    (*env)->SetDoubleArrayRegion(env, w, 0, 1, w_array);
-    (*env)->SetIntArrayRegion(env, jw, 0, 1, jw_array);
+    (*env)->SetDoubleArrayRegion(env, w, 0, l_w, w_array);
+    (*env)->SetIntArrayRegion(env, jw, 0, l_jw, jw_array);
     (*env)->SetDoubleArrayRegion(env, alpha, 0, 1, alpha_array);
     (*env)->SetDoubleArrayRegion(env, f0, 0, 1, f0_array);
     (*env)->SetDoubleArrayRegion(env, gs, 0, 1, gs_array);
