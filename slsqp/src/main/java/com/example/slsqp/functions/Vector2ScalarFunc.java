@@ -1,4 +1,4 @@
-package com.example.slsqp;
+package com.example.slsqp.functions;
 
 @FunctionalInterface
 public interface Vector2ScalarFunc

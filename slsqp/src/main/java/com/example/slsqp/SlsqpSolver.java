@@ -2,6 +2,7 @@ package com.example.slsqp;
 
 import com.example.slsqp.constraints.ScalarConstraint;
 import com.example.slsqp.constraints.VectorConstraint;
+import com.example.slsqp.functions.CallBackFunc;
 
 import java.util.List;
 

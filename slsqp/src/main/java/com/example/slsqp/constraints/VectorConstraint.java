@@ -1,7 +1,7 @@
 package com.example.slsqp.constraints;
 
 import com.example.slsqp.Jacobian;
-import com.example.slsqp.Vector2VectorFunc;
+import com.example.slsqp.functions.Vector2VectorFunc;
 
 public class VectorConstraint
 {

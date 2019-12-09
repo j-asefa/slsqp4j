@@ -1,5 +1,8 @@
 package com.example.slsqp;
 
+import com.example.slsqp.functions.Vector2ScalarFunc;
+import com.example.slsqp.functions.Vector2VectorFunc;
+
 public class Jacobian
 {
     public static double epsilon = Math.sqrt(Math.ulp((double)1)); // 1.4901161193847656e-08

@@ -3,6 +3,10 @@ package com.example.slsqp;
 import com.example.slsqp.constraints.ConstraintType;
 import com.example.slsqp.constraints.ScalarConstraint;
 import com.example.slsqp.constraints.VectorConstraint;
+import com.example.slsqp.functions.CallBackFunc;
+import com.example.slsqp.functions.Vector2ScalarFunc;
+import com.example.slsqp.functions.WrappedScalarFunction;
+import com.example.slsqp.util.NativeUtils;
 
 import java.util.Arrays;
 import java.util.List;

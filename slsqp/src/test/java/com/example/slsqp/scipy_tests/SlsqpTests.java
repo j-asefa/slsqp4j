@@ -3,7 +3,9 @@ package com.example.slsqp.scipy_tests;
 import com.example.slsqp.NoOpSlsqp;
 import com.example.slsqp.OptimizeResult;
 import com.example.slsqp.Slsqp;
+import com.example.slsqp.functions.Vector2ScalarFunc;
 import com.example.slsqp.constraints.ConstraintType;
+import com.example.slsqp.constraints.ScalarConstraint;
 import com.example.slsqp.constraints.VectorConstraint;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +18,82 @@ public class SlsqpTests
 {
     final double defaultTol = 1.0E-6;
     final int defaultMaxIter = 100;
+
+    // this test case and the one below it are taken from the example at
+    // https://stackoverflow.com/questions/26882087/python-scipy-optimization-minimize-using-slsqp-showing-maximized-results
+    /*@Test
+    public void testSymmetricInput()
+    {
+        double[] xl = new double[]{0, 0};
+        double[] xu = new double[]{100, 5};
+
+        final double[][] bounds = new double[][] {xl, xu};
+
+        double[] x = new double[]{0, 0};
+        final ScalarConstraint scalarConstraint = new ScalarConstraint(
+            ConstraintType.EQ,
+            new TestUtil.TestConstraintFunc(),
+            null
+        );
+        final List<ScalarConstraint> constraintList = new ArrayList<>();
+        constraintList.add(scalarConstraint);
+        final Vector2ScalarFunc inputFunc = new TestUtil.TestInputFunc();
+        final Slsqp slsqp = new Slsqp(
+            inputFunc,
+            null,
+            x
+        );
+        double tolerance = 1.0E-6;
+        int maxIter = 100;
+        final OptimizeResult result = slsqp.minimize_slsqp_with_scalar_constraints(
+            bounds,
+            0,
+            constraintList,
+            tolerance,
+            maxIter,
+            null
+        );
+
+        assertTrue(Math.abs(result.x[0] - 2.5) < TestUtil.ERROR);
+        assertTrue(Math.abs(result.x[1] - 2.5) < TestUtil.ERROR);
+    }
+
+    @Test
+    public void testASymmetricInput()
+    {
+        double[] xl = new double[]{0, 0};
+        double[] xu = new double[]{100, 5};
+
+        final double[][] bounds = new double[][] {xl, xu};
+
+        double[] x = new double[]{1, 0};
+        final ScalarConstraint scalarConstraint = new ScalarConstraint(
+            ConstraintType.EQ,
+            new TestUtil.TestConstraintFunc(),
+            null
+        );
+        final List<ScalarConstraint> constraintList = new ArrayList<>();
+        constraintList.add(scalarConstraint);
+        final Vector2ScalarFunc inputFunc = new TestUtil.TestInputFunc();
+        final Slsqp slsqp = new Slsqp(
+            inputFunc,
+            null,
+            x
+        );
+        double tolerance = 1.0E-6;
+        int maxIter = 100;
+        final OptimizeResult result = slsqp.minimize_slsqp_with_scalar_constraints(
+            bounds,
+            0,
+            constraintList,
+            tolerance,
+            maxIter,
+            null
+        );
+
+        assertTrue(Math.abs(result.x[0] - 5) < TestUtil.ERROR);
+        assertTrue(Math.abs(result.x[1] - 3.18634e-14) < TestUtil.ERROR);
+    }*/
 
     @Test
     public void test_minimize_equality_approximated()

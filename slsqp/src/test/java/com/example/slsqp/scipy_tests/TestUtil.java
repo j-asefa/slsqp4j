@@ -1,12 +1,34 @@
 package com.example.slsqp.scipy_tests;
 
-import com.example.slsqp.Vector2ScalarFunc;
-import com.example.slsqp.Vector2VectorFunc;
+import com.example.slsqp.functions.Vector2ScalarFunc;
+import com.example.slsqp.functions.Vector2VectorFunc;
 
 public class TestUtil
 {
     public static final double ERROR = 1.0E-6;
 
+    // this constraint and input function is taken from the example at
+    // https://stackoverflow.com/questions/26882087/python-scipy-optimization-minimize-using-slsqp-showing-maximized-results
+    public static class TestConstraintFunc implements Vector2ScalarFunc
+    {
+        @Override
+        public double apply(double[] x, double... arg)
+        {
+            return x[0] + x[1] - 5;
+        }
+    }
+
+    public static class TestInputFunc implements Vector2ScalarFunc
+    {
+        @Override
+        public double apply(double[] x, double... arg)
+        {
+            return x[0] * x[1];
+        }
+    }
+
+
+    // below test classes are taken from scipy tests.
     public static final class Fun implements Vector2ScalarFunc
     {
         @Override

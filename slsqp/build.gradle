@@ -20,7 +20,7 @@ task compileFortran(type: Exec) {
 }
 
 task generateJniHeaders(type: Exec) {
-    def compFile = file("src/main/java/com/example/slsqp/NativeUtils.java")
+    def compFile = file("src/main/java/com/example/slsqp/util/NativeUtils.java")
     def slsqp_solverHeadersDir = file("${buildDir}/c/slsqp_solver-headers")
     def class_output_dir = file("${buildDir}/classes/java/main/com/example/slsqp")
     group "Build"

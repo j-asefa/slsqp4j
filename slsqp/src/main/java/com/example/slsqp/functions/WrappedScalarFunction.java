@@ -1,4 +1,6 @@
-package com.example.slsqp;
+package com.example.slsqp.functions;
+
+import com.example.slsqp.Jacobian;
 
 public class WrappedScalarFunction
 {

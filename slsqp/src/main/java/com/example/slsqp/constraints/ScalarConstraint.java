@@ -1,7 +1,7 @@
 package com.example.slsqp.constraints;
 
 import com.example.slsqp.Jacobian;
-import com.example.slsqp.Vector2ScalarFunc;
+import com.example.slsqp.functions.Vector2ScalarFunc;
 
 public class ScalarConstraint
 {
