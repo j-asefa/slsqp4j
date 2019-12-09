@@ -17,7 +17,7 @@ public class SlsqpTests
     final double defaultTol = 1.0E-6;
     final int defaultMaxIter = 100;
 
-    /*@Test
+    @Test
     public void test_minimize_equality_approximated()
     {
         final Slsqp slsqp = new Slsqp(new TestUtil.Fun(), null, new double[]{-1, -1});
@@ -36,7 +36,7 @@ public class SlsqpTests
         final double[] expected = {1, 1};
         assertArrayEquals(resX, expected);
         assertTrue(result.success);
-    }*/
+    }
 
     @Test
     public void test_no_op_slsqp()
