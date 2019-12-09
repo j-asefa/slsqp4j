@@ -97,7 +97,8 @@ public class Slsqp
 
         double[] g = new double[n + 1];
 
-        double[][] a = new double[la][n + 1];
+        // Note that Fortran expects arrays to be laid out in column-major order.
+        double[][] a = new double[n + 1][la];
 
         while (true)
         {
@@ -123,7 +124,13 @@ public class Slsqp
                 for (int i = 0; i < scalarConstraintList.size(); i++)
                 {
                     final double[] constraintJacobian = scalarConstraintList.get(i).getJacobian(x);
-                    System.arraycopy(constraintJacobian, 0, a[i], 0, constraintJacobian.length);
+                    assert (constraintJacobian.length == n);
+                    assert(scalarConstraintList.size() == la);
+                    for (int j = 0; j < n; j++)
+                    {
+                        a[j][i] = constraintJacobian[j]; // a is in column-major order
+                    }
+                    a[n][i] = 0;
                 }
             }
 

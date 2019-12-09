@@ -139,9 +139,9 @@ public class NativeUtils
         System.out.println("f = " + fx[0]);
         System.out.println("c = " + c[0]);
         System.out.println("g = " + g[0] + ", " + g[1]);
-        for (int i = 0; i < la; i++)
+        for (int i = 0; i < n; i++)
         {
-            for (int j = 0; j < n; j++)
+            for (int j = 0; j < la; j++)
             {
                 System.out.print("a[" + i + "]" + "[" + j + "] = " + a[i][j] + " ");
             }
@@ -186,9 +186,9 @@ public class NativeUtils
         System.out.println("f = " + fx[0]);
         System.out.println("c = " + c[0]);
         System.out.println("g = " + g[0] + ", " + g[1]);
-        for (int i = 0; i < la; i++)
+        for (int i = 0; i < n; i++)
         {
-            for (int j = 0; j < n; j++)
+            for (int j = 0; j < la; j++)
             {
                 System.out.print("a[" + i + "]" + "[" + j + "] = " + a[i][j] + " ");
             }

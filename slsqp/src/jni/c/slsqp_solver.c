@@ -15,7 +15,7 @@ extern void slsqp_(
     double* f, // standard double
     double *c, // array of length la
     double *g, // array of length n + 1
-    double **a, // matrix of dims (la, n + 1)
+    double *a, // matrix of dims (la, n + 1)
     double *acc, // standard double --- value is returned to caller
     int *iter, // standard int -- value is returned to caller
     int *mode, // standard int -- value is returned to caller
@@ -56,7 +56,7 @@ JNIEXPORT jint JNICALL Java_com_example_slsqp_NativeUtils_slsqp(
       jdouble f, // standard double
       jdoubleArray c, // array of length la
       jdoubleArray g, // array of length n + 1
-      jobjectArray a, // 2D array of dims (la, n + 1)
+      jobjectArray a, // 2D array of dims (n + 1, la) -- this array is passed in *column-major* order
       jdoubleArray acc, // standard double --- value is returned to caller
       jintArray iter, // standard int -- value is returned to caller
       jintArray mode, // standard int -- value is returned to caller
@@ -141,19 +141,14 @@ JNIEXPORT jint JNICALL Java_com_example_slsqp_NativeUtils_slsqp(
     jint *n3_array = (*env)->GetIntArrayElements(env, n3, 0);
 
 
-    double **local2Darray = (double**) malloc(sizeof(double*) * la);
-    int i;
-    for (i = 0; i < la; i++)
+    double *local2Darray = (double*) malloc(sizeof(double) * la * (n + 1));
+    int i, j;
+    for (i = 0; i < n + 1; i++)
     {
-        local2Darray[i] = (double*) malloc(sizeof(double) * (n + 1));
-    }
-
-    int j;
-    for (i = 0; i < la; i++) {
          jdoubleArray oneDim = (jdoubleArray)(*env)->GetObjectArrayElement(env, a, i);
          jdouble *element = (*env)->GetDoubleArrayElements(env, oneDim, 0);
-        for (j = 0; j < n + 1; j++) {
-            local2Darray[i][j] = element[j];
+        for (j = 0; j < la; j++) {
+            local2Darray[(i * la) + j] = element[j];
         }
         (*env)->ReleaseDoubleArrayElements(env, oneDim, element, 0);
         (*env)->DeleteLocalRef(env, oneDim);
@@ -199,13 +194,19 @@ JNIEXPORT jint JNICALL Java_com_example_slsqp_NativeUtils_slsqp(
         n3_array
     );
 
-    for (i = 0; i < la; i++) {
-        jdoubleArray doubleArray = (*env)->NewDoubleArray(env, n + 1);
-        (*env)->SetDoubleArrayRegion(env, doubleArray, 0, n + 1, local2Darray[i]);
+    for (i = 0; i < n + 1; i++) {
+        jdoubleArray doubleArray = (*env)->NewDoubleArray(env, la);
+        for (j = 0; j < la; j++)
+        {
+            double val = local2Darray[(i * la) + j];
+            (*env)->SetDoubleArrayRegion(env, doubleArray, 0, 1, &val);
+        }
+
         (*env)->SetObjectArrayElement(env, a, i, doubleArray);
         (*env)->DeleteLocalRef(env, doubleArray);
     }
 
+    free(local2Darray);
 
     (*env)->SetDoubleArrayRegion(env, x, 0, 1, x_array);
     (*env)->SetDoubleArrayRegion(env, xl, 0, 1, xl_array);
@@ -236,12 +237,6 @@ JNIEXPORT jint JNICALL Java_com_example_slsqp_NativeUtils_slsqp(
     (*env)->SetIntArrayRegion(env, n2, 0, 1, n2_array);
     (*env)->SetIntArrayRegion(env, n3, 0, 1, n3_array);
 
-    for (i = 0; i < la; i++)
-    {
-        free(local2Darray[i]);
-    }
-
-    free(local2Darray);
 
     (*env)->ReleaseDoubleArrayElements(env, x, x_array, JNI_ABORT);
     (*env)->ReleaseDoubleArrayElements(env, xl, xl_array, JNI_ABORT);
