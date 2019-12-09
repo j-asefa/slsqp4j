@@ -30,7 +30,6 @@ public class ScalarConstraint
         this.jacobian = jacobian;
     }
 
-
     public ConstraintType getConstraintType()
     {
         return constraintType;

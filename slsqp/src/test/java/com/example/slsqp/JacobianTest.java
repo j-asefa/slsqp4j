@@ -1,12 +1,12 @@
 package com.example.slsqp;
 
+import com.example.slsqp.scipy_tests.TestUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class JacobianTest
 {
-    private final double error = 10E-6;
     @Test
     public void testJacobian()
     {
@@ -18,7 +18,7 @@ public class JacobianTest
         double[] exact_jac = testFunc.exactJac(inputArr);
         for (int i = 0; i < inputArr.length; i++)
         {
-            assertTrue(Math.abs(fprime[i] - exact_jac[i]) < error);
+            assertTrue(Math.abs(fprime[i] - exact_jac[i]) < TestUtil.ERROR);
         }
     }
 

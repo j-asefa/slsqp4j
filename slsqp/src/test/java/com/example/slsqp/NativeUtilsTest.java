@@ -9,7 +9,7 @@ import java.util.List;
 
 public class NativeUtilsTest
 {
-    /*@Test
+    @Test
     public void testSlsqp()
     {
         double[] xl = new double[]{0, 0};
@@ -41,7 +41,7 @@ public class NativeUtilsTest
             maxIter,
             null
         );
-    }*/
+    }
 
     private static class ConstraintFunc implements Vector2ScalarFunc
     {

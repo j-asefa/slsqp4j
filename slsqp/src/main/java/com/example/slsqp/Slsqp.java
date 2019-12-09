@@ -173,8 +173,7 @@ public class Slsqp implements SlsqpSolver
         if (objectiveFuncJacobian == null)
         {
             fprime = wrappedObjectiveFunction.approx_jacobian(x);
-        }
-        else
+        } else
         {
             fprime = objectiveFuncJacobian;
         }
@@ -183,7 +182,7 @@ public class Slsqp implements SlsqpSolver
         final double[] xl = new double[n]; // lower bounds
         final double[] xu = new double[n]; // upper bounds
 
-        int[] mode = new int[]{0};
+        int[] mode = new int[] {0};
 
         int m = 0;
         int meq = 0;
@@ -200,8 +199,8 @@ public class Slsqp implements SlsqpSolver
         int la = Math.max(1, m);
 
         int mineq = m - meq + n_1 + n_1;
-        int l_w = (3*n_1+m)*(n_1+1)+(n_1-meq+1)*(mineq+2) + 2*mineq+(n_1+mineq)*(n_1-meq) +
-            2*meq + n_1 + ((n+1)*n);
+        int l_w = (3 * n_1 + m) * (n_1 + 1) + (n_1 - meq + 1) * (mineq + 2) + 2 * mineq + (n_1 + mineq) * (n_1 - meq) +
+            2 * meq + n_1 + ((n + 1) * n);
         int l_jw = mineq;
 
         double[] w = new double[l_w];
@@ -219,35 +218,36 @@ public class Slsqp implements SlsqpSolver
 
         double[] g = new double[n_1];
 
-
         double[] c = new double[la];
         // Note that Fortran expects arrays to be laid out in column-major order.
         double[][] a = new double[n_1][la];
-
-        if (mode[0] == 0 || mode[0] == 1)
+        while (true)
         {
-            // calculate the value of the objective function
-            fx = objectiveFunc.apply(x, sign);
+            if (mode[0] == 0 || mode[0] == 1)
+            {
+                // calculate the value of the objective function
+                fx = objectiveFunc.apply(x, sign);
 
-            int constraintIndex = 0;
-            // first get the equality constraints
-            for (VectorConstraint constraint : vectorConstraintList)
-            {
-                if (constraint.getConstraintType() == ConstraintType.EQ)
+                int constraintIndex = 0;
+                // first get the equality constraints
+                for (VectorConstraint constraint : vectorConstraintList)
                 {
-                    final double[] constraintVec = constraint.getConstraintFunc().apply(x, sign);
-                    System.arraycopy(constraintVec, 0, c, constraintIndex, constraintVec.length);
-                    constraintIndex += constraintVec.length;
+                    if (constraint.getConstraintType() == ConstraintType.EQ)
+                    {
+                        final double[] constraintVec = constraint.getConstraintFunc().apply(x, sign);
+                        System.arraycopy(constraintVec, 0, c, constraintIndex, constraintVec.length);
+                        constraintIndex += constraintVec.length;
+                    }
                 }
-            }
-            // then get the inequality constraints
-            for (VectorConstraint constraint : vectorConstraintList)
-            {
-                if (constraint.getConstraintType() == ConstraintType.INEQ)
+                // then get the inequality constraints
+                for (VectorConstraint constraint : vectorConstraintList)
                 {
-                    final double[] constraintVec = constraint.getConstraintFunc().apply(x, sign);
-                    System.arraycopy(constraintVec, 0, c, constraintIndex, constraintVec.length);
-                    constraintIndex += constraintVec.length;
+                    if (constraint.getConstraintType() == ConstraintType.INEQ)
+                    {
+                        final double[] constraintVec = constraint.getConstraintFunc().apply(x, sign);
+                        System.arraycopy(constraintVec, 0, c, constraintIndex, constraintVec.length);
+                        constraintIndex += constraintVec.length;
+                    }
                 }
             }
 
@@ -273,8 +273,7 @@ public class Slsqp implements SlsqpSolver
                                 if (constraintJac[j].length > 1)
                                 {
                                     a[j][i] = constraintJac[j][l]; // a is in column-major order
-                                }
-                                else
+                                } else
                                 {
                                     a[j][i] = constraintJac[j][0];
                                 }
@@ -301,8 +300,7 @@ public class Slsqp implements SlsqpSolver
                                 if (constraintJac[j].length > 1)
                                 {
                                     a[j][i] = constraintJac[j][l]; // a is in column-major order
-                                }
-                                else
+                                } else
                                 {
                                     a[j][i] = constraintJac[j][0];
                                 }
@@ -331,6 +329,12 @@ public class Slsqp implements SlsqpSolver
                 callBackFunc.callback(Arrays.copyOf(x, x.length));
             }
 
+            if (Math.abs(mode[0]) != 1)
+            {
+                break;
+            }
+
+            majiter_prev = majiter[0];
         }
         return new OptimizeResult(x, fx, g, mode[0], 0, 0, mode[0], mode[0] == 0, a);
     }

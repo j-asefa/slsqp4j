@@ -5,6 +5,8 @@ import com.example.slsqp.Vector2VectorFunc;
 
 public class TestUtil
 {
+    public static final double ERROR = 1.0E-6;
+
     public static final class Fun implements Vector2ScalarFunc
     {
         @Override

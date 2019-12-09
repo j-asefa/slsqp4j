@@ -27,17 +27,14 @@ public class VectorConstraint
 
     public double[][] getJacobian(double[] x)
     {
-        double[][] jac;
         if (jacobian == null)
         {
-            jac = Jacobian.approx_jacobian(x, constraintFunc);
+            return Jacobian.approx_jacobian(x, constraintFunc);
         }
         else
         {
-             jac =jacobian;
+            return jacobian;
         }
-        System.out.println("jac dims: " + jac.length + " x " + jac[0].length);
-        return jac;
     }
 
     public Vector2VectorFunc getConstraintFunc()

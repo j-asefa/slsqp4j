@@ -63,7 +63,7 @@ public class SlsqpTests
         {
             for (int j = 0; j < a[0].length; j++)
             {
-                assertEquals(a[i][j], result.a[i][j]);
+                assertTrue(Math.abs(a[i][j] - result.a[i][j]) < TestUtil.ERROR);
             }
         }
     }
