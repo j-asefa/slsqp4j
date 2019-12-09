@@ -10,6 +10,7 @@ public class OptimizeResult
     public final int njev;
     public final int exit_mode;
     public final boolean success;
+    public double[][] a;
 
     public OptimizeResult(
         double[] x,
@@ -19,7 +20,8 @@ public class OptimizeResult
         int nfev,
         int njev,
         int exit_mode,
-        boolean success
+        boolean success,
+        double[][] a
     )
     {
         this.x = x;
@@ -30,5 +32,6 @@ public class OptimizeResult
         this.njev = njev;
         this.exit_mode = exit_mode;
         this.success = success;
+        this.a = a;
     }
 }

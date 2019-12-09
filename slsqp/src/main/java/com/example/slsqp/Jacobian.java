@@ -8,6 +8,7 @@ public class Jacobian
     {
         final int n = x.length;
         double[] f0 = func.apply(x);
+
         double[][] jac = new double[n][f0.length];
         double[] dx = new double[n];
 

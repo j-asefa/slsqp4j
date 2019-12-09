@@ -7,7 +7,7 @@ import com.example.slsqp.constraints.VectorConstraint;
 import java.util.Arrays;
 import java.util.List;
 
-public class Slsqp
+public class Slsqp implements SlsqpSolver
 {
     private Vector2ScalarFunc objectiveFunc;
     private double[] objectiveFuncJacobian;
@@ -152,7 +152,7 @@ public class Slsqp
 
             majiter_prev = majiter[0];
         }
-        return new OptimizeResult(x, fx, g, mode[0], 0, 0, mode[0], mode[0] == 0);
+        return new OptimizeResult(x, fx, g, mode[0], 0, 0, mode[0], mode[0] == 0, a);
     }
 
     public OptimizeResult minimize_slsqp_with_vector_constraints(
@@ -315,7 +315,7 @@ public class Slsqp
 
             majiter_prev = majiter[0];
         }
-        return new OptimizeResult(x, fx, g, mode[0], 0, 0, mode[0], mode[0] == 0);
+        return new OptimizeResult(x, fx, g, mode[0], 0, 0, mode[0], mode[0] == 0, a);
     }
 
     private void computeBounds(int n, double[][] bounds, double[] xl, double[] xu)
