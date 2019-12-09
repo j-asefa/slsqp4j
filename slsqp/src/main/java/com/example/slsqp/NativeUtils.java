@@ -137,7 +137,7 @@ public class NativeUtils
         System.out.println("xl = " + xl[0] + ", " + xl[1]);
         System.out.println("xu = " + xu[0] + ", " + xu[0]);
         System.out.println("f = " + fx[0]);
-        System.out.println("c = " + c[0]);
+        System.out.println("c = " + (c.length > 0 ? c[0] : 0));
         System.out.println("g = " + g[0] + ", " + g[1]);
         for (int i = 0; i < n; i++)
         {

@@ -98,7 +98,16 @@ JNIEXPORT jint JNICALL Java_com_example_slsqp_NativeUtils_slsqp(
     {
         exit(-1);
     }
-    jdouble *c_array = (*env)->GetDoubleArrayElements(env, c, 0);
+    jdouble *c_array;
+    double c_array_alt = 0;
+    if (la > 0)
+    {
+        c_array = (*env)->GetDoubleArrayElements(env, c, 0);
+    }
+    else
+    {
+        c_array = &c_array_alt;
+    }
     jdouble *g_array = (*env)->GetDoubleArrayElements(env, g, 0);
 
     jdouble *acc_array = (*env)->GetDoubleArrayElements(env, acc, 0);

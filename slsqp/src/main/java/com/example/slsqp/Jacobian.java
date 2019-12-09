@@ -7,7 +7,7 @@ public class Jacobian
     public static double[][] approx_jacobian(double[] x, Vector2VectorFunc func)
     {
         final int n = x.length;
-        double[] f0 = func.func(x);
+        double[] f0 = func.apply(x);
         double[][] jac = new double[n][f0.length];
         double[] dx = new double[n];
 
@@ -22,18 +22,18 @@ public class Jacobian
             }
             for (int j = 0; j < f0.length; j++)
             {
-                jac[i][j] = (func.func(add)[j] - f0[j]) / Jacobian.epsilon;
+                jac[i][j] = (func.apply(add)[j] - f0[j]) / Jacobian.epsilon;
             }
             dx[i] = 0;
         }
-        return transpose(jac);
+        return jac;
     }
 
     // jacobian of a scalar valued function is n-dimensional vector
     public static double[] approx_jacobian(double[] x, Vector2ScalarFunc func)
     {
         final int n = x.length;
-        double f0 = func.func(x);
+        double f0 = func.apply(x);
 
         double[] jac = new double[n];
         double[] dx = new double[n];
@@ -46,7 +46,7 @@ public class Jacobian
             {
                 add[j] = x[j] + dx[j];
             }
-            jac[i] = (func.func(add) - f0) / Jacobian.epsilon;
+            jac[i] = (func.apply(add) - f0) / Jacobian.epsilon;
             dx[i] = 0;
         }
         return jac;
@@ -55,7 +55,7 @@ public class Jacobian
     public static double[] approx_jacobian(double[] x, Vector2ScalarFunc func, double arg)
     {
         final int n = x.length;
-        double f0 = func.func(x);
+        double f0 = func.apply(x);
 
         double[] jac = new double[n];
         double[] dx = new double[n];
@@ -68,7 +68,7 @@ public class Jacobian
             {
                 add[j] = x[j] + arg + dx[j];
             }
-            jac[i] = (func.func(add) - f0) / Jacobian.epsilon;
+            jac[i] = (func.apply(add) - f0) / Jacobian.epsilon;
             dx[i] = 0;
         }
         return jac;

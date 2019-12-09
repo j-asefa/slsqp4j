@@ -29,7 +29,7 @@ public class WrappedVectorFunction
             }
         }
 
-        double[] f0 = func.func(x0);
+        double[] f0 = func.apply(x0);
 
         double[][] jac = new double[n][f0.length];
         double[] dx = new double[n];
@@ -44,7 +44,7 @@ public class WrappedVectorFunction
             }
             for (int j = 0; j < f0.length; j++)
             {
-                jac[i][j] = (func.func(add)[j] - f0[j]) / Jacobian.epsilon;
+                jac[i][j] = (func.apply(add)[j] - f0[j]) / Jacobian.epsilon;
             }
             dx[i] = 0;
         }

@@ -46,7 +46,7 @@ public class NativeUtilsTest
     private static class ConstraintFunc implements Vector2ScalarFunc
     {
         @Override
-        public double func(double[] x, double... arg)
+        public double apply(double[] x, double... arg)
         {
             return x[0] + x[1] - 5;
         }
@@ -55,7 +55,7 @@ public class NativeUtilsTest
     private static class InputFunc implements Vector2ScalarFunc
     {
         @Override
-        public double func(double[] x, double... arg)
+        public double apply(double[] x, double... arg)
         {
             return x[0] * x[1];
         }

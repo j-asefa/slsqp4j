@@ -25,7 +25,7 @@ public class JacobianTest
     private static final class TestFunc implements Vector2ScalarFunc
     {
         @Override
-        public double func(double[] x, double... arg)
+        public double apply(double[] x, double... arg)
         {
             double x1 = x[0];
             double x2 = x[1];
