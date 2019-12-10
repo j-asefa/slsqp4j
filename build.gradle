@@ -87,20 +87,6 @@ subprojects {
     }
 
     jacocoTestCoverageVerification {
-        afterEvaluate {
-            classDirectories.setFrom(files(classDirectories.files.collect {
-                fileTree(dir: it, exclude: [
-                    'skew/stream/codec/*',
-                    'uk/co/real_logic/artio/**',
-                    'skew/stream/test/framework/*',
-                    'skew/service/db/**/*',
-                    'skew/stream/tool/**/*',
-                    'skew/stream/service/db/**/*'
-                ]
-                )
-            }))
-        }
-
         violationRules {
             rule {
                 limit {
