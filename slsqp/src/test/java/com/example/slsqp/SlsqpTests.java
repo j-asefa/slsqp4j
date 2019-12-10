@@ -1,7 +1,5 @@
-package com.example.slsqp.scipy_tests;
+package com.example.slsqp;
 
-import com.example.slsqp.OptimizeResult;
-import com.example.slsqp.Slsqp;
 import com.example.slsqp.functions.Vector2ScalarFunc;
 import com.example.slsqp.constraints.ConstraintType;
 import com.example.slsqp.constraints.ScalarConstraint;
@@ -57,7 +55,9 @@ public class SlsqpTests
 
         assertTrue(Math.abs(result.x[0] - 2.5) < TestUtil.ERROR);
         assertTrue(Math.abs(result.x[1] - 2.5) < TestUtil.ERROR);
+        assertTrue(result.success);
     }
+
 
     @Test
     public void testASymmetricInput()
@@ -205,36 +205,6 @@ public class SlsqpTests
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
         assertTrue(result.success);
     }
-
-    /*@Test
-    public void test_no_op_slsqp()
-    {
-        final double[] x = new double[]{-1, -1};
-        final NoOpSlsqp slsqp = new NoOpSlsqp(new TestUtil.Fun(), null, x);
-        final List<VectorConstraint> constraints = new ArrayList<>();
-        final VectorConstraint eqCon = new VectorConstraint(ConstraintType.EQ, new TestUtil.Fecon(), null);
-        final VectorConstraint ieqCon = new VectorConstraint(ConstraintType.INEQ, new TestUtil.Fieqcon(), null);
-        constraints.add(eqCon);
-        constraints.add(ieqCon);
-        final OptimizeResult result = slsqp.minimize_slsqp_with_vector_constraints(
-            null,
-            constraints,
-            defaultTol,
-            defaultMaxIter,
-            null,
-            -1;
-        );
-        final double[][] a = slsqp.getA();
-        final double[] resX = result.x;
-        assertArrayEquals(resX, x);
-        for (int i = 0; i < a.length; i++)
-        {
-            for (int j = 0; j < a[0].length; j++)
-            {
-                assertTrue(Math.abs(a[i][j] - result.a[i][j]) < TestUtil.ERROR);
-            }
-        }
-    }*/
 
     // Vector tests
 

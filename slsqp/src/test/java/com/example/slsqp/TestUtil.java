@@ -1,4 +1,4 @@
-package com.example.slsqp.scipy_tests;
+package com.example.slsqp;
 
 import com.example.slsqp.functions.Vector2ScalarFunc;
 import com.example.slsqp.functions.Vector2VectorFunc;

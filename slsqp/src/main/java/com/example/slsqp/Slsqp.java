@@ -364,41 +364,11 @@ public class Slsqp implements SlsqpSolver
 
             this.a = a;
 
-            System.out.println("*********BEFORE**********");
-
-            System.out.print("fprime = ");
-            for (int i = 0; i < g.length; i++)
-            {
-                System.out.print(g[i] + ", ");
-            }
-            System.out.println();
-            System.out.print("x = ");
-            for (int i = 0; i < x.length; i++)
-            {
-                System.out.print(x[i] + ", ");
-            }
-            System.out.println();
-            System.out.println("fx = " + fx);
             NativeUtils.slsqp(m, meq, la, x, xl, xu, new double[] {fx}, c, g, a, acc, majiter, mode, w, jw,
                 alpha, f0, gs, h1, h2, h3, h4, t, t0, tol,
                 iexact, incons, ireset, itermx, line,
                 n1, n2, n3);
-            System.out.println("*********AFTER**********");
 
-            fprime = wrappedObjectiveFunction.approx_jacobian(x);
-            System.out.print("fprime = ");
-            for (int i = 0; i < fprime.length; i++)
-            {
-                System.out.print(fprime[i] + ", ");
-            }
-            System.out.println();
-            System.out.println("fx = " + fx);
-            System.out.print("x = ");
-            for (int i = 0; i < x.length; i++)
-            {
-                System.out.print(x[i] + ", ");
-            }
-            System.out.println();
             if (callBackFunc != null && majiter[0] > majiter_prev)
             {
                 callBackFunc.callback(Arrays.copyOf(x, x.length));

@@ -1,7 +1,6 @@
 package com.example.slsqp;
 
 import com.example.slsqp.functions.Vector2ScalarFunc;
-import com.example.slsqp.scipy_tests.TestUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
