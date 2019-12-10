@@ -1,5 +1,6 @@
 package com.example.slsqp;
 
+import com.example.slsqp.functions.Vector2MatrixFunc;
 import com.example.slsqp.functions.Vector2ScalarFunc;
 import com.example.slsqp.constraints.ConstraintType;
 import com.example.slsqp.constraints.ScalarConstraint;
@@ -98,7 +99,7 @@ public class SlsqpTests
     }
 
     @Test
-    public void test_minimize_equality_given_cons_scalar()
+    public void testMinimizeEqualityGivenConsScalar()
     {
         final double[] x = new double[] {-1, 1};
         final Slsqp slsqp = new Slsqp(new TestUtil.Fun(), new TestUtil.Jac(), x);
@@ -123,7 +124,7 @@ public class SlsqpTests
     }
 
     @Test
-    public void test_scalar_constraints()
+    public void testScalarConstraints()
     {
         final double[] x = new double[] {3};
 
@@ -154,7 +155,7 @@ public class SlsqpTests
     }
 
     @Test
-    public void test_infeasible_initial()
+    public void testInfeasibleInitial()
     {
         double[] x = new double[] {10};
 
@@ -209,7 +210,7 @@ public class SlsqpTests
     // Vector tests
 
     @Test
-    public void test_minimize_equality_approximated()
+    public void testMinimizeEqualityApproximated()
     {
         final Slsqp slsqp = new Slsqp(new TestUtil.Fun(), null, new double[]{-1, 1});
         final List<VectorConstraint> constraints = new ArrayList<>();
@@ -231,7 +232,7 @@ public class SlsqpTests
     }
 
     @Test
-    public void test_minimize_equality_given()
+    public void testMinimizeEqualityGiven()
     {
         final double[] x = new double[] {-1, 1};
         final Slsqp slsqp = new Slsqp(new TestUtil.Fun(), new TestUtil.Jac(), x);
@@ -250,6 +251,89 @@ public class SlsqpTests
         final double[] expected = {1, 1};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[1] - expected[1]) < TestUtil.ERROR);
+        assertTrue(result.success);
+    }
+
+    @Test
+    public void testMinimizeInequalityGiven()
+    {
+        double[] x = new double[]{-1, 1};
+        final Slsqp slsqp = new Slsqp(new TestUtil.Fun(), new TestUtil.Jac(), x);
+        final List<VectorConstraint> constraints = new ArrayList<>();
+        final VectorConstraint constraint = new VectorConstraint(ConstraintType.INEQ, new TestUtil.Fieqcon(), null, -1);
+        constraints.add(constraint);
+        final OptimizeResult result = slsqp.minimize_slsqp_with_vector_constraints(
+            null,
+            constraints,
+            defaultTol,
+            defaultMaxIter,
+            null,
+            -1
+        );
+        final double[] resX = result.x;
+        final double[] expected = {2, 1};
+        assertTrue(Math.abs(resX[0] - expected[0]) < 1.0E-3);
+        assertTrue(Math.abs(resX[1] - expected[1]) < 1.0E-3);
+        assertTrue(result.success);
+    }
+
+    @Test
+    public void testMinimizeInequalityGivenVectorConstraints()
+    {
+        double[] x = new double[]{-1, 1};
+        final Slsqp slsqp = new Slsqp(new TestUtil.Fun(), new TestUtil.Jac(), x);
+        final List<VectorConstraint> constraints = new ArrayList<>();
+        final VectorConstraint constraint = new VectorConstraint(
+            ConstraintType.INEQ,
+            new TestUtil.Fieqcon2(),
+            new TestUtil.FprimeIeqcon2(),
+            -1);
+        constraints.add(constraint);
+        final OptimizeResult result = slsqp.minimize_slsqp_with_vector_constraints(
+            null,
+            constraints,
+            defaultTol,
+            defaultMaxIter,
+            null,
+            -1
+        );
+        final double[] resX = result.x;
+        final double[] expected = {2, 1};
+        assertTrue(Math.abs(resX[0] - expected[0]) < 1.0E-3);
+        assertTrue(Math.abs(resX[1] - expected[1]) < 1.0E-3);
+        assertTrue(result.success);
+    }
+
+    @Test
+    public void testMinimizeBoundEqualityGiven2()
+    {
+        double[] x = new double[]{-1, 1};
+        final Slsqp slsqp = new Slsqp(new TestUtil.Fun(), new TestUtil.Jac(), x);
+        double[] lowerBounds = new double[] {-0.8, -1};
+        double[] upperBounds = new double[] {1, 0.8};
+        double[][] bounds = new double[][] {lowerBounds, upperBounds};
+        final List<VectorConstraint> constraints = new ArrayList<>();
+        final Vector2MatrixFunc constraintJac = (x1, arg) -> Jacobian.transpose(new double[][] {new TestUtil.FprimeEcon().apply(x1, arg)});
+        final VectorConstraint constraint = new VectorConstraint(
+            ConstraintType.EQ,
+            new TestUtil.Fecon(),
+            constraintJac,
+            -1);
+        constraints.add(constraint);
+        final OptimizeResult result = slsqp.minimize_slsqp_with_vector_constraints(
+            bounds,
+            constraints,
+            defaultTol,
+            defaultMaxIter,
+            null,
+            -1
+        );
+        final double[] resX = result.x;
+        final double[] expected = {0.8, 0.8};
+        assertTrue(Math.abs(resX[0] - expected[0]) < 1.0E-3);
+        assertTrue(Math.abs(resX[1] - expected[1]) < 1.0E-3);
+        assertTrue(-0.8 <= resX[0] && resX[0] <= 1);
+        assertTrue(-1 <= resX[1] && resX[1] <= 0.8);
         assertTrue(result.success);
     }
 }

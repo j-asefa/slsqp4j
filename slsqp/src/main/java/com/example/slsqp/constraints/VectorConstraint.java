@@ -1,6 +1,7 @@
 package com.example.slsqp.constraints;
 
 import com.example.slsqp.Jacobian;
+import com.example.slsqp.functions.Vector2MatrixFunc;
 import com.example.slsqp.functions.Vector2VectorFunc;
 
 public class VectorConstraint
@@ -8,12 +9,12 @@ public class VectorConstraint
     private double[] arg;
     private ConstraintType constraintType;
     private Vector2VectorFunc constraintFunc;
-    private double[][] jacobian;
+    private Vector2MatrixFunc jacobian;
 
     public VectorConstraint(
         ConstraintType constraintType,
         Vector2VectorFunc constraintFunc,
-        double[][] jacobian,
+        Vector2MatrixFunc jacobian,
         double... arg)
     {
         this.constraintType = constraintType;
@@ -35,7 +36,7 @@ public class VectorConstraint
         }
         else
         {
-            return jacobian;
+            return jacobian.apply(x, arg);
         }
     }
 

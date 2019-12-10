@@ -1,5 +1,6 @@
 package com.example.slsqp;
 
+import com.example.slsqp.functions.Vector2MatrixFunc;
 import com.example.slsqp.functions.Vector2ScalarFunc;
 import com.example.slsqp.functions.Vector2VectorFunc;
 
@@ -138,9 +139,9 @@ public class TestUtil
         }
     }
 
-    public static final class FprimeIeqcon2
+    public static final class FprimeIeqcon2 implements Vector2MatrixFunc
     {
-        public double[][] func(double[] x, double... arg)
+        public double[][] apply(double[] x, double... arg)
         {
             return identity(x.length);
         }
