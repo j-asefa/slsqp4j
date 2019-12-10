@@ -308,10 +308,13 @@ public class SlsqpTests
     public void testMinimizeBoundEqualityGiven2()
     {
         double[] x = new double[]{-1, 1};
+
         final Slsqp slsqp = new Slsqp(new TestUtil.Fun(), new TestUtil.Jac(), x);
+
         double[] lowerBounds = new double[] {-0.8, -1};
         double[] upperBounds = new double[] {1, 0.8};
         double[][] bounds = new double[][] {lowerBounds, upperBounds};
+
         final List<VectorConstraint> constraints = new ArrayList<>();
         final Vector2MatrixFunc constraintJac = (x1, arg) -> Jacobian.transpose(new double[][] {new TestUtil.FprimeEcon().apply(x1, arg)});
         final VectorConstraint constraint = new VectorConstraint(

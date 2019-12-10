@@ -51,8 +51,7 @@ public class Slsqp implements SlsqpSolver
         double tolerance,
         int maxIterations,
         CallBackFunc callBackFunc,
-        double... objectiveFuncionArgs
-        )
+        double... objectiveFuncionArgs)
     {
         final WrappedScalarFunction wrappedObjectiveFunction = new WrappedScalarFunction(objectiveFunc, objectiveFuncionArgs);
         final int n = x.length;
@@ -363,43 +362,11 @@ public class Slsqp implements SlsqpSolver
             }
 
             this.a = a;
-            /*System.out.println("********BEFORE*********");
-            System.out.print("a = ");
-            for (int i = 0; i < a.length; i++)
-            {
-                for (int j = 0; j < a[0].length; j++)
-                {
-                    System.out.print(a[i][j] + ", ");
-                }
-            }
-            System.out.println();
-            System.out.print("xl = ");
-            for (int i = 0; i < xl.length; i++)
-            {
-                System.out.print(xl[i] + ", ");
-            }
-            System.out.println();
-            System.out.print("xu = ");
-            for (int i = 0; i < xu.length; i++)
-            {
-                System.out.print(xu[i] + ", ");
-            }*/
 
             NativeUtils.slsqp(m, meq, la, x, xl, xu, new double[] {fx}, c, g, a, acc, majiter, mode, w, jw,
                 alpha, f0, gs, h1, h2, h3, h4, t, t0, tol,
                 iexact, incons, ireset, itermx, line,
                 n1, n2, n3);
-
-            /*System.out.println("********AFTER*********");
-            System.out.print("a = ");
-            for (int i = 0; i < a.length; i++)
-            {
-                for (int j = 0; j < a[0].length; j++)
-                {
-                    System.out.print(a[i][j] + ", ");
-                }
-            }
-            System.out.println();*/
 
             if (callBackFunc != null && majiter[0] > majiter_prev)
             {
