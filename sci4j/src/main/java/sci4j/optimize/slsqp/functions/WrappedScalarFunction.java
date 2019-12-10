@@ -18,8 +18,8 @@ public class WrappedScalarFunction
         return func.apply(x, arg);
     }
 
-    public double[] approx_jacobian(double[] x)
+    public double[] approxJacobian(double[] x)
     {
-        return Jacobian.approx_jacobian(x, this.func, arg);
+        return Jacobian.approxJacobian(x, this.func, arg);
     }
 }

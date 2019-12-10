@@ -32,7 +32,7 @@ public class VectorConstraint
     {
         if (jacobian == null)
         {
-            return Jacobian.approx_jacobian(x, constraintFunc, arg);
+            return Jacobian.approxJacobian(x, constraintFunc, arg);
         }
         else
         {

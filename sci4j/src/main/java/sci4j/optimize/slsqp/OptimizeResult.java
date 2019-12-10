@@ -7,7 +7,7 @@ public class OptimizeResult
     public final double[] jac;
     public final int status;
     public final int numIters;
-    public final int exit_mode;
+    public final int exitMode;
     public final boolean success;
     public double[][] a;
 
@@ -17,7 +17,7 @@ public class OptimizeResult
         double[] jac,
         int status,
         int numIters,
-        int exit_mode,
+        int exitMode,
         boolean success,
         double[][] a
     )
@@ -27,7 +27,7 @@ public class OptimizeResult
         this.jac = jac;
         this.numIters = numIters;
         this.status = status;
-        this.exit_mode = exit_mode;
+        this.exitMode = exitMode;
         this.success = success;
         this.a = a;
     }

@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class NativeUtils
+public final class NativeUtils
 {
 
     private NativeUtils()
@@ -30,9 +30,9 @@ public class NativeUtils
         int[] iter, // standard int -- value is returned to caller
         int[] mode, // standard int -- value is returned to caller
         double[] w, // array of length l_w
-        int l_w, // standard int. check len(w) >= l_w
+        int lenW, // standard int. check len(w) >= l_w
         int[] jw, // array of length l_jw
-        int l_jw, // standard int. check len(jw) >= l_jw
+        int lenJw, // standard int. check len(jw) >= l_jw
         double[] alpha, // standard double  -- value is returned to caller
         double[] f0, // standard double -- value is returned to caller
         double[] gs, // standard double -- value is returned to caller

@@ -7,10 +7,10 @@ public class Jacobian
 {
     public static double epsilon = Math.sqrt(Math.ulp((double)1)); // 1.4901161193847656e-08
 
-    public static double[][] approx_jacobian(double[] x, Vector2VectorFunc func, double... arg)
+    public static double[][] approxJacobian(double[] x, Vector2VectorFunc func, double... arg)
     {
         final int n = x.length;
-        double[] f0;
+        final double[] f0;
         if (arg != null && arg.length > 0)
         {
             f0 = func.apply(x, arg);
@@ -20,14 +20,14 @@ public class Jacobian
             f0 = func.apply(x);
         }
 
-        double[][] jac = new double[n][f0.length];
-        double[] dx = new double[n];
+        final double[][] jac = new double[n][f0.length];
+        final double[] dx = new double[n];
 
         for (int i = 0; i < n; i++)
         {
             dx[i] = Jacobian.epsilon;
 
-            double[] add = new double[n];
+            final double[] add = new double[n];
             for (int j = 0; j < n; j++)
             {
                 add[j] = x[j] + dx[j];
@@ -48,10 +48,10 @@ public class Jacobian
         return jac;
     }
 
-    public static double[] approx_jacobian(double[] x, Vector2ScalarFunc func, double... arg)
+    public static double[] approxJacobian(double[] x, Vector2ScalarFunc func, double... arg)
     {
         final int n = x.length;
-        double f0;
+        final double f0;
         if (arg != null && arg.length > 0)
         {
             f0 = func.apply(x, arg);
@@ -61,13 +61,13 @@ public class Jacobian
             f0 = func.apply(x);
         }
 
-        double[] jac = new double[n];
-        double[] dx = new double[n];
+        final double[] jac = new double[n];
+        final double[] dx = new double[n];
         for (int i = 0; i < n; i++)
         {
             dx[i] = Jacobian.epsilon;
 
-            double[] add = new double[n];
+            final double[] add = new double[n];
             for (int j = 0; j < n; j++)
             {
                 add[j] = x[j] + dx[j];
@@ -89,10 +89,14 @@ public class Jacobian
 
     public static double[][] transpose(double[][] arr)
     {
-        double[][] temp = new double[arr[0].length][arr.length];
+        final double[][] temp = new double[arr[0].length][arr.length];
         for (int i = 0; i < arr.length; i++)
+        {
             for (int j = 0; j < arr[0].length; j++)
+            {
                 temp[j][i] = arr[i][j];
+            }
+        }
         return temp;
     }
 

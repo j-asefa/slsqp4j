@@ -1,4 +1,4 @@
-package com.example.slsqp;
+package sci4j.optimize.slsqp;
 
 import sci4j.optimize.slsqp.functions.Vector2MatrixFunc;
 import sci4j.optimize.slsqp.functions.Vector2ScalarFunc;
@@ -40,15 +40,15 @@ public class TestUtil
                 throw new IllegalArgumentException("optional argument must be one of {1, -1}");
             }
 
-            double x = arr[0];
-            double y = arr[1];
+            final double x = arr[0];
+            final double y = arr[1];
             double sign = 1;
             if (arg.length > 0)
             {
                 sign = arg[0];
             }
 
-            return sign * (2*x*y + 2*x - Math.pow(x, 2) - 2 * Math.pow(y, 2));
+            return sign * (2 * x * y + 2 * x - Math.pow(x, 2) - 2 * Math.pow(y, 2));
         }
     }
 
@@ -62,16 +62,16 @@ public class TestUtil
             {
                 throw new IllegalArgumentException("optional argument must be one of {1, -1}");
             }
-            double x = arr[0];
-            double y = arr[1];
+            final double x = arr[0];
+            final double y = arr[1];
 
             double sign = 1;
             if (arg.length > 0)
             {
                 sign = arg[0];
             }
-            double dfdx = sign * (-2 * x + 2 * y + 2);
-            double dfdy = sign * (2 * x - 4 * y);
+            final double dfdx = sign * (-2 * x + 2 * y + 2);
+            final double dfdy = sign * (2 * x - 4 * y);
             return new double[] {dfdx, dfdy};
         }
     }
@@ -148,7 +148,7 @@ public class TestUtil
 
         private double[][] identity(int length)
         {
-            final double[][] identityMat =  new double[length][length];
+            final double[][] identityMat = new double[length][length];
             for (int i = 0; i < length; i++)
             {
                 for (int j = 0; j < length; j++)

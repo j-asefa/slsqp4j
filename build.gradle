@@ -3,26 +3,118 @@ defaultTasks 'clean', 'build', 'test'
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.0.0'
     }
 }
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'maven'
     apply plugin: 'c'
+    apply plugin: 'checkstyle'
+    apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'org.junit.platform.gradle.plugin'
+    apply plugin: 'jacoco'
+    apply plugin: 'checkstyle'
+    apply plugin: 'maven-publish'
 
-    version '1.0-SNAPSHOT'
+    repositories {
+        maven {
+            url AWS_REPO_SNAPSHOT_URL
+            credentials(AwsCredentials) {
+                accessKey AWS_ACCESS_KEY
+                secretKey AWS_SECRET_KEY
+            }
+        }
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+    if (project.name.equals("sci4j") ) {
+        publishing {
+            repositories {
+                maven {
+                    url AWS_REPO_SNAPSHOT_URL
+                    credentials(AwsCredentials) {
+                        accessKey AWS_ACCESS_KEY
+                        secretKey AWS_SECRET_KEY
+                    }
+                }
+            }
+            publications {
+                shadow(MavenPublication) { publication ->
+                    groupId platformGroupId
+                    artifactId project.name
+                    version platformVersion
+                    project.shadow.component(publication)
+                }
+                latest(MavenPublication) { publication ->
+                    groupId platformGroupId
+                    artifactId project.name
+                    version 'latest'
+                    project.shadow.component(publication)
+                }
+            }
+        }
+    }
+
+    checkstyle {
+        toolVersion = checkstyleVersion
+        configDir = file("$rootDir/config/checkstyle")
+    }
+
+    jacoco {
+        toolVersion = '0.8.3'
+        applyTo junitPlatformTest
+    }
+
+    junitPlatformTest {
+        jacoco {
+            destinationFile = file("$buildDir/jacoco/test.exec")
+        }
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled false
+            csv.enabled false
+            html.destination file("${buildDir}/jacoco/html")
+        }
+    }
+
+    jacocoTestCoverageVerification {
+        afterEvaluate {
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it, exclude: [
+                    'skew/stream/codec/*',
+                    'uk/co/real_logic/artio/**',
+                    'skew/stream/test/framework/*',
+                    'skew/service/db/**/*',
+                    'skew/stream/tool/**/*',
+                    'skew/stream/service/db/**/*'
+                ]
+                )
+            }))
+        }
+
+        violationRules {
+            rule {
+                limit {
+                    minimum = 0.85
+                }
+            }
+        }
+    }
 
     sourceCompatibility = 1.8
 
-    repositories {
-        mavenCentral()
-    }
-
     dependencies {
+        checkstyle group: 'com.puppycrawl.tools', name: 'checkstyle', version: checkstyleVersion
+
         testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion
         testCompile group: 'org.junit.jupiter', name: 'junit-jupiter', version: junitVersion
     }
