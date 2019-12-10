@@ -1,4 +1,3 @@
-rootProject.name = 'java_fortran_tests'
-include 'example'
-include 'slsqp'
+rootProject.name = 'sci4j'
+include 'sci4j'
 
