@@ -28,8 +28,6 @@ public class TestUtil
         }
     }
 
-
-    // below test classes are taken from scipy tests.
     public static final class Fun implements Vector2ScalarFunc
     {
         @Override

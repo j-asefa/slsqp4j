@@ -103,7 +103,7 @@ public class SlsqpTests
         final ScalarConstraint constraint = new ScalarConstraint(
             ConstraintType.EQ,
             new TestUtil.FeconScalar(),
-            new TestUtil.FprimeEconScalar().apply(x));
+            new TestUtil.FprimeEconScalar());
         constraints.add(constraint);
         final OptimizeResult result = Slsqp.minimizeSlsqpWithScalarConstraints(
             new TestUtil.Fun(),

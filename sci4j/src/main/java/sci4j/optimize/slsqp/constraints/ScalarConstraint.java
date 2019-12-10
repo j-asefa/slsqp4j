@@ -2,18 +2,19 @@ package sci4j.optimize.slsqp.constraints;
 
 import sci4j.optimize.slsqp.Jacobian;
 import sci4j.optimize.slsqp.functions.Vector2ScalarFunc;
+import sci4j.optimize.slsqp.functions.Vector2VectorFunc;
 
 public class ScalarConstraint
 {
     private ConstraintType constraintType;
     private Vector2ScalarFunc constraintFunc;
-    private double[] jacobian;
+    private Vector2VectorFunc jacobian;
     private double[] arg;
 
     public ScalarConstraint(
         ConstraintType constraintType,
         Vector2ScalarFunc constraintFunc,
-        double[] jacobian,
+        Vector2VectorFunc jacobian,
         double... arg)
     {
         this.constraintType = constraintType;
@@ -35,7 +36,7 @@ public class ScalarConstraint
         }
         else
         {
-            return jacobian;
+            return jacobian.apply(x, arg);
         }
     }
 
