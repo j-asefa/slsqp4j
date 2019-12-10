@@ -10,17 +10,19 @@ public interface SlsqpSolver
 {
     OptimizeResult minimize_slsqp_with_scalar_constraints(
         double[][] bounds,
-        double sign,
         List<ScalarConstraint> scalarConstraintList,
         double tolerance,
         int maxIterations,
-        CallBackFunc callBackFunc);
+        CallBackFunc callBackFunc,
+        double... objectiveFunctionArgs
+        );
 
     OptimizeResult minimize_slsqp_with_vector_constraints(
         double[][] bounds,
-        double sign,
         List<VectorConstraint> vectorConstraintList,
         double tolerance,
         int maxIterations,
-        CallBackFunc callBackFunc);
+        CallBackFunc callBackFunc,
+        double... objectiveFunctionArgs
+        );
 }

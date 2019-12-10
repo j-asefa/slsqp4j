@@ -13,8 +13,19 @@ import java.util.List;
 
 public class NoOpSlsqp implements SlsqpSolver
 {
+    @Override
+    public OptimizeResult minimize_slsqp_with_scalar_constraints(double[][] bounds, List<ScalarConstraint> scalarConstraintList, double tolerance, int maxIterations, CallBackFunc callBackFunc, double... objectiveFunctionArgs)
+    {
+        return null;
+    }
 
-    private Vector2ScalarFunc objectiveFunc;
+    @Override
+    public OptimizeResult minimize_slsqp_with_vector_constraints(double[][] bounds, List<VectorConstraint> vectorConstraintList, double tolerance, int maxIterations, CallBackFunc callBackFunc, double... objectiveFunctionArgs)
+    {
+        return null;
+    }
+
+    /*private Vector2ScalarFunc objectiveFunc;
     private double[] objectiveFuncJacobian;
     private double[] x;
 
@@ -68,7 +79,7 @@ public class NoOpSlsqp implements SlsqpSolver
         double[] fprime;
         if (objectiveFuncJacobian == null)
         {
-            fprime = wrappedObjectiveFunction.approx_jacobian(x);
+            fprime = wrappedObjectiveFunction.approx_jacobian(x, sign);
         }
         else
         {
@@ -129,7 +140,7 @@ public class NoOpSlsqp implements SlsqpSolver
         {
             if (objectiveFuncJacobian == null)
             {
-                fprime = wrappedObjectiveFunction.approx_jacobian(x);
+                fprime = wrappedObjectiveFunction.approx_jacobian(x, sign);
             }
             else
             {
@@ -181,7 +192,7 @@ public class NoOpSlsqp implements SlsqpSolver
         double[] fprime;
         if (objectiveFuncJacobian == null)
         {
-            fprime = wrappedObjectiveFunction.approx_jacobian(x);
+            fprime = wrappedObjectiveFunction.approx_jacobian(x, sign);
         }
         else
         {
@@ -342,5 +353,5 @@ public class NoOpSlsqp implements SlsqpSolver
 
         }
         return new OptimizeResult(x, fx, g, mode[0], 1, mode[0], mode[0] == 0, a);
-    }
+    }*/
 }

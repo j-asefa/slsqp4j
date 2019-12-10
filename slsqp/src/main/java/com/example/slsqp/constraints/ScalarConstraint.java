@@ -8,26 +8,18 @@ public class ScalarConstraint
     private ConstraintType constraintType;
     private Vector2ScalarFunc constraintFunc;
     private double[] jacobian;
-    private double arg = 0;
+    private double[] arg;
 
     public ScalarConstraint(
         ConstraintType constraintType,
         Vector2ScalarFunc constraintFunc,
         double[] jacobian,
-        double arg)
-    {
-        this(constraintType, constraintFunc, jacobian);
-        this.arg = arg;
-    }
-
-    public ScalarConstraint(
-        ConstraintType constraintType,
-        Vector2ScalarFunc constraintFunc,
-        double[] jacobian)
+        double... arg)
     {
         this.constraintType = constraintType;
         this.constraintFunc = constraintFunc;
         this.jacobian = jacobian;
+        this.arg = arg;
     }
 
     public ConstraintType getConstraintType()
@@ -47,8 +39,8 @@ public class ScalarConstraint
         }
     }
 
-    public Vector2ScalarFunc getConstraintFunc()
+    public double apply(double[] x)
     {
-        return constraintFunc;
+        return constraintFunc.apply(x, arg);
     }
 }

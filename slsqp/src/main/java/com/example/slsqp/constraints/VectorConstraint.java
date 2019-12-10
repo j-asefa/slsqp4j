@@ -5,7 +5,7 @@ import com.example.slsqp.functions.Vector2VectorFunc;
 
 public class VectorConstraint
 {
-
+    private double[] arg;
     private ConstraintType constraintType;
     private Vector2VectorFunc constraintFunc;
     private double[][] jacobian;
@@ -13,11 +13,13 @@ public class VectorConstraint
     public VectorConstraint(
         ConstraintType constraintType,
         Vector2VectorFunc constraintFunc,
-        double[][] jacobian)
+        double[][] jacobian,
+        double... arg)
     {
         this.constraintType = constraintType;
         this.constraintFunc = constraintFunc;
         this.jacobian = jacobian;
+        this.arg = arg;
     }
 
     public ConstraintType getConstraintType()
@@ -29,7 +31,7 @@ public class VectorConstraint
     {
         if (jacobian == null)
         {
-            return Jacobian.approx_jacobian(x, constraintFunc);
+            return Jacobian.approx_jacobian(x, constraintFunc, arg);
         }
         else
         {
@@ -37,8 +39,8 @@ public class VectorConstraint
         }
     }
 
-    public Vector2VectorFunc getConstraintFunc()
+    public double[] apply(double[] x)
     {
-        return constraintFunc;
+        return constraintFunc.apply(x, arg);
     }
 }
