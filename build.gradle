@@ -35,6 +35,32 @@ subprojects {
         jcenter()
     }
 
+    publishing {
+        repositories {
+            maven {
+                url AWS_REPO_SNAPSHOT_URL
+                credentials(AwsCredentials) {
+                    accessKey AWS_ACCESS_KEY
+                    secretKey AWS_SECRET_KEY
+                }
+            }
+        }
+        publications {
+            shadow(MavenPublication) { publication ->
+                groupId platformGroupId
+                artifactId project.name
+                version platformVersion
+                project.shadow.component(publication)
+            }
+            latest(MavenPublication) { publication ->
+                groupId platformGroupId
+                artifactId project.name
+                version 'latest'
+                project.shadow.component(publication)
+            }
+        }
+    }
+
     checkstyle {
         toolVersion = checkstyleVersion
         configDir = file("$rootDir/config/checkstyle")
