@@ -17,8 +17,10 @@ public class Slsqp
     /**
      *
      * @param objectiveFunc objective function of the optimization problem
-     * @param objectiveFuncJacobian optional function representing the Jacobian of the objective function. If null,
-     *                              numerical approximation is used.
+     * @param objectiveFuncJacobian optional function representing the Jacobian of the objective function. Note that the
+     *                              solver expects the Jacobian to be in column-major order, so a call to
+     *                              {@link Jacobian#transpose(double[][])} should be made before passing the jacobian
+     *                              to this function. If null, numerical approximation is used.
      * @param x input to the optimization problem.
      * @param bounds 2xn matrix. bounds[0] is array of lower bounds, bounds[1] is array of upper bounds
      * @param scalarConstraintList list of scalar-valued constraints
@@ -202,8 +204,10 @@ public class Slsqp
     /**
      *
      * @param objectiveFunc objective function of the optimization problem
-     * @param objectiveFuncJacobian optional function representing the Jacobian of the objective function. If null,
-     *                              numerical approximation is used.
+     * @param objectiveFuncJacobian optional function representing the Jacobian of the objective function. Note that the
+     *                              solver expects the Jacobian to be in column-major order, so a call to
+     *                              {@link Jacobian#transpose(double[][])} should be made before passing the jacobian
+     *                              to this function. If null, numerical approximation is used.
      * @param x input to the optimization problem.
      * @param bounds 2xn matrix. bounds[0] is array of lower bounds, bounds[1] is array of upper bounds
      * @param vectorConstraintList list of vector-valued constraints
