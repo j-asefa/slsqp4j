@@ -6,7 +6,7 @@ import sci4j.optimize.slsqp.functions.Vector2VectorFunc;
 
 public class TestUtil
 {
-    public static final double ERROR = 1.0E-6;
+    public static final double ERROR = 1.0E-5;
 
     // this constraint and input function is taken from the example at
     // https://stackoverflow.com/questions/26882087/python-scipy-optimization-minimize-using-slsqp-showing-maximized-results

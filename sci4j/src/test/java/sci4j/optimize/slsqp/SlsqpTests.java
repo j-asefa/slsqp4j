@@ -358,7 +358,7 @@ public class SlsqpTests
     }
 
     @Test
-    public void testThree()
+    public void testLargerMatrix()
     {
         final double[] x = new double[]{0.84, 1.3, -0.992, 0.18};
 
@@ -396,15 +396,67 @@ public class SlsqpTests
             -1
         );
         final double[] resX = result.x;
-        final double[] expected = {8.18693466e+37, 5.79199315e+34, 5.33119427e+37, 3.32919992e+33};
-        for (int i = 0; i < resX.length; i++)
-        {
-            System.out.println("x[" + i + "] = " + resX[i] + " ");
-        }
-        /*assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
+        final double[] expected = {
+            81869346598383174108963135153684611072.0000000000000000000000000000000000000,
+            57919931473235792828070634541023232.0000000000000000000000000000000000000000000000000000000,
+            53311942694712538609603367273781788672.0000000000000000000000000000000000000000000000000000000,
+            3329199916413834719641054178443264.0000000000000000000000000000000000000000000000000000000};
+        assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[1] - expected[1]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[2] - expected[2]) < TestUtil.ERROR);
-        assertTrue(Math.abs(resX[3] - expected[3]) < TestUtil.ERROR);*/
+        assertTrue(Math.abs(resX[3] - expected[3]) < TestUtil.ERROR);
+        assertTrue(result.success);
+    }
+
+    @Test
+    public void testLargerMatrixWithBounds()
+    {
+        final double[] x = new double[]{0.84, 1.3, -0.992, 0.18};
+
+        final double[] lowerBounds = new double[] {0.5, -1, -1.4, -2.2};
+        final double[] upperBounds = new double[] {1, 1.9, 1.3, 0.8};
+        final double[][] bounds = new double[][] {lowerBounds, upperBounds};
+
+
+        final List<VectorConstraint> constraints = new ArrayList<>();
+        final Vector2VectorFunc constraintFunc = (x1, arg) -> x1;
+
+        final VectorConstraint constraint = new VectorConstraint(
+            ConstraintType.INEQ,
+            constraintFunc,
+            null);
+        constraints.add(constraint);
+
+        final Vector2ScalarFunc objectiveFunction = (x12, arg) ->
+        {
+            final double a = x12[0];
+            final double b = x12[1];
+            final double c = x12[2];
+            final double d = x12[3];
+            int sign = 1;
+            if (arg != null && arg.length > 0)
+            {
+                sign = (int)arg[0];
+            }
+            return sign * (a * b * c * d + 2 * a - 2 * b + Math.pow(c, 2) + Math.pow(d, 2));
+        };
+        final OptimizeResult result = Slsqp.minimizeSlsqpWithVectorConstraints(
+            objectiveFunction,
+            null,
+            x,
+            bounds,
+            constraints,
+            defaultTol,
+            defaultMaxIter,
+            null,
+            -1
+        );
+        final double[] resX = result.x;
+        final double[] expected = {1.00000000e+00, -1.33226763e-15, -1.33226763e-15, -4.99600361e-16};
+        assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
+        assertTrue(Math.abs(resX[1] - expected[1]) < TestUtil.ERROR);
+        assertTrue(Math.abs(resX[2] - expected[2]) < TestUtil.ERROR);
+        assertTrue(Math.abs(resX[3] - expected[3]) < TestUtil.ERROR);
         assertTrue(result.success);
     }
 }
