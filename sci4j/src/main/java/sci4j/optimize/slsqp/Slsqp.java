@@ -153,7 +153,6 @@ public class Slsqp
                         final double[] constraintJac = constraint.getJacobian(x);
 
                         // copy the constraint jacobian matrix into the array a
-                        // jacDim2 is the number of columns in constraint jacobian
                         for (int j = 0; j < constraintJac.length; j++)
                         {
                             a[j][i] = constraintJac[j];
@@ -169,7 +168,6 @@ public class Slsqp
                         final double[] constraintJac = constraint.getJacobian(x);
 
                         // copy the constraint jacobian matrix into the array a
-                        // jacDim2 is the number of columns in constraint jacobian
                         for (int j = 0; j < constraintJac.length; j++)
                         {
                             a[j][i] = constraintJac[j];
@@ -346,9 +344,7 @@ public class Slsqp
                         final double[][] constraintJac = constraint.getJacobian(x);
 
                         // copy the constraint jacobian matrix into the array a
-                        // jacDim2 is the number of columns in constraint jacobian
-                        final int jacDim2 = constraintJac[0].length;
-                        for (int l = 0; l < jacDim2; l++)
+                        for (int l = 0; l < constraintJac[0].length; l++)
                         {
                             for (int j = 0; j < constraintJac.length; j++)
                             {
@@ -372,9 +368,7 @@ public class Slsqp
                         final double[][] constraintJac = constraint.getJacobian(x);
 
                         // copy the constraint jacobian matrix into the array a
-                        // jacDim2 is the number of columns in constraint jacobian
-                        final int jacDim2 = constraintJac[0].length;
-                        for (int l = 0; l < jacDim2; l++)
+                        for (int l = 0; l < constraintJac[0].length; l++)
                         {
                             for (int j = 0; j < constraintJac.length; j++)
                             {
