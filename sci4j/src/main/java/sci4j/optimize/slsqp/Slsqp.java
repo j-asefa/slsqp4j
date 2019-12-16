@@ -344,42 +344,32 @@ public class Slsqp
                     if (constraint.getConstraintType() == ConstraintType.EQ)
                     {
                         final double[][] constraintJac = constraint.getJacobian(x);
-
-                        // copy the constraint jacobian matrix into the array a
-                        // jacDim2 is the number of columns in constraint jacobian
-                        final int jacDim2 = constraintJac[0].length;
-                        for (int l = 0; l < jacDim2; l++)
+                        for (int l = 0; l < constraintJac.length; l++)
                         {
-                            for (int j = 0; j < constraintJac.length; j++)
+                            for (int j = 0; j < constraintJac[l].length; j++)
                             {
-                                if (constraintJac[j].length > 1)
+                                if (constraintJac[l].length > 1)
                                 {
                                     a[j][i] = constraintJac[j][l]; // a is in column-major order
-                                }
-                                else
+                                } else
                                 {
                                     a[j][i] = constraintJac[j][0];
                                 }
                             }
+                            i++;
                         }
-                        i += jacDim2;
                     }
                 }
-
                 for (final VectorConstraint constraint : vectorConstraintList)
                 {
                     if (constraint.getConstraintType() == ConstraintType.INEQ)
                     {
                         final double[][] constraintJac = constraint.getJacobian(x);
-
-                        // copy the constraint jacobian matrix into the array a
-                        // jacDim2 is the number of columns in constraint jacobian
-                        final int jacDim2 = constraintJac[0].length;
-                        for (int l = 0; l < jacDim2; l++)
+                        for (int l = 0; l < constraintJac.length; l++)
                         {
-                            for (int j = 0; j < constraintJac.length; j++)
+                            for (int j = 0; j < constraintJac[l].length; j++)
                             {
-                                if (constraintJac[j].length > 1)
+                                if (constraintJac[l].length > 1)
                                 {
                                     a[j][i] = constraintJac[j][l]; // a is in column-major order
                                 }
@@ -388,8 +378,8 @@ public class Slsqp
                                     a[j][i] = constraintJac[j][0];
                                 }
                             }
+                            i++;
                         }
-                        i += jacDim2;
                     }
                 }
             }

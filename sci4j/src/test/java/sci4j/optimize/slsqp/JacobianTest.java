@@ -2,6 +2,7 @@ package sci4j.optimize.slsqp;
 
 import sci4j.optimize.slsqp.functions.Vector2ScalarFunc;
 import org.junit.jupiter.api.Test;
+import sci4j.optimize.slsqp.functions.Vector2VectorFunc;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,6 +20,30 @@ public class JacobianTest
         for (int i = 0; i < inputArr.length; i++)
         {
             assertTrue(Math.abs(fprime[i] - exactJac[i]) < TestUtil.ERROR);
+        }
+    }
+
+    @Test
+    public void testIdentity()
+    {
+        final Vector2VectorFunc testFunc = (x, arg) -> x;
+
+        final double[] inputArr = new double[]{-1, -1, 2, 4, 5, 6, 8};
+        final double[][] fprime = Jacobian.approxJacobian(inputArr, testFunc);
+
+        for (int i = 0; i < fprime.length; i++)
+        {
+            for (int j = 0; j < fprime[0].length; j++)
+            {
+                if (i == j)
+                {
+                    assertTrue(Math.abs(fprime[i][j] - 1) < TestUtil.ERROR);
+                }
+                else
+                {
+                    assertTrue(Math.abs(fprime[i][j] - 0) < TestUtil.ERROR);
+                }
+            }
         }
     }
 

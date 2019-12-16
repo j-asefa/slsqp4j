@@ -6,6 +6,7 @@ import sci4j.optimize.slsqp.constraints.ConstraintType;
 import sci4j.optimize.slsqp.constraints.ScalarConstraint;
 import sci4j.optimize.slsqp.constraints.VectorConstraint;
 import org.junit.jupiter.api.Test;
+import sci4j.optimize.slsqp.functions.Vector2VectorFunc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -353,6 +354,57 @@ public class SlsqpTests
         assertTrue(Math.abs(resX[1] - expected[1]) < 1.0E-3);
         assertTrue(-0.8 <= resX[0] && resX[0] <= 1);
         assertTrue(-1 <= resX[1] && resX[1] <= 0.8);
+        assertTrue(result.success);
+    }
+
+    @Test
+    public void testThree()
+    {
+        final double[] x = new double[]{0.84, 1.3, -0.992, 0.18};
+
+        final List<VectorConstraint> constraints = new ArrayList<>();
+        final Vector2VectorFunc constraintFunc = (x1, arg) -> x1;
+
+        final VectorConstraint constraint = new VectorConstraint(
+            ConstraintType.INEQ,
+            constraintFunc,
+            null);
+        constraints.add(constraint);
+
+        final Vector2ScalarFunc objectiveFunction = (x12, arg) ->
+        {
+            final double a = x12[0];
+            final double b = x12[1];
+            final double c = x12[2];
+            final double d = x12[3];
+            int sign = 1;
+            if (arg != null && arg.length > 0)
+            {
+                sign = (int)arg[0];
+            }
+            return sign * (a * b * c * d + 2 * a - 2 * b + Math.pow(c, 2) + Math.pow(d, 2));
+        };
+        final OptimizeResult result = Slsqp.minimizeSlsqpWithVectorConstraints(
+            objectiveFunction,
+            null,
+            x,
+            null,
+            constraints,
+            defaultTol,
+            defaultMaxIter,
+            null,
+            -1
+        );
+        final double[] resX = result.x;
+        final double[] expected = {8.18693466e+37, 5.79199315e+34, 5.33119427e+37, 3.32919992e+33};
+        for (int i = 0; i < resX.length; i++)
+        {
+            System.out.println("x[" + i + "] = " + resX[i] + " ");
+        }
+        /*assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
+        assertTrue(Math.abs(resX[1] - expected[1]) < TestUtil.ERROR);
+        assertTrue(Math.abs(resX[2] - expected[2]) < TestUtil.ERROR);
+        assertTrue(Math.abs(resX[3] - expected[3]) < TestUtil.ERROR);*/
         assertTrue(result.success);
     }
 }

@@ -45,7 +45,7 @@ public class Jacobian
             }
             dx[i] = 0;
         }
-        return jac;
+        return transpose(jac);
     }
 
     public static double[] approxJacobian(double[] x, Vector2ScalarFunc func, double... arg)
