@@ -23,6 +23,16 @@ public class ScalarConstraint
         this.arg = arg;
     }
 
+    public ScalarConstraint(
+        ConstraintType constraintType,
+        Vector2ScalarFunc constraintFunc,
+        double... arg)
+    {
+        this.constraintType = constraintType;
+        this.constraintFunc = constraintFunc;
+        this.arg = arg;
+    }
+
     public ConstraintType getConstraintType()
     {
         return constraintType;
