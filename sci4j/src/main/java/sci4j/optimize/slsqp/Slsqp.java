@@ -22,11 +22,11 @@ public class Slsqp
      *                              numerical approximation is used.
      * @param x input to the optimization problem.
      * @param bounds 2xn matrix. bounds[0] is array of lower bounds, bounds[1] is array of upper bounds
-     * @param scalarConstraintList list of scalar-valued constraints
+     * @param scalarConstraints list of scalar-valued constraints
      * @param tolerance accuracy tolerance
      * @param maxIterations max number of iterations to run the solver for
      * @param callBackFunc optional callback function on major iterations. If null, no callback is called.
-     * @param objectiveFuncionArgs optional arguments to the objective function
+     * @param objectiveFunctionArgs optional arguments to the objective function
      * @return OptimizeResult result of optimization
      */
     public static OptimizeResult minimizeSlsqpWithScalarConstraints(
@@ -34,11 +34,11 @@ public class Slsqp
         Vector2VectorFunc objectiveFuncJacobian,
         double[] x,
         double[][] bounds,
-        List<ScalarConstraint> scalarConstraintList,
+        ScalarConstraint[] scalarConstraints,
         double tolerance,
         int maxIterations,
         CallBackFunc callBackFunc,
-        double... objectiveFuncionArgs)
+        double... objectiveFunctionArgs)
     {
         final double[] alpha = new double[]{0};
         final double[] f0 = new double[]{0};
@@ -60,7 +60,7 @@ public class Slsqp
         final int[] n3 = new int[]{0};
 
         final WrappedScalarFunction wrappedObjectiveFunction =
-            new WrappedScalarFunction(objectiveFunc, objectiveFuncionArgs);
+            new WrappedScalarFunction(objectiveFunc, objectiveFunctionArgs);
 
         final int n = x.length;
 
@@ -75,8 +75,8 @@ public class Slsqp
 
         final int[] mode = new int[]{0};
 
-        final int m = scalarConstraintList.size();
-        final int meq = (int)scalarConstraintList.stream().filter(
+        final int m = scalarConstraints.length;
+        final int meq = (int) Arrays.stream(scalarConstraints).filter(
             p -> p.getConstraintType() == ConstraintType.EQ
         ).count();
 
@@ -112,7 +112,7 @@ public class Slsqp
 
                 int constraintIndex = 0;
                 // first get the equality constraints
-                for (final ScalarConstraint constraint : scalarConstraintList)
+                for (final ScalarConstraint constraint : scalarConstraints)
                 {
                     if (constraint.getConstraintType() == ConstraintType.EQ)
                     {
@@ -122,7 +122,7 @@ public class Slsqp
                     }
                 }
                 // then get the inequality constraints
-                for (final ScalarConstraint constraint : scalarConstraintList)
+                for (final ScalarConstraint constraint : scalarConstraints)
                 {
                     if (constraint.getConstraintType() == ConstraintType.INEQ)
                     {
@@ -141,13 +141,13 @@ public class Slsqp
                 }
                 else
                 {
-                    fprime = objectiveFuncJacobian.apply(x, objectiveFuncionArgs);
+                    fprime = objectiveFuncJacobian.apply(x, objectiveFunctionArgs);
                 }
 
                 System.arraycopy(fprime, 0, g, 0, n);
                 g[n] = 0;
                 int i = 0;
-                for (final ScalarConstraint constraint : scalarConstraintList)
+                for (final ScalarConstraint constraint : scalarConstraints)
                 {
                     if (constraint.getConstraintType() == ConstraintType.EQ)
                     {
@@ -162,7 +162,7 @@ public class Slsqp
                     }
                 }
 
-                for (final ScalarConstraint constraint : scalarConstraintList)
+                for (final ScalarConstraint constraint : scalarConstraints)
                 {
                     if (constraint.getConstraintType() == ConstraintType.INEQ)
                     {
@@ -205,20 +205,20 @@ public class Slsqp
      * @param objectiveFunc objective function of the optimization problem
      * @param x input to the optimization problem.
      * @param bounds 2xn matrix. bounds[0] is array of lower bounds, bounds[1] is array of upper bounds
-     * @param scalarConstraintList list of scalar-valued constraints
+     * @param scalarConstraints list of scalar-valued constraints
      * @param tolerance accuracy tolerance
      * @param maxIterations max number of iterations to run the solver for
-     * @param objectiveFuncionArgs optional arguments to the objective function
+     * @param objectiveFunctionArgs optional arguments to the objective function
      * @return OptimizeResult result of optimization
      */
     public static OptimizeResult minimizeSlsqpWithScalarConstraints(
         Vector2ScalarFunc objectiveFunc,
         double[] x,
         double[][] bounds,
-        List<ScalarConstraint> scalarConstraintList,
+        ScalarConstraint[] scalarConstraints,
         double tolerance,
         int maxIterations,
-        double... objectiveFuncionArgs)
+        double... objectiveFunctionArgs)
     {
         final double[] alpha = new double[]{0};
         final double[] f0 = new double[]{0};
@@ -240,7 +240,7 @@ public class Slsqp
         final int[] n3 = new int[]{0};
 
         final WrappedScalarFunction wrappedObjectiveFunction =
-            new WrappedScalarFunction(objectiveFunc, objectiveFuncionArgs);
+            new WrappedScalarFunction(objectiveFunc, objectiveFunctionArgs);
 
         final int n = x.length;
 
@@ -255,8 +255,8 @@ public class Slsqp
 
         final int[] mode = new int[]{0};
 
-        final int m = scalarConstraintList.size();
-        final int meq = (int)scalarConstraintList.stream().filter(
+        final int m = scalarConstraints.length;
+        final int meq = (int)Arrays.stream(scalarConstraints).filter(
             p -> p.getConstraintType() == ConstraintType.EQ
         ).count();
 
@@ -291,7 +291,7 @@ public class Slsqp
 
                 int constraintIndex = 0;
                 // first get the equality constraints
-                for (final ScalarConstraint constraint : scalarConstraintList)
+                for (final ScalarConstraint constraint : scalarConstraints)
                 {
                     if (constraint.getConstraintType() == ConstraintType.EQ)
                     {
@@ -301,7 +301,7 @@ public class Slsqp
                     }
                 }
                 // then get the inequality constraints
-                for (final ScalarConstraint constraint : scalarConstraintList)
+                for (final ScalarConstraint constraint : scalarConstraints)
                 {
                     if (constraint.getConstraintType() == ConstraintType.INEQ)
                     {
@@ -319,7 +319,7 @@ public class Slsqp
                 System.arraycopy(fprime, 0, g, 0, n);
                 g[n] = 0;
                 int i = 0;
-                for (final ScalarConstraint constraint : scalarConstraintList)
+                for (final ScalarConstraint constraint : scalarConstraints)
                 {
                     if (constraint.getConstraintType() == ConstraintType.EQ)
                     {
@@ -334,7 +334,7 @@ public class Slsqp
                     }
                 }
 
-                for (final ScalarConstraint constraint : scalarConstraintList)
+                for (final ScalarConstraint constraint : scalarConstraints)
                 {
                     if (constraint.getConstraintType() == ConstraintType.INEQ)
                     {
@@ -370,11 +370,11 @@ public class Slsqp
      *                              numerical approximation is used.
      * @param x input to the optimization problem.
      * @param bounds 2xn matrix. bounds[0] is array of lower bounds, bounds[1] is array of upper bounds
-     * @param vectorConstraintList list of vector-valued constraints
+     * @param vectorConstraints list of vector-valued constraints
      * @param tolerance accuracy tolerance
      * @param maxIterations max number of iterations to run the solver for
      * @param callBackFunc optional callback function on major iterations. If null, no callback is called.
-     * @param objectiveFuncionArgs optional arguments to the objective function
+     * @param objectiveFunctionArgs optional arguments to the objective function
      * @return OptimizeResult result of optimization
      */
     public static OptimizeResult minimizeSlsqpWithVectorConstraints(
@@ -382,11 +382,11 @@ public class Slsqp
         Vector2VectorFunc objectiveFuncJacobian,
         double[] x,
         double[][] bounds,
-        List<VectorConstraint> vectorConstraintList,
+        VectorConstraint[] vectorConstraints,
         double tolerance,
         int maxIterations,
         CallBackFunc callBackFunc,
-        double... objectiveFuncionArgs)
+        double... objectiveFunctionArgs)
     {
         final double[] alpha = new double[]{0};
         final double[] f0 = new double[]{0};
@@ -408,7 +408,7 @@ public class Slsqp
         final int[] n3 = new int[]{0};
 
         final WrappedScalarFunction wrappedObjectiveFunction =
-            new WrappedScalarFunction(objectiveFunc, objectiveFuncionArgs);
+            new WrappedScalarFunction(objectiveFunc, objectiveFunctionArgs);
 
         final int n = x.length;
 
@@ -427,7 +427,7 @@ public class Slsqp
         int meq = 0;
 
         // get the number of constraints
-        for (final VectorConstraint constraint : vectorConstraintList)
+        for (final VectorConstraint constraint : vectorConstraints)
         {
             m += constraint.apply(x).length;
             if (constraint.getConstraintType() == ConstraintType.EQ)
@@ -469,7 +469,7 @@ public class Slsqp
 
                 int constraintIndex = 0;
                 // first get the equality constraints
-                for (final VectorConstraint constraint : vectorConstraintList)
+                for (final VectorConstraint constraint : vectorConstraints)
                 {
                     if (constraint.getConstraintType() == ConstraintType.EQ)
                     {
@@ -479,7 +479,7 @@ public class Slsqp
                     }
                 }
                 // then get the inequality constraints
-                for (final VectorConstraint constraint : vectorConstraintList)
+                for (final VectorConstraint constraint : vectorConstraints)
                 {
                     if (constraint.getConstraintType() == ConstraintType.INEQ)
                     {
@@ -498,12 +498,12 @@ public class Slsqp
                 }
                 else
                 {
-                    fprime = objectiveFuncJacobian.apply(x, objectiveFuncionArgs);
+                    fprime = objectiveFuncJacobian.apply(x, objectiveFunctionArgs);
                 }
                 System.arraycopy(fprime, 0, g, 0, n);
                 g[n] = 0;
                 int i = 0;
-                for (final VectorConstraint constraint : vectorConstraintList)
+                for (final VectorConstraint constraint : vectorConstraints)
                 {
                     if (constraint.getConstraintType() == ConstraintType.EQ)
                     {
@@ -527,7 +527,7 @@ public class Slsqp
                         }
                     }
                 }
-                for (final VectorConstraint constraint : vectorConstraintList)
+                for (final VectorConstraint constraint : vectorConstraints)
                 {
                     if (constraint.getConstraintType() == ConstraintType.INEQ)
                     {

@@ -36,8 +36,8 @@ public class SlsqpTests
             new TestUtil.TestConstraintFunc(),
             null
         );
-        final List<ScalarConstraint> constraintList = new ArrayList<>();
-        constraintList.add(scalarConstraint);
+        final ScalarConstraint[] constraintList = new ScalarConstraint[1];
+        constraintList[0] = scalarConstraint;
         final Vector2ScalarFunc inputFunc = new TestUtil.TestInputFunc();
         final double tolerance = 1.0E-6;
         final int maxIter = 100;
@@ -73,8 +73,8 @@ public class SlsqpTests
             new TestUtil.TestConstraintFunc(),
             null
         );
-        final List<ScalarConstraint> constraintList = new ArrayList<>();
-        constraintList.add(scalarConstraint);
+        final ScalarConstraint[] constraintList = new ScalarConstraint[1];
+        constraintList[0] = scalarConstraint;
 
         final Vector2ScalarFunc inputFunc = new TestUtil.TestInputFunc();
         final double tolerance = 1.0E-6;
@@ -100,12 +100,13 @@ public class SlsqpTests
     public void testMinimizeEqualityGivenConsScalar()
     {
         final double[] x = new double[] {-1, 1};
-        final List<ScalarConstraint> constraints = new ArrayList<>();
+        final ScalarConstraint[] constraints = new ScalarConstraint[1];
         final ScalarConstraint constraint = new ScalarConstraint(
             ConstraintType.EQ,
             new TestUtil.FeconScalar(),
             new TestUtil.FprimeEconScalar());
-        constraints.add(constraint);
+        constraints[0] = constraint;
+
         final OptimizeResult result = Slsqp.minimizeSlsqpWithScalarConstraints(
             new TestUtil.Fun(),
             new TestUtil.Jac(),
@@ -132,12 +133,13 @@ public class SlsqpTests
 
         final Vector2ScalarFunc constraintFunc = (x1, arg) -> x1[0] - 1;
 
-        final List<ScalarConstraint> constraints = new ArrayList<>();
+        final ScalarConstraint[] constraints = new ScalarConstraint[1];
         final ScalarConstraint constraint = new ScalarConstraint(
             ConstraintType.INEQ,
             constraintFunc,
             null);
-        constraints.add(constraint);
+        constraints[0] = constraint;
+
         final OptimizeResult result = Slsqp.minimizeSlsqpWithScalarConstraints(
             inputFunc,
             null,
@@ -164,19 +166,19 @@ public class SlsqpTests
 
         final Vector2ScalarFunc constraintFunc1 = (x1, arg) -> 0 - x1[0];
         final ScalarConstraint constraint1 = new ScalarConstraint(ConstraintType.INEQ, constraintFunc1, null);
-        final List<ScalarConstraint> constraintList1 = new ArrayList<>();
-        constraintList1.add(constraint1);
+        final ScalarConstraint[] constraintList1 = new ScalarConstraint[1];
+        constraintList1[0] = constraint1;
 
         final Vector2ScalarFunc constraintFunc2 = (x1, arg) -> x1[0] - 2;
         final ScalarConstraint constraint2 = new ScalarConstraint(ConstraintType.INEQ, constraintFunc2, null);
-        final List<ScalarConstraint> constraintList2 = new ArrayList<>();
-        constraintList2.add(constraint2);
+        final ScalarConstraint[] constraintList2 = new ScalarConstraint[1];
+        constraintList2[0] = constraint2;
 
         final Vector2ScalarFunc constraintFunc3 = (x1, arg) -> x1[0] + 1;
         final ScalarConstraint constraint3 = new ScalarConstraint(ConstraintType.INEQ, constraintFunc3, null);
-        final List<ScalarConstraint> constraintList3 = new ArrayList<>();
-        constraintList3.add(constraint3);
-        constraintList3.add(constraint1);
+        final ScalarConstraint[] constraintList3 = new ScalarConstraint[2];
+        constraintList3[0] = constraint3;
+        constraintList3[1] = constraint1;
 
         OptimizeResult result = Slsqp.minimizeSlsqpWithScalarConstraints(
             inputFunc,
@@ -217,9 +219,9 @@ public class SlsqpTests
     @Test
     public void testMinimizeEqualityApproximated()
     {
-        final List<VectorConstraint> constraints = new ArrayList<>();
+        final VectorConstraint[] constraints = new VectorConstraint[1];
         final VectorConstraint constraint = new VectorConstraint(ConstraintType.EQ, new TestUtil.Fecon(), null, -1);
-        constraints.add(constraint);
+        constraints[0] = constraint;
         final OptimizeResult result = Slsqp.minimizeSlsqpWithVectorConstraints(
             new TestUtil.Fun(),
             null,
@@ -242,9 +244,10 @@ public class SlsqpTests
     public void testMinimizeEqualityGiven()
     {
         final double[] x = new double[] {-1, 1};
-        final List<VectorConstraint> constraints = new ArrayList<>();
+        final VectorConstraint[] constraints = new VectorConstraint[1];
         final VectorConstraint constraint = new VectorConstraint(ConstraintType.EQ, new TestUtil.Fecon(), null, -1);
-        constraints.add(constraint);
+        constraints[0] = constraint;
+
         final OptimizeResult result = Slsqp.minimizeSlsqpWithVectorConstraints(
             new TestUtil.Fun(),
             new TestUtil.Jac(),
@@ -267,9 +270,10 @@ public class SlsqpTests
     public void testMinimizeInequalityGiven()
     {
         final double[] x = new double[]{-1, 1};
-        final List<VectorConstraint> constraints = new ArrayList<>();
+        final VectorConstraint[] constraints = new VectorConstraint[1];
         final VectorConstraint constraint = new VectorConstraint(ConstraintType.INEQ, new TestUtil.Fieqcon(), null, -1);
-        constraints.add(constraint);
+        constraints[0] = constraint;
+
         final OptimizeResult result = Slsqp.minimizeSlsqpWithVectorConstraints(
             new TestUtil.Fun(),
             new TestUtil.Jac(),
@@ -292,13 +296,14 @@ public class SlsqpTests
     public void testMinimizeInequalityGivenVectorConstraints()
     {
         final double[] x = new double[]{-1, 1};
-        final List<VectorConstraint> constraints = new ArrayList<>();
+        final VectorConstraint[] constraints = new VectorConstraint[1];
         final VectorConstraint constraint = new VectorConstraint(
             ConstraintType.INEQ,
             new TestUtil.Fieqcon2(),
             new TestUtil.FprimeIeqcon2(),
             -1);
-        constraints.add(constraint);
+        constraints[0] = constraint;
+
         final OptimizeResult result = Slsqp.minimizeSlsqpWithVectorConstraints(
             new TestUtil.Fun(),
             new TestUtil.Jac(),
@@ -326,7 +331,7 @@ public class SlsqpTests
         final double[] upperBounds = new double[] {1, 0.8};
         final double[][] bounds = new double[][] {lowerBounds, upperBounds};
 
-        final List<VectorConstraint> constraints = new ArrayList<>();
+        final VectorConstraint[] constraints = new VectorConstraint[1];
         final Vector2MatrixFunc constraintJac = (x1, arg) ->
             Jacobian.transpose(new double[][] {new TestUtil.FprimeEcon().apply(x1, arg)});
 
@@ -335,7 +340,7 @@ public class SlsqpTests
             new TestUtil.Fecon(),
             constraintJac,
             -1);
-        constraints.add(constraint);
+        constraints[0] = constraint;
 
         final OptimizeResult result = Slsqp.minimizeSlsqpWithVectorConstraints(
             new TestUtil.Fun(),
@@ -362,14 +367,14 @@ public class SlsqpTests
     {
         final double[] x = new double[]{0.84, 1.3, -0.992, 0.18};
 
-        final List<VectorConstraint> constraints = new ArrayList<>();
+        final VectorConstraint[] constraints = new VectorConstraint[1];
         final Vector2VectorFunc constraintFunc = (x1, arg) -> x1;
 
         final VectorConstraint constraint = new VectorConstraint(
             ConstraintType.INEQ,
             constraintFunc,
             null);
-        constraints.add(constraint);
+        constraints[0] = constraint;
 
         final Vector2ScalarFunc objectiveFunction = (x12, arg) ->
         {
@@ -418,14 +423,14 @@ public class SlsqpTests
         final double[][] bounds = new double[][] {lowerBounds, upperBounds};
 
 
-        final List<VectorConstraint> constraints = new ArrayList<>();
+        final VectorConstraint[] constraints = new VectorConstraint[1];
         final Vector2VectorFunc constraintFunc = (x1, arg) -> x1;
 
         final VectorConstraint constraint = new VectorConstraint(
             ConstraintType.INEQ,
             constraintFunc,
             null);
-        constraints.add(constraint);
+        constraints[0] = constraint;
 
         final Vector2ScalarFunc objectiveFunction = (x12, arg) ->
         {
