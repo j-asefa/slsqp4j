@@ -10,407 +10,148 @@ import sci4j.optimize.slsqp.functions.WrappedScalarFunction;
 import sci4j.optimize.slsqp.util.NativeUtils;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class Slsqp
 {
-    /**
-     * Solve the given optimization problem using Sequential Least Squares Programming.
-     *
-     * @param objectiveFunc objective function of the optimization problem
-     * @param objectiveFuncJacobian optional function representing the Jacobian of the objective function. If null,
-     *                              numerical approximation is used.
-     * @param x input to the optimization problem.
-     * @param bounds 2xn matrix. bounds[0] is array of lower bounds, bounds[1] is array of upper bounds
-     * @param scalarConstraints list of scalar-valued constraints
-     * @param tolerance accuracy tolerance
-     * @param maxIterations max number of iterations to run the solver for
-     * @param callBackFunc optional callback function on major iterations. If null, no callback is called.
-     * @param objectiveFunctionArgs optional arguments to the objective function
-     * @return OptimizeResult result of optimization
-     */
-    public static OptimizeResult minimizeSlsqpWithScalarConstraints(
-        Vector2ScalarFunc objectiveFunc,
-        Vector2VectorFunc objectiveFuncJacobian,
-        double[] x,
-        double[][] bounds,
-        ScalarConstraint[] scalarConstraints,
-        double tolerance,
-        int maxIterations,
-        CallBackFunc callBackFunc,
-        double... objectiveFunctionArgs)
+
+    public static class SlsqpBuilder
     {
-        final double[] alpha = new double[]{0};
-        final double[] f0 = new double[]{0};
-        final double[] gs = new double[]{0};
-        final double[] h1 = new double[]{0};
-        final double[] h2 = new double[]{0};
-        final double[] h3 = new double[]{0};
-        final double[] h4 = new double[]{0};
-        final double[] t = new double[]{0};
-        final double[] t0 = new double[]{0};
-        final double[] tol = new double[]{0};
-        final int[] iexact = new int[]{0};
-        final int[] incons = new int[]{0};
-        final int[] ireset = new int[]{0};
-        final int[] itermx = new int[]{0};
-        final int[] line = new int[]{0};
-        final int[] n1 = new int[]{0};
-        final int[] n2 = new int[]{0};
-        final int[] n3 = new int[]{0};
+        Vector2ScalarFunc objectiveFunc;
+        Vector2VectorFunc objectiveFuncJacobian;
+        double[] input;
+        double[][] bounds;
+        ScalarConstraint[] scalarConstraints;
+        double tolerance;
+        int maxIterations;
+        CallBackFunc callBackFunc;
+        double[] objectiveFunctionArgs;
+        VectorConstraint[] vectorConstraints;
 
-        final WrappedScalarFunction wrappedObjectiveFunction =
-            new WrappedScalarFunction(objectiveFunc, objectiveFunctionArgs);
-
-        final int n = x.length;
-
-        final int nPlus1 = n + 1;
-
-        final double[] xl = new double[n]; // lower bounds
-        final double[] xu = new double[n]; // upper bounds
-
-        computeBounds(n, bounds, xl, xu);
-
-        clip(x, xl, xu);
-
-        final int[] mode = new int[]{0};
-
-        final int m = scalarConstraints.length;
-        final int meq = (int) Arrays.stream(scalarConstraints).filter(
-            p -> p.getConstraintType() == ConstraintType.EQ
-        ).count();
-
-        final int mineq = m - meq + nPlus1 + nPlus1;
-        final int lenW = (3 * nPlus1 + m) * (nPlus1 + 1) +
-            (nPlus1 - meq + 1) * (mineq + 2) + 2 * mineq +
-            (nPlus1 + mineq) * (nPlus1 - meq) + 2 * meq +
-            nPlus1 * n / 2 + 2 * m + 3 * n + 4 * nPlus1 + 1;
-
-        final double[] w = new double[lenW];
-        final int[] jw = new int[mineq];
-
-        final int[] majIter = new int[] {maxIterations};
-        int majIterPrev = 0;
-        final double[] acc = new double[] {tolerance};
-
-        double fx = 0;
-        final int la = Math.max(1, m);
-        final double[] c = new double[la];
-
-        final double[] g = new double[nPlus1];
-
-        // Note that Fortran expects arrays to be laid out in column-major order.
-        final double[][] a = new double[nPlus1][la];
-        double[] fprime;
-
-        while (true)
+        public SlsqpBuilder withObjectiveFunction(Vector2ScalarFunc objectiveFunc)
         {
-            if (mode[0] == 0 || mode[0] == 1)
-            {
-                // calculate the value of the objective function
-                fx = wrappedObjectiveFunction.apply(x);
-
-                int constraintIndex = 0;
-                // first get the equality constraints
-                for (final ScalarConstraint constraint : scalarConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.EQ)
-                    {
-                        final double constraintVal = constraint.apply(x);
-                        c[constraintIndex] = constraintVal;
-                        constraintIndex++;
-                    }
-                }
-                // then get the inequality constraints
-                for (final ScalarConstraint constraint : scalarConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.INEQ)
-                    {
-                        final double constraintVal = constraint.apply(x);
-                        c[constraintIndex] = constraintVal;
-                        constraintIndex++;
-                    }
-                }
-            }
-
-            if (mode[0] == 0 || mode[0] == -1)
-            {
-                if (objectiveFuncJacobian == null)
-                {
-                    fprime = wrappedObjectiveFunction.approxJacobian(x);
-                }
-                else
-                {
-                    fprime = objectiveFuncJacobian.apply(x, objectiveFunctionArgs);
-                }
-
-                System.arraycopy(fprime, 0, g, 0, n);
-                g[n] = 0;
-                int i = 0;
-                for (final ScalarConstraint constraint : scalarConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.EQ)
-                    {
-                        final double[] constraintJac = constraint.getJacobian(x);
-
-                        // copy the constraint jacobian matrix into the array a
-                        for (int j = 0; j < constraintJac.length; j++)
-                        {
-                            a[j][i] = constraintJac[j];
-                        }
-                        i++;
-                    }
-                }
-
-                for (final ScalarConstraint constraint : scalarConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.INEQ)
-                    {
-                        final double[] constraintJac = constraint.getJacobian(x);
-
-                        // copy the constraint jacobian matrix into the array a
-                        for (int j = 0; j < constraintJac.length; j++)
-                        {
-                            a[j][i] = constraintJac[j];
-                        }
-                        i++;
-                    }
-                }
-            }
-
-            NativeUtils.slsqp(m, meq, la, x, xl, xu, new double[] {fx}, c, g, a, acc, majIter, mode, w, jw,
-                alpha, f0, gs, h1, h2, h3, h4, t, t0, tol,
-                iexact, incons, ireset, itermx, line,
-                n1, n2, n3);
-
-            if (callBackFunc != null && majIter[0] > majIterPrev)
-            {
-                callBackFunc.callback(Arrays.copyOf(x, x.length));
-            }
-
-            if (Math.abs(mode[0]) != 1)
-            {
-                break;
-            }
-
-            majIterPrev = majIter[0];
+            this.objectiveFunc = objectiveFunc;
+            return this;
         }
-        return new OptimizeResult(x, fx, g, mode[0], majIter[0], mode[0], mode[0] == 0, a);
+
+        public SlsqpBuilder withJacobian(Vector2VectorFunc objectiveFuncJacobian)
+        {
+            this.objectiveFuncJacobian = objectiveFuncJacobian;
+            return this;
+        }
+
+        public SlsqpBuilder withInput(double[] input)
+        {
+            this.input = input;
+            return this;
+        }
+
+        public SlsqpBuilder withBounds(double[][] bounds)
+        {
+            this.bounds = bounds;
+            return this;
+        }
+
+        public SlsqpBuilder withScalarConstraints(ScalarConstraint[] scalarConstraints)
+        {
+            this.scalarConstraints = scalarConstraints;
+            return this;
+        }
+
+        public SlsqpBuilder withVectorConstraints(VectorConstraint[] vectorConstraints)
+        {
+            this.vectorConstraints = vectorConstraints;
+            return this;
+        }
+
+        public SlsqpBuilder withTolerance(double tolerance)
+        {
+            this.tolerance = tolerance;
+            return this;
+        }
+
+        public SlsqpBuilder withMaxIterations(int maxIterations)
+        {
+            this.maxIterations = maxIterations;
+            return this;
+        }
+
+        public SlsqpBuilder withCallBackFunction(CallBackFunc callBackFunc)
+        {
+            this.callBackFunc = callBackFunc;
+            return this;
+        }
+
+        public SlsqpBuilder withObjectiveFunctionArguments(double... objectiveFunctionArgs)
+        {
+            this.objectiveFunctionArgs = objectiveFunctionArgs;
+            return this;
+        }
+
+        public Slsqp build()
+        {
+            final Slsqp slsqp = new Slsqp();
+            slsqp.objectiveFunc = this.objectiveFunc;
+            slsqp.objectiveFuncJacobian = this.objectiveFuncJacobian;
+            slsqp.input = this.input;
+            slsqp.bounds = this.bounds;
+            slsqp.scalarConstraints = this.scalarConstraints;
+            slsqp.tolerance = this.tolerance;
+            slsqp.maxIterations = this.maxIterations;
+            slsqp.callBackFunc = this.callBackFunc;
+            slsqp.objectiveFunctionArgs = this.objectiveFunctionArgs;
+            slsqp.vectorConstraints = this.vectorConstraints;
+            return slsqp;
+        }
     }
 
-    /**
-     * Solve the given optimization problem using Sequential Least Squares Programming. The approximate Jacobian is used
-     * and no callback function is called.
-     *
-     * @param objectiveFunc objective function of the optimization problem
-     * @param x input to the optimization problem.
-     * @param bounds 2xn matrix. bounds[0] is array of lower bounds, bounds[1] is array of upper bounds
-     * @param scalarConstraints list of scalar-valued constraints
-     * @param tolerance accuracy tolerance
-     * @param maxIterations max number of iterations to run the solver for
-     * @param objectiveFunctionArgs optional arguments to the objective function
-     * @return OptimizeResult result of optimization
-     */
-    public static OptimizeResult minimizeSlsqpWithScalarConstraints(
-        Vector2ScalarFunc objectiveFunc,
-        double[] x,
-        double[][] bounds,
-        ScalarConstraint[] scalarConstraints,
-        double tolerance,
-        int maxIterations,
-        double... objectiveFunctionArgs)
+    Vector2ScalarFunc objectiveFunc;
+    Vector2VectorFunc objectiveFuncJacobian;
+    double[] input;
+    double[][] bounds;
+    ScalarConstraint[] scalarConstraints;
+    double tolerance;
+    int maxIterations;
+    CallBackFunc callBackFunc;
+    double[] objectiveFunctionArgs;
+    VectorConstraint[] vectorConstraints;
+    final double[] alpha = new double[]{0};
+    final double[] f0 = new double[]{0};
+    final double[] gs = new double[]{0};
+    final double[] h1 = new double[]{0};
+    final double[] h2 = new double[]{0};
+    final double[] h3 = new double[]{0};
+    final double[] h4 = new double[]{0};
+    final double[] t = new double[]{0};
+    final double[] t0 = new double[]{0};
+    final double[] tol = new double[]{0};
+    final int[] iexact = new int[]{0};
+    final int[] incons = new int[]{0};
+    final int[] ireset = new int[]{0};
+    final int[] itermx = new int[]{0};
+    final int[] line = new int[]{0};
+    final int[] n1 = new int[]{0};
+    final int[] n2 = new int[]{0};
+    final int[] n3 = new int[]{0};
+    final int[] mode = new int[]{0};
+
+    public OptimizeResult solve()
     {
-        final double[] alpha = new double[]{0};
-        final double[] f0 = new double[]{0};
-        final double[] gs = new double[]{0};
-        final double[] h1 = new double[]{0};
-        final double[] h2 = new double[]{0};
-        final double[] h3 = new double[]{0};
-        final double[] h4 = new double[]{0};
-        final double[] t = new double[]{0};
-        final double[] t0 = new double[]{0};
-        final double[] tol = new double[]{0};
-        final int[] iexact = new int[]{0};
-        final int[] incons = new int[]{0};
-        final int[] ireset = new int[]{0};
-        final int[] itermx = new int[]{0};
-        final int[] line = new int[]{0};
-        final int[] n1 = new int[]{0};
-        final int[] n2 = new int[]{0};
-        final int[] n3 = new int[]{0};
-
-        final WrappedScalarFunction wrappedObjectiveFunction =
-            new WrappedScalarFunction(objectiveFunc, objectiveFunctionArgs);
-
-        final int n = x.length;
-
-        final int nPlus1 = n + 1;
-
-        final double[] xl = new double[n]; // lower bounds
-        final double[] xu = new double[n]; // upper bounds
-
-        computeBounds(n, bounds, xl, xu);
-
-        clip(x, xl, xu);
-
-        final int[] mode = new int[]{0};
-
-        final int m = scalarConstraints.length;
-        final int meq = (int)Arrays.stream(scalarConstraints).filter(
-            p -> p.getConstraintType() == ConstraintType.EQ
-        ).count();
-
-        final int mineq = m - meq + nPlus1 + nPlus1;
-        final int lenW = (3 * nPlus1 + m) * (nPlus1 + 1) +
-            (nPlus1 - meq + 1) * (mineq + 2) + 2 * mineq +
-            (nPlus1 + mineq) * (nPlus1 - meq) + 2 * meq +
-            nPlus1 * n / 2 + 2 * m + 3 * n + 4 * nPlus1 + 1;
-
-        final double[] w = new double[lenW];
-        final int[] jw = new int[mineq];
-
-        final int[] majIter = new int[] {maxIterations};
-        final double[] acc = new double[] {tolerance};
-
-        double fx = 0;
-        final int la = Math.max(1, m);
-        final double[] c = new double[la];
-
-        final double[] g = new double[nPlus1];
-
-        // Note that Fortran expects arrays to be laid out in column-major order.
-        final double[][] a = new double[nPlus1][la];
-        double[] fprime;
-
-        while (true)
+        if (this.vectorConstraints == null)
         {
-            if (mode[0] == 0 || mode[0] == 1)
-            {
-                // calculate the value of the objective function
-                fx = wrappedObjectiveFunction.apply(x);
-
-                int constraintIndex = 0;
-                // first get the equality constraints
-                for (final ScalarConstraint constraint : scalarConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.EQ)
-                    {
-                        final double constraintVal = constraint.apply(x);
-                        c[constraintIndex] = constraintVal;
-                        constraintIndex++;
-                    }
-                }
-                // then get the inequality constraints
-                for (final ScalarConstraint constraint : scalarConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.INEQ)
-                    {
-                        final double constraintVal = constraint.apply(x);
-                        c[constraintIndex] = constraintVal;
-                        constraintIndex++;
-                    }
-                }
-            }
-
-            if (mode[0] == 0 || mode[0] == -1)
-            {
-                fprime = wrappedObjectiveFunction.approxJacobian(x);
-
-                System.arraycopy(fprime, 0, g, 0, n);
-                g[n] = 0;
-                int i = 0;
-                for (final ScalarConstraint constraint : scalarConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.EQ)
-                    {
-                        final double[] constraintJac = constraint.getJacobian(x);
-
-                        // copy the constraint jacobian matrix into the array a
-                        for (int j = 0; j < constraintJac.length; j++)
-                        {
-                            a[j][i] = constraintJac[j];
-                        }
-                        i++;
-                    }
-                }
-
-                for (final ScalarConstraint constraint : scalarConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.INEQ)
-                    {
-                        final double[] constraintJac = constraint.getJacobian(x);
-
-                        // copy the constraint jacobian matrix into the array a
-                        for (int j = 0; j < constraintJac.length; j++)
-                        {
-                            a[j][i] = constraintJac[j];
-                        }
-                        i++;
-                    }
-                }
-            }
-
-            NativeUtils.slsqp(m, meq, la, x, xl, xu, new double[] {fx}, c, g, a, acc, majIter, mode, w, jw,
-                alpha, f0, gs, h1, h2, h3, h4, t, t0, tol,
-                iexact, incons, ireset, itermx, line,
-                n1, n2, n3);
-
-            if (Math.abs(mode[0]) != 1)
-            {
-                break;
-            }
+            return solveWithScalarConstraints();
         }
-        return new OptimizeResult(x, fx, g, mode[0], majIter[0], mode[0], mode[0] == 0, a);
+        else
+        {
+            return solveWithVectorConstraints();
+        }
     }
 
-    /**
-     *
-     * @param objectiveFunc objective function of the optimization problem
-     * @param objectiveFuncJacobian optional function representing the Jacobian of the objective function. If null,
-     *                              numerical approximation is used.
-     * @param x input to the optimization problem.
-     * @param bounds 2xn matrix. bounds[0] is array of lower bounds, bounds[1] is array of upper bounds
-     * @param vectorConstraints list of vector-valued constraints
-     * @param tolerance accuracy tolerance
-     * @param maxIterations max number of iterations to run the solver for
-     * @param callBackFunc optional callback function on major iterations. If null, no callback is called.
-     * @param objectiveFunctionArgs optional arguments to the objective function
-     * @return OptimizeResult result of optimization
-     */
-    public static OptimizeResult minimizeSlsqpWithVectorConstraints(
-        Vector2ScalarFunc objectiveFunc,
-        Vector2VectorFunc objectiveFuncJacobian,
-        double[] x,
-        double[][] bounds,
-        VectorConstraint[] vectorConstraints,
-        double tolerance,
-        int maxIterations,
-        CallBackFunc callBackFunc,
-        double... objectiveFunctionArgs)
+    private OptimizeResult solveWithVectorConstraints()
     {
-        final double[] alpha = new double[]{0};
-        final double[] f0 = new double[]{0};
-        final double[] gs = new double[]{0};
-        final double[] h1 = new double[]{0};
-        final double[] h2 = new double[]{0};
-        final double[] h3 = new double[]{0};
-        final double[] h4 = new double[]{0};
-        final double[] t = new double[]{0};
-        final double[] t0 = new double[]{0};
-        final double[] tol = new double[]{0};
-        final int[] iexact = new int[]{0};
-        final int[] incons = new int[]{0};
-        final int[] ireset = new int[]{0};
-        final int[] itermx = new int[]{0};
-        final int[] line = new int[]{0};
-        final int[] n1 = new int[]{0};
-        final int[] n2 = new int[]{0};
-        final int[] n3 = new int[]{0};
-
         final WrappedScalarFunction wrappedObjectiveFunction =
             new WrappedScalarFunction(objectiveFunc, objectiveFunctionArgs);
 
-        final int n = x.length;
+        final int n = input.length;
 
         final int nPlus1 = n + 1;
 
@@ -419,7 +160,7 @@ public class Slsqp
 
         computeBounds(n, bounds, xl, xu);
 
-        clip(x, xl, xu);
+        clip(input, xl, xu);
 
         final int[] mode = new int[] {0};
 
@@ -429,7 +170,7 @@ public class Slsqp
         // get the number of constraints
         for (final VectorConstraint constraint : vectorConstraints)
         {
-            m += constraint.apply(x).length;
+            m += constraint.apply(input).length;
             if (constraint.getConstraintType() == ConstraintType.EQ)
             {
                 meq++;
@@ -465,7 +206,7 @@ public class Slsqp
             if (mode[0] == 0 || mode[0] == 1)
             {
                 // calculate the value of the objective function
-                fx = wrappedObjectiveFunction.apply(x);
+                fx = wrappedObjectiveFunction.apply(input);
 
                 int constraintIndex = 0;
                 // first get the equality constraints
@@ -473,7 +214,7 @@ public class Slsqp
                 {
                     if (constraint.getConstraintType() == ConstraintType.EQ)
                     {
-                        final double[] constraintVec = constraint.apply(x);
+                        final double[] constraintVec = constraint.apply(input);
                         System.arraycopy(constraintVec, 0, c, constraintIndex, constraintVec.length);
                         constraintIndex += constraintVec.length;
                     }
@@ -483,7 +224,7 @@ public class Slsqp
                 {
                     if (constraint.getConstraintType() == ConstraintType.INEQ)
                     {
-                        final double[] constraintVec = constraint.apply(x);
+                        final double[] constraintVec = constraint.apply(input);
                         System.arraycopy(constraintVec, 0, c, constraintIndex, constraintVec.length);
                         constraintIndex += constraintVec.length;
                     }
@@ -494,11 +235,11 @@ public class Slsqp
             {
                 if (objectiveFuncJacobian == null)
                 {
-                    fprime = wrappedObjectiveFunction.approxJacobian(x);
+                    fprime = wrappedObjectiveFunction.approxJacobian(input);
                 }
                 else
                 {
-                    fprime = objectiveFuncJacobian.apply(x, objectiveFunctionArgs);
+                    fprime = objectiveFuncJacobian.apply(input, objectiveFunctionArgs);
                 }
                 System.arraycopy(fprime, 0, g, 0, n);
                 g[n] = 0;
@@ -507,7 +248,7 @@ public class Slsqp
                 {
                     if (constraint.getConstraintType() == ConstraintType.EQ)
                     {
-                        final double[][] constraintJac = constraint.getJacobian(x);
+                        final double[][] constraintJac = constraint.getJacobian(input);
 
                         // copy the constraint jacobian matrix into the array a
                         for (int l = 0; l < constraintJac[0].length; l++)
@@ -531,7 +272,7 @@ public class Slsqp
                 {
                     if (constraint.getConstraintType() == ConstraintType.INEQ)
                     {
-                        final double[][] constraintJac = constraint.getJacobian(x);
+                        final double[][] constraintJac = constraint.getJacobian(input);
 
                         // copy the constraint jacobian matrix into the array a
                         for (int l = 0; l < constraintJac[0].length; l++)
@@ -553,14 +294,14 @@ public class Slsqp
                 }
             }
 
-            NativeUtils.slsqp(m, meq, la, x, xl, xu, new double[] {fx}, c, g, a, acc, majIter, mode, w, jw,
+            NativeUtils.slsqp(m, meq, la, input, xl, xu, new double[] {fx}, c, g, a, acc, majIter, mode, w, jw,
                 alpha, f0, gs, h1, h2, h3, h4, t, t0, tol,
                 iexact, incons, ireset, itermx, line,
                 n1, n2, n3);
 
             if (callBackFunc != null && majIter[0] > majIterPrev)
             {
-                callBackFunc.callback(Arrays.copyOf(x, x.length));
+                callBackFunc.callback(Arrays.copyOf(input, input.length));
             }
 
             if (Math.abs(mode[0]) != 1)
@@ -570,10 +311,134 @@ public class Slsqp
 
             majIterPrev = majIter[0];
         }
-        return new OptimizeResult(x, fx, g, mode[0], majIter[0], mode[0], mode[0] == 0, a);
+        return new OptimizeResult(input, fx, g, mode[0], majIter[0], mode[0], mode[0] == 0, a);
     }
 
-    private static void computeBounds(int n, double[][] bounds, double[] xl, double[] xu)
+    private OptimizeResult solveWithScalarConstraints()
+    {
+        final WrappedScalarFunction wrappedObjectiveFunction =
+            new WrappedScalarFunction(objectiveFunc, objectiveFunctionArgs);
+
+        final int n = input.length;
+
+        final int nPlus1 = n + 1;
+
+        final double[] xl = new double[n]; // lower bounds
+        final double[] xu = new double[n]; // upper bounds
+
+        computeBounds(n, bounds, xl, xu);
+
+        clip(input, xl, xu);
+
+        final int m = scalarConstraints.length;
+        final int meq = (int)Arrays.stream(scalarConstraints).filter(
+            p -> p.getConstraintType() == ConstraintType.EQ
+        ).count();
+
+        final int mineq = m - meq + nPlus1 + nPlus1;
+        final int lenW = (3 * nPlus1 + m) * (nPlus1 + 1) +
+            (nPlus1 - meq + 1) * (mineq + 2) + 2 * mineq +
+            (nPlus1 + mineq) * (nPlus1 - meq) + 2 * meq +
+            nPlus1 * n / 2 + 2 * m + 3 * n + 4 * nPlus1 + 1;
+
+        final double[] w = new double[lenW];
+        final int[] jw = new int[mineq];
+
+        final int[] majIter = new int[] {maxIterations};
+        final double[] acc = new double[] {tolerance};
+
+        double fx = 0;
+        final int la = Math.max(1, m);
+        final double[] c = new double[la];
+
+        final double[] g = new double[nPlus1];
+
+        // Note that Fortran expects arrays to be laid out in column-major order.
+        final double[][] a = new double[nPlus1][la];
+        double[] fprime;
+
+        while (true)
+        {
+            if (mode[0] == 0 || mode[0] == 1)
+            {
+                // calculate the value of the objective function
+                fx = wrappedObjectiveFunction.apply(input);
+
+                int constraintIndex = 0;
+                // first get the equality constraints
+                for (final ScalarConstraint constraint : scalarConstraints)
+                {
+                    if (constraint.getConstraintType() == ConstraintType.EQ)
+                    {
+                        final double constraintVal = constraint.apply(input);
+                        c[constraintIndex] = constraintVal;
+                        constraintIndex++;
+                    }
+                }
+                // then get the inequality constraints
+                for (final ScalarConstraint constraint : scalarConstraints)
+                {
+                    if (constraint.getConstraintType() == ConstraintType.INEQ)
+                    {
+                        final double constraintVal = constraint.apply(input);
+                        c[constraintIndex] = constraintVal;
+                        constraintIndex++;
+                    }
+                }
+            }
+
+            if (mode[0] == 0 || mode[0] == -1)
+            {
+                fprime = wrappedObjectiveFunction.approxJacobian(input);
+
+                System.arraycopy(fprime, 0, g, 0, n);
+                g[n] = 0;
+                int i = 0;
+                for (final ScalarConstraint constraint : scalarConstraints)
+                {
+                    if (constraint.getConstraintType() == ConstraintType.EQ)
+                    {
+                        final double[] constraintJac = constraint.getJacobian(input);
+
+                        // copy the constraint jacobian matrix into the array a
+                        for (int j = 0; j < constraintJac.length; j++)
+                        {
+                            a[j][i] = constraintJac[j];
+                        }
+                        i++;
+                    }
+                }
+
+                for (final ScalarConstraint constraint : scalarConstraints)
+                {
+                    if (constraint.getConstraintType() == ConstraintType.INEQ)
+                    {
+                        final double[] constraintJac = constraint.getJacobian(input);
+
+                        // copy the constraint jacobian matrix into the array a
+                        for (int j = 0; j < constraintJac.length; j++)
+                        {
+                            a[j][i] = constraintJac[j];
+                        }
+                        i++;
+                    }
+                }
+            }
+
+            NativeUtils.slsqp(m, meq, la, input, xl, xu, new double[] {fx}, c, g, a, acc, majIter, mode, w, jw,
+                alpha, f0, gs, h1, h2, h3, h4, t, t0, tol,
+                iexact, incons, ireset, itermx, line,
+                n1, n2, n3);
+
+            if (Math.abs(mode[0]) != 1)
+            {
+                break;
+            }
+        }
+        return new OptimizeResult(input, fx, g, mode[0], majIter[0], mode[0], mode[0] == 0, a);
+    }
+
+    private void computeBounds(int n, double[][] bounds, double[] xl, double[] xu)
     {
         if (bounds == null)
         {
@@ -599,7 +464,7 @@ public class Slsqp
 
     }
 
-    private static void clip(double[] x, double[] xl, double[] xu)
+    private void clip(double[] x, double[] xl, double[] xu)
     {
         final int n = x.length;
         for (int i = 0; i < n; i++)
