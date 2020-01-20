@@ -6,10 +6,12 @@ public class WrappedScalarFunction
 {
     private final Vector2ScalarFunc func;
     private final double[] arg;
+    private final Vector2VectorFunc jacobian;
 
-    public WrappedScalarFunction(Vector2ScalarFunc func, double... arg)
+    public WrappedScalarFunction(Vector2ScalarFunc func, Vector2VectorFunc jacobian, double... arg)
     {
         this.func = func;
+        this.jacobian = jacobian;
         this.arg = arg;
     }
 
@@ -18,8 +20,16 @@ public class WrappedScalarFunction
         return func.apply(x, arg);
     }
 
-    public double[] approxJacobian(double[] x)
+    public double[] getJacobian(double[] x)
     {
-        return Jacobian.approxJacobian(x, this.func, arg);
+        if (jacobian == null)
+        {
+            return Jacobian.approxJacobian(x, this.func, arg);
+        }
+        else
+        {
+            return jacobian.apply(x, arg);
+        }
+
     }
 }

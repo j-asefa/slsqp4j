@@ -4,33 +4,57 @@ import sci4j.optimize.slsqp.Jacobian;
 import sci4j.optimize.slsqp.functions.Vector2ScalarFunc;
 import sci4j.optimize.slsqp.functions.Vector2VectorFunc;
 
-public class ScalarConstraint
+public final class ScalarConstraint
 {
     private ConstraintType constraintType;
     private Vector2ScalarFunc constraintFunc;
     private Vector2VectorFunc jacobian;
-    private double[] arg;
+    private double[] args;
 
-    public ScalarConstraint(
-        ConstraintType constraintType,
-        Vector2ScalarFunc constraintFunc,
-        Vector2VectorFunc jacobian,
-        double... arg)
+    public static class ScalarConstraintBuilder
     {
-        this.constraintType = constraintType;
-        this.constraintFunc = constraintFunc;
-        this.jacobian = jacobian;
-        this.arg = arg;
+        private ConstraintType constraintType;
+        private Vector2ScalarFunc constraintFunc;
+        private Vector2VectorFunc jacobian;
+        private double[] args;
+
+        public ScalarConstraintBuilder withConstraintFunction(Vector2ScalarFunc constraintFunc)
+        {
+            this.constraintFunc = constraintFunc;
+            return this;
+        }
+
+        public ScalarConstraintBuilder withConstraintType(ConstraintType constraintType)
+        {
+            this.constraintType = constraintType;
+            return this;
+        }
+
+        public ScalarConstraintBuilder withJacobian(Vector2VectorFunc jacobian)
+        {
+            this.jacobian = jacobian;
+            return this;
+        }
+
+        public ScalarConstraintBuilder withArgs(double... args)
+        {
+            this.args = args;
+            return this;
+        }
+
+        public ScalarConstraint build()
+        {
+            final ScalarConstraint scalarConstraint = new ScalarConstraint();
+            scalarConstraint.constraintType = this.constraintType;
+            scalarConstraint.constraintFunc = this.constraintFunc;
+            scalarConstraint.jacobian = this.jacobian;
+            scalarConstraint.args = this.args;
+            return scalarConstraint;
+        }
     }
 
-    public ScalarConstraint(
-        ConstraintType constraintType,
-        Vector2ScalarFunc constraintFunc,
-        double... arg)
+    private ScalarConstraint()
     {
-        this.constraintType = constraintType;
-        this.constraintFunc = constraintFunc;
-        this.arg = arg;
     }
 
     public ConstraintType getConstraintType()
@@ -42,16 +66,16 @@ public class ScalarConstraint
     {
         if (jacobian == null)
         {
-            return Jacobian.approxJacobian(x, constraintFunc, arg);
+            return Jacobian.approxJacobian(x, constraintFunc, args);
         }
         else
         {
-            return jacobian.apply(x, arg);
+            return jacobian.apply(x, args);
         }
     }
 
     public double apply(double[] x)
     {
-        return constraintFunc.apply(x, arg);
+        return constraintFunc.apply(x, args);
     }
 }

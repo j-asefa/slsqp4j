@@ -4,51 +4,57 @@ import sci4j.optimize.slsqp.Jacobian;
 import sci4j.optimize.slsqp.functions.Vector2MatrixFunc;
 import sci4j.optimize.slsqp.functions.Vector2VectorFunc;
 
-public class VectorConstraint
+public final class VectorConstraint
 {
-    private double[] arg;
+    private double[] args;
     private ConstraintType constraintType;
     private Vector2VectorFunc constraintFunc;
     private Vector2MatrixFunc jacobian;
 
-    /**
-     * Constructs a Vector Constraint to be used by the SLSQP solver
-     *
-     * @param constraintType type of this constraint (EQ, INEQ).
-     * @param constraintFunc vector to vector function representing the constraint function to apply
-     * @param jacobian function outputting the jacobian of the constraint function. Note that the solver expects the
-     *                 Jacobian to be in column-major order, so a call to {@link Jacobian#transpose(double[][])}
-     *                 should be made before passing the jacobian to this function.
-     * @param arg optional arguments to the constraint function
-     */
-    public VectorConstraint(
-        ConstraintType constraintType,
-        Vector2VectorFunc constraintFunc,
-        Vector2MatrixFunc jacobian,
-        double... arg)
+    public static class VectorConstraintBuilder
     {
-        this.constraintType = constraintType;
-        this.constraintFunc = constraintFunc;
-        this.jacobian = jacobian;
-        this.arg = arg;
+        private ConstraintType constraintType;
+        private Vector2VectorFunc constraintFunc;
+        private Vector2MatrixFunc jacobian;
+        private double[] args;
+
+        public VectorConstraint.VectorConstraintBuilder withConstraintFunction(Vector2VectorFunc constraintFunc)
+        {
+            this.constraintFunc = constraintFunc;
+            return this;
+        }
+
+        public VectorConstraint.VectorConstraintBuilder withConstraintType(ConstraintType constraintType)
+        {
+            this.constraintType = constraintType;
+            return this;
+        }
+
+        public VectorConstraint.VectorConstraintBuilder withJacobian(Vector2MatrixFunc jacobian)
+        {
+            this.jacobian = jacobian;
+            return this;
+        }
+
+        public VectorConstraint.VectorConstraintBuilder withArgs(double... args)
+        {
+            this.args = args;
+            return this;
+        }
+
+        public VectorConstraint build()
+        {
+            final VectorConstraint vectorConstraint = new VectorConstraint();
+            vectorConstraint.constraintType = this.constraintType;
+            vectorConstraint.constraintFunc = this.constraintFunc;
+            vectorConstraint.jacobian = this.jacobian;
+            vectorConstraint.args = this.args;
+            return vectorConstraint;
+        }
     }
 
-    /**
-     * Constructs a VectorConstraint that does not take a Jacobian for the constraint function, thus the numerical
-     * approximation for the Jacobian is used.
-     *
-     * @param constraintType type of this constraint (EQ, INEQ).
-     * @param constraintFunc vector to vector function representing the constraint function to apply
-     * @param arg optional arguments to the constraint function
-     */
-    public VectorConstraint(
-        ConstraintType constraintType,
-        Vector2VectorFunc constraintFunc,
-        double... arg)
+    private VectorConstraint()
     {
-        this.constraintType = constraintType;
-        this.constraintFunc = constraintFunc;
-        this.arg = arg;
     }
 
     public ConstraintType getConstraintType()
@@ -60,16 +66,16 @@ public class VectorConstraint
     {
         if (jacobian == null)
         {
-            return Jacobian.approxJacobian(x, constraintFunc, arg);
+            return Jacobian.approxJacobian(x, constraintFunc, args);
         }
         else
         {
-            return jacobian.apply(x, arg);
+            return jacobian.apply(x, args);
         }
     }
 
     public double[] apply(double[] x)
     {
-        return constraintFunc.apply(x, arg);
+        return constraintFunc.apply(x, args);
     }
 }
