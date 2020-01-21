@@ -8,7 +8,7 @@ public class TestUtil
 {
     public static final double ERROR = 1.0E-5;
 
-    // this constraint and input function is taken from the example at
+    // this test case is taken from the example at
     // https://stackoverflow.com/questions/26882087/python-scipy-optimization-minimize-using-slsqp-showing-maximized-results
     public static class TestConstraintFunc implements Vector2ScalarFunc
     {
