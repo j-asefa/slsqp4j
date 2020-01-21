@@ -30,6 +30,5 @@ public class WrappedScalarFunction
         {
             return jacobian.apply(x, arg);
         }
-
     }
 }
