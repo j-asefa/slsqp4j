@@ -6,7 +6,7 @@ import sci4j.optimize.slsqp.constraints.VectorConstraint;
 import sci4j.optimize.slsqp.functions.CallBackFunc;
 import sci4j.optimize.slsqp.functions.Vector2ScalarFunc;
 import sci4j.optimize.slsqp.functions.Vector2VectorFunc;
-import sci4j.optimize.slsqp.functions.WrappedScalarFunction;
+import sci4j.optimize.slsqp.functions.WrappedVector2ScalarFunction;
 import sci4j.optimize.slsqp.util.NativeUtils;
 
 import java.util.Arrays;
@@ -143,8 +143,8 @@ public final class Slsqp
 
     private OptimizeResult solveWithVectorConstraints(double[] x)
     {
-        final WrappedScalarFunction wrappedObjectiveFunction =
-            new WrappedScalarFunction(objectiveFunc, objectiveFuncJacobian, objectiveFunctionArgs);
+        final WrappedVector2ScalarFunction wrappedObjectiveFunction =
+            new WrappedVector2ScalarFunction(objectiveFunc, objectiveFuncJacobian, objectiveFunctionArgs);
 
         final int n = x.length;
 
@@ -190,6 +190,7 @@ public final class Slsqp
         final double[] g = new double[nPlus1];
 
         final double[] c = new double[la];
+
         // Note that Fortran expects arrays to be laid out in column-major order.
         final double[][] a = new double[nPlus1][la];
 
@@ -297,13 +298,13 @@ public final class Slsqp
 
             majIterPrev = majIter[0];
         }
-        return new OptimizeResult(x, fx, g, mode[0], majIter[0], mode[0], mode[0] == 0, a);
+        return new OptimizeResult(x, fx, g, majIter[0], mode[0], mode[0] == 0, a);
     }
 
     private OptimizeResult solveWithScalarConstraints(double[] x)
     {
-        final WrappedScalarFunction wrappedObjectiveFunction =
-            new WrappedScalarFunction(objectiveFunc, objectiveFuncJacobian, objectiveFunctionArgs);
+        final WrappedVector2ScalarFunction wrappedObjectiveFunction =
+            new WrappedVector2ScalarFunction(objectiveFunc, objectiveFuncJacobian, objectiveFunctionArgs);
 
         final int n = x.length;
 
@@ -429,7 +430,7 @@ public final class Slsqp
 
             majIterPrev = majIter[0];
         }
-        return new OptimizeResult(x, fx, g, mode[0], majIter[0], mode[0], mode[0] == 0, a);
+        return new OptimizeResult(x, fx, g, majIter[0], mode[0], mode[0] == 0, a);
     }
 
     private void computeBounds(int n, double[][] bounds, double[] xl, double[] xu)

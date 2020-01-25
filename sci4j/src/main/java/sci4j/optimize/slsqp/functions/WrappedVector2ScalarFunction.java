@@ -2,13 +2,13 @@ package sci4j.optimize.slsqp.functions;
 
 import sci4j.optimize.slsqp.Jacobian;
 
-public class WrappedScalarFunction
+public class WrappedVector2ScalarFunction
 {
     private final Vector2ScalarFunc func;
     private final double[] arg;
     private final Vector2VectorFunc jacobian;
 
-    public WrappedScalarFunction(Vector2ScalarFunc func, Vector2VectorFunc jacobian, double... arg)
+    public WrappedVector2ScalarFunction(Vector2ScalarFunc func, Vector2VectorFunc jacobian, double... arg)
     {
         this.func = func;
         this.jacobian = jacobian;
