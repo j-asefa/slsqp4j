@@ -133,15 +133,15 @@ public final class Slsqp
     {
         if (this.vectorConstraints == null)
         {
-            return solveWithScalarConstraints(x);
+            return optimizeWithScalarConstraints(x);
         }
         else
         {
-            return solveWithVectorConstraints(x);
+            return optimizeWithVectorConstraints(x);
         }
     }
 
-    private OptimizeResult solveWithVectorConstraints(double[] x)
+    private OptimizeResult optimizeWithVectorConstraints(double[] x)
     {
         final WrappedVector2ScalarFunction wrappedObjectiveFunction =
             new WrappedVector2ScalarFunction(objectiveFunc, objectiveFuncJacobian, objectiveFunctionArgs);
@@ -301,7 +301,7 @@ public final class Slsqp
         return new OptimizeResult(x, fx, g, majIter[0], mode[0], mode[0] == 0, a);
     }
 
-    private OptimizeResult solveWithScalarConstraints(double[] x)
+    private OptimizeResult optimizeWithScalarConstraints(double[] x)
     {
         final WrappedVector2ScalarFunction wrappedObjectiveFunction =
             new WrappedVector2ScalarFunction(objectiveFunc, objectiveFuncJacobian, objectiveFunctionArgs);
