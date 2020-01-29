@@ -18,7 +18,10 @@ public final class VectorConstraint
         private Vector2MatrixFunc jacobian;
         private double[] args;
 
-        public VectorConstraint.VectorConstraintBuilder withConstraintFunction(Vector2VectorFunc constraintFunc, double... args)
+        public VectorConstraint.VectorConstraintBuilder withConstraintFunction(
+            Vector2VectorFunc constraintFunc,
+            double... args
+        )
         {
             this.constraintFunc = constraintFunc;
             this.args = args;

@@ -78,7 +78,8 @@ public final class Slsqp
 
         public Slsqp build()
         {
-            if (!this.scalarConstraints.isEmpty() && !this.vectorConstraints.isEmpty()) {
+            if (!this.scalarConstraints.isEmpty() && !this.vectorConstraints.isEmpty())
+            {
                 throw new IllegalStateException("cannot specify both vector and scalar constraints");
             }
             final Slsqp slsqp = new Slsqp();
