@@ -25,9 +25,10 @@ public final class Slsqp
         private double[] objectiveFunctionArgs;
         private VectorConstraint[] vectorConstraints;
 
-        public SlsqpBuilder withObjectiveFunction(Vector2ScalarFunc objectiveFunc)
+        public SlsqpBuilder withObjectiveFunction(Vector2ScalarFunc objectiveFunc, double... objectiveFunctionArgs)
         {
             this.objectiveFunc = objectiveFunc;
+            this.objectiveFunctionArgs = objectiveFunctionArgs;
             return this;
         }
 
@@ -43,13 +44,13 @@ public final class Slsqp
             return this;
         }
 
-        public SlsqpBuilder withScalarConstraints(ScalarConstraint[] scalarConstraints)
+        public SlsqpBuilder addScalarConstraint(ScalarConstraint[] scalarConstraints)
         {
             this.scalarConstraints = scalarConstraints;
             return this;
         }
 
-        public SlsqpBuilder withVectorConstraints(VectorConstraint[] vectorConstraints)
+        public SlsqpBuilder addVectorConstraint(VectorConstraint[] vectorConstraints)
         {
             this.vectorConstraints = vectorConstraints;
             return this;
@@ -70,12 +71,6 @@ public final class Slsqp
         public SlsqpBuilder withCallBackFunction(CallBackFunc callBackFunc)
         {
             this.callBackFunc = callBackFunc;
-            return this;
-        }
-
-        public SlsqpBuilder withObjectiveFunctionArguments(double... objectiveFunctionArgs)
-        {
-            this.objectiveFunctionArgs = objectiveFunctionArgs;
             return this;
         }
 

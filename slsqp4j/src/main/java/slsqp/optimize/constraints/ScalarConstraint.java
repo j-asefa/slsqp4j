@@ -18,9 +18,10 @@ public final class ScalarConstraint
         private Vector2VectorFunc jacobian;
         private double[] args;
 
-        public ScalarConstraintBuilder withConstraintFunction(Vector2ScalarFunc constraintFunc)
+        public ScalarConstraintBuilder withConstraintFunction(Vector2ScalarFunc constraintFunc, double... args)
         {
             this.constraintFunc = constraintFunc;
+            this.args = args;
             return this;
         }
 
@@ -33,12 +34,6 @@ public final class ScalarConstraint
         public ScalarConstraintBuilder withJacobian(Vector2VectorFunc jacobian)
         {
             this.jacobian = jacobian;
-            return this;
-        }
-
-        public ScalarConstraintBuilder withArgs(double... args)
-        {
-            this.args = args;
             return this;
         }
 

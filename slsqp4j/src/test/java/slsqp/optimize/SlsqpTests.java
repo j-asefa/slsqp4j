@@ -40,12 +40,11 @@ public class SlsqpTests
         final double tolerance = 1.0E-6;
         final int maxIter = 100;
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(objectiveFunc)
+            .withObjectiveFunction(objectiveFunc, 1)
             .withBounds(bounds)
-            .withScalarConstraints(constraintList)
+            .addScalarConstraint(constraintList)
             .withTolerance(tolerance)
             .withMaxIterations(maxIter)
-            .withObjectiveFunctionArguments(1)
             .build();
 
         final OptimizeResult result = slsqp.optimize(x);
@@ -78,12 +77,11 @@ public class SlsqpTests
         final int maxIter = 100;
 
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(objectiveFunc)
+            .withObjectiveFunction(objectiveFunc, 1)
             .withBounds(bounds)
-            .withScalarConstraints(constraintList)
+            .addScalarConstraint(constraintList)
             .withTolerance(tolerance)
             .withMaxIterations(maxIter)
-            .withObjectiveFunctionArguments(1)
             .build();
 
         final OptimizeResult result = slsqp.optimize(x);
@@ -105,12 +103,11 @@ public class SlsqpTests
         constraints[0] = constraint;
 
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(new TestUtil.Fun())
+            .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
-            .withScalarConstraints(constraints)
+            .addScalarConstraint(constraints)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
-            .withObjectiveFunctionArguments(-1)
             .build();
 
         final OptimizeResult result = slsqp.optimize(x);
@@ -137,11 +134,10 @@ public class SlsqpTests
         constraints[0] = constraint;
 
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(objectiveFunction)
-            .withScalarConstraints(constraints)
+            .withObjectiveFunction(objectiveFunction, 1)
+            .addScalarConstraint(constraints)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
-            .withObjectiveFunctionArguments(1)
             .build();
 
         final OptimizeResult result = slsqp.optimize(x);
@@ -175,11 +171,10 @@ public class SlsqpTests
         constraintList2[0] = constraint2;
 
         final Slsqp slsqp1 = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(objectiveFunction)
-            .withScalarConstraints(constraintList1)
+            .withObjectiveFunction(objectiveFunction, -1)
+            .addScalarConstraint(constraintList1)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
-            .withObjectiveFunctionArguments(-1)
             .build();
 
         OptimizeResult result = slsqp1.optimize(x);
@@ -192,11 +187,10 @@ public class SlsqpTests
         x = new double[] {-10};
 
         final Slsqp slsqp2 = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(objectiveFunction)
-            .withScalarConstraints(constraintList2)
+            .withObjectiveFunction(objectiveFunction, -1)
+            .addScalarConstraint(constraintList2)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
-            .withObjectiveFunctionArguments(-1)
             .build();
         result = slsqp2.optimize(x);
         resX = result.x;
@@ -213,17 +207,15 @@ public class SlsqpTests
         final VectorConstraint[] constraints = new VectorConstraint[1];
         final VectorConstraint constraint = new VectorConstraint.VectorConstraintBuilder()
             .withConstraintType(ConstraintType.EQ)
-            .withConstraintFunction(new TestUtil.Fecon())
-            .withArgs(-1)
+            .withConstraintFunction(new TestUtil.Fecon(), -1)
             .build();
         constraints[0] = constraint;
 
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(new TestUtil.Fun())
-            .withVectorConstraints(constraints)
+            .withObjectiveFunction(new TestUtil.Fun(), -1)
+            .addVectorConstraint(constraints)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
-            .withObjectiveFunctionArguments(-1)
             .build();
 
         final OptimizeResult result = slsqp.optimize(new double[] {-1, 1});
@@ -241,18 +233,16 @@ public class SlsqpTests
         final VectorConstraint[] constraints = new VectorConstraint[1];
         final VectorConstraint constraint = new VectorConstraint.VectorConstraintBuilder()
             .withConstraintType(ConstraintType.EQ)
-            .withConstraintFunction(new TestUtil.Fecon())
-            .withArgs(-1)
+            .withConstraintFunction(new TestUtil.Fecon(), -1)
             .build();
         constraints[0] = constraint;
 
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(new TestUtil.Fun())
+            .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
-            .withVectorConstraints(constraints)
+            .addVectorConstraint(constraints)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
-            .withObjectiveFunctionArguments(-1)
             .build();
 
         final OptimizeResult result = slsqp.optimize(x);
@@ -270,18 +260,16 @@ public class SlsqpTests
         final VectorConstraint[] constraints = new VectorConstraint[1];
         final VectorConstraint constraint = new VectorConstraint.VectorConstraintBuilder()
             .withConstraintType(ConstraintType.INEQ)
-            .withConstraintFunction(new TestUtil.Fieqcon())
-            .withArgs(-1)
+            .withConstraintFunction(new TestUtil.Fieqcon(), -1)
             .build();
         constraints[0] = constraint;
 
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(new TestUtil.Fun())
+            .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
-            .withVectorConstraints(constraints)
+            .addVectorConstraint(constraints)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
-            .withObjectiveFunctionArguments(-1)
             .build();
 
         final OptimizeResult result = slsqp.optimize(x);
@@ -299,19 +287,17 @@ public class SlsqpTests
         final VectorConstraint[] constraints = new VectorConstraint[1];
         final VectorConstraint constraint = new VectorConstraint.VectorConstraintBuilder()
             .withConstraintType(ConstraintType.INEQ)
-            .withConstraintFunction(new TestUtil.Fieqcon2())
+            .withConstraintFunction(new TestUtil.Fieqcon2(), -1)
             .withJacobian(new TestUtil.FprimeIeqcon2())
-            .withArgs(-1)
             .build();
         constraints[0] = constraint;
 
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(new TestUtil.Fun())
+            .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
-            .withVectorConstraints(constraints)
+            .addVectorConstraint(constraints)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
-            .withObjectiveFunctionArguments(-1)
             .build();
 
         final OptimizeResult result = slsqp.optimize(x);
@@ -337,20 +323,18 @@ public class SlsqpTests
 
         final VectorConstraint constraint = new VectorConstraint.VectorConstraintBuilder()
             .withConstraintType(ConstraintType.EQ)
-            .withConstraintFunction(new TestUtil.Fecon())
+            .withConstraintFunction(new TestUtil.Fecon(), -1)
             .withJacobian(constraintJac)
-            .withArgs(-1)
             .build();
         constraints[0] = constraint;
 
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(new TestUtil.Fun())
+            .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
             .withBounds(bounds)
-            .withVectorConstraints(constraints)
+            .addVectorConstraint(constraints)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
-            .withObjectiveFunctionArguments(-1)
             .build();
 
         final OptimizeResult result = slsqp.optimize(x);
@@ -392,11 +376,10 @@ public class SlsqpTests
         };
 
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(objectiveFunction)
-            .withVectorConstraints(constraints)
+            .withObjectiveFunction(objectiveFunction, -1)
+            .addVectorConstraint(constraints)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
-            .withObjectiveFunctionArguments(-1)
             .build();
 
         final OptimizeResult result = slsqp.optimize(x);
@@ -448,12 +431,11 @@ public class SlsqpTests
         };
 
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(objectiveFunction)
+            .withObjectiveFunction(objectiveFunction, -1)
             .withBounds(bounds)
-            .withVectorConstraints(constraints)
+            .addVectorConstraint(constraints)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
-            .withObjectiveFunctionArguments(-1)
             .build();
 
         final OptimizeResult result = slsqp.optimize(x);
