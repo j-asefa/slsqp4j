@@ -87,7 +87,7 @@ public final class NativeUtils
 
     static
     {
-        loadLib("/libslsqp_solver.so");
+        loadLib("/libslsqp.so");
     }
 
     public static void slsqp(
