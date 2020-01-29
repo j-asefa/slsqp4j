@@ -38,7 +38,7 @@ public class SlsqpTests
         final double tolerance = 1.0E-6;
         final int maxIter = 100;
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(objectiveFunc, 1)
+            .withObjectiveFunction(objectiveFunc)
             .withBounds(bounds)
             .addConstraint(constraint)
             .withTolerance(tolerance)
@@ -71,7 +71,7 @@ public class SlsqpTests
         final int maxIter = 100;
 
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(objectiveFunc, 1)
+            .withObjectiveFunction(objectiveFunc)
             .withBounds(bounds)
             .addConstraint(constraint)
             .withTolerance(tolerance)
@@ -122,7 +122,7 @@ public class SlsqpTests
             .build();
 
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
-            .withObjectiveFunction(objectiveFunction, 1)
+            .withObjectiveFunction(objectiveFunction)
             .addConstraint(constraint)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
