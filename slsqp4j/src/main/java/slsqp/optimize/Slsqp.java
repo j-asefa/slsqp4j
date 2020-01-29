@@ -10,6 +10,8 @@ import slsqp.optimize.functions.WrappedVector2ScalarFunction;
 import slsqp.optimize.util.NativeUtils;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class Slsqp
 {
@@ -18,12 +20,12 @@ public final class Slsqp
         private Vector2ScalarFunc objectiveFunc;
         private Vector2VectorFunc objectiveFuncJacobian;
         private double[][] bounds;
-        private ScalarConstraint[] scalarConstraints;
+        private Set<ScalarConstraint> scalarConstraints = new HashSet<>();
+        private Set<VectorConstraint> vectorConstraints = new HashSet<>();
         private double tolerance;
         private int maxIterations;
         private CallBackFunc callBackFunc;
         private double[] objectiveFunctionArgs;
-        private VectorConstraint[] vectorConstraints;
 
         public SlsqpBuilder withObjectiveFunction(Vector2ScalarFunc objectiveFunc, double... objectiveFunctionArgs)
         {
@@ -44,15 +46,15 @@ public final class Slsqp
             return this;
         }
 
-        public SlsqpBuilder addScalarConstraint(ScalarConstraint[] scalarConstraints)
+        public SlsqpBuilder addConstraint(ScalarConstraint scalarConstraint)
         {
-            this.scalarConstraints = scalarConstraints;
+            this.scalarConstraints.add(scalarConstraint);
             return this;
         }
 
-        public SlsqpBuilder addVectorConstraint(VectorConstraint[] vectorConstraints)
+        public SlsqpBuilder addConstraint(VectorConstraint vectorConstraint)
         {
-            this.vectorConstraints = vectorConstraints;
+            this.vectorConstraints.add(vectorConstraint);
             return this;
         }
 
@@ -76,16 +78,19 @@ public final class Slsqp
 
         public Slsqp build()
         {
+            if (!this.scalarConstraints.isEmpty() && !this.vectorConstraints.isEmpty()) {
+                throw new IllegalStateException("cannot specify both vector and scalar constraints");
+            }
             final Slsqp slsqp = new Slsqp();
             slsqp.objectiveFunc = this.objectiveFunc;
             slsqp.objectiveFuncJacobian = this.objectiveFuncJacobian;
             slsqp.bounds = this.bounds;
             slsqp.scalarConstraints = this.scalarConstraints;
+            slsqp.vectorConstraints = this.vectorConstraints;
             slsqp.tolerance = this.tolerance;
             slsqp.maxIterations = this.maxIterations;
             slsqp.callBackFunc = this.callBackFunc;
             slsqp.objectiveFunctionArgs = this.objectiveFunctionArgs;
-            slsqp.vectorConstraints = this.vectorConstraints;
             return slsqp;
         }
     }
@@ -97,12 +102,12 @@ public final class Slsqp
     private Vector2ScalarFunc objectiveFunc;
     private Vector2VectorFunc objectiveFuncJacobian;
     private double[][] bounds;
-    private ScalarConstraint[] scalarConstraints;
+    private Set<ScalarConstraint> scalarConstraints;
+    private Set<VectorConstraint> vectorConstraints;
     private double tolerance;
     private int maxIterations;
     private CallBackFunc callBackFunc;
     private double[] objectiveFunctionArgs;
-    private VectorConstraint[] vectorConstraints;
 
     private final double[] alpha = new double[]{0};
     private final double[] f0 = new double[]{0};
@@ -126,7 +131,7 @@ public final class Slsqp
 
     public OptimizeResult optimize(double[] x)
     {
-        if (this.vectorConstraints == null)
+        if (this.vectorConstraints.isEmpty())
         {
             return optimizeWithScalarConstraints(x);
         }
@@ -312,8 +317,8 @@ public final class Slsqp
 
         clip(x, xl, xu);
 
-        final int m = scalarConstraints.length;
-        final int meq = (int)Arrays.stream(scalarConstraints).filter(
+        final int m = scalarConstraints.size();
+        final int meq = (int)scalarConstraints.stream().filter(
             p -> p.getConstraintType() == ConstraintType.EQ
         ).count();
 
