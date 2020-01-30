@@ -130,19 +130,19 @@ public final class Slsqp
     private final int[] n3 = new int[]{0};
     private final int[] mode = new int[]{0};
 
-    public OptimizeResult optimize(double[] x)
+    public OptimizeResult minimize(double[] x)
     {
         if (this.vectorConstraints.isEmpty())
         {
-            return optimizeWithScalarConstraints(x);
+            return minimizeWithScalarConstraints(x);
         }
         else
         {
-            return optimizeWithVectorConstraints(x);
+            return minimizeWithVectorConstraints(x);
         }
     }
 
-    private OptimizeResult optimizeWithVectorConstraints(double[] x)
+    private OptimizeResult minimizeWithVectorConstraints(double[] x)
     {
         final WrappedVector2ScalarFunction wrappedObjectiveFunction =
             new WrappedVector2ScalarFunction(objectiveFunc, objectiveFuncJacobian, objectiveFunctionArgs);
@@ -302,7 +302,7 @@ public final class Slsqp
         return new OptimizeResult(x, fx, g, majIter[0], mode[0], mode[0] == 0, a);
     }
 
-    private OptimizeResult optimizeWithScalarConstraints(double[] x)
+    private OptimizeResult minimizeWithScalarConstraints(double[] x)
     {
         final WrappedVector2ScalarFunction wrappedObjectiveFunction =
             new WrappedVector2ScalarFunction(objectiveFunc, objectiveFuncJacobian, objectiveFunctionArgs);

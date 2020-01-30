@@ -45,7 +45,7 @@ public class SlsqpTests
             .withMaxIterations(maxIter)
             .build();
 
-        final OptimizeResult result = slsqp.optimize(x);
+        final OptimizeResult result = slsqp.minimize(x);
 
         assertTrue(Math.abs(result.x[0] - 2.5) < TestUtil.ERROR);
         assertTrue(Math.abs(result.x[1] - 2.5) < TestUtil.ERROR);
@@ -78,7 +78,7 @@ public class SlsqpTests
             .withMaxIterations(maxIter)
             .build();
 
-        final OptimizeResult result = slsqp.optimize(x);
+        final OptimizeResult result = slsqp.minimize(x);
         assertTrue(Math.abs(result.x[0] - 1.99840144e-14) < TestUtil.ERROR);
         assertTrue(Math.abs(result.x[1] - 5) < TestUtil.ERROR);
         assertTrue(result.success);
@@ -102,7 +102,7 @@ public class SlsqpTests
             .withMaxIterations(defaultMaxIter)
             .build();
 
-        final OptimizeResult result = slsqp.optimize(x);
+        final OptimizeResult result = slsqp.minimize(x);
         final double[] expected = {1, 1};
         assertTrue(Math.abs(result.x[0] - expected[0]) < TestUtil.ERROR);
         assertTrue(Math.abs(result.x[1] - expected[1]) < TestUtil.ERROR);
@@ -128,7 +128,7 @@ public class SlsqpTests
             .withMaxIterations(defaultMaxIter)
             .build();
 
-        final OptimizeResult result = slsqp.optimize(x);
+        final OptimizeResult result = slsqp.minimize(x);
         final double[] resX = result.x;
         final double[] expected = {1};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
@@ -161,7 +161,7 @@ public class SlsqpTests
             .withMaxIterations(defaultMaxIter)
             .build();
 
-        OptimizeResult result = slsqp1.optimize(x);
+        OptimizeResult result = slsqp1.minimize(x);
 
         double[] resX = result.x;
         double[] expected = {0};
@@ -176,7 +176,7 @@ public class SlsqpTests
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
-        result = slsqp2.optimize(x);
+        result = slsqp2.minimize(x);
         resX = result.x;
         expected = new double[]{2};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
@@ -200,7 +200,7 @@ public class SlsqpTests
             .withMaxIterations(defaultMaxIter)
             .build();
 
-        final OptimizeResult result = slsqp.optimize(new double[] {-1, 1});
+        final OptimizeResult result = slsqp.minimize(new double[] {-1, 1});
         final double[] resX = result.x;
         final double[] expected = {1, 1};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
@@ -225,7 +225,7 @@ public class SlsqpTests
             .withMaxIterations(defaultMaxIter)
             .build();
 
-        final OptimizeResult result = slsqp.optimize(x);
+        final OptimizeResult result = slsqp.minimize(x);
         final double[] resX = result.x;
         final double[] expected = {1, 1};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
@@ -250,7 +250,7 @@ public class SlsqpTests
             .withMaxIterations(defaultMaxIter)
             .build();
 
-        final OptimizeResult result = slsqp.optimize(x);
+        final OptimizeResult result = slsqp.minimize(x);
         final double[] resX = result.x;
         final double[] expected = {2, 1};
         assertTrue(Math.abs(resX[0] - expected[0]) < 1.0E-3);
@@ -259,7 +259,7 @@ public class SlsqpTests
     }
 
     @Test
-    public void testMinimizeInequalityGivenVectorConstraints()
+    public void testMinimizeInequalityGiven2()
     {
         final double[] x = new double[]{-1, 1};
         final VectorConstraint constraint = new VectorConstraint.VectorConstraintBuilder()
@@ -276,7 +276,7 @@ public class SlsqpTests
             .withMaxIterations(defaultMaxIter)
             .build();
 
-        final OptimizeResult result = slsqp.optimize(x);
+        final OptimizeResult result = slsqp.minimize(x);
         final double[] resX = result.x;
         final double[] expected = {2, 1};
         assertTrue(Math.abs(resX[0] - expected[0]) < 1.0E-3);
@@ -285,7 +285,7 @@ public class SlsqpTests
     }
 
     @Test
-    public void testMinimizeBoundEqualityGiven2()
+    public void testMinimizeBoundedEqualityConstraint()
     {
         final double[] x = new double[]{-1, 1};
 
@@ -311,7 +311,7 @@ public class SlsqpTests
             .withMaxIterations(defaultMaxIter)
             .build();
 
-        final OptimizeResult result = slsqp.optimize(x);
+        final OptimizeResult result = slsqp.minimize(x);
         final double[] resX = result.x;
         final double[] expected = {0.8, 0.8};
         assertTrue(Math.abs(resX[0] - expected[0]) < 1.0E-3);
@@ -322,7 +322,7 @@ public class SlsqpTests
     }
 
     @Test
-    public void testLargerMatrix()
+    public void test4DVector()
     {
         final double[] x = new double[]{0.84, 1.3, -0.992, 0.18};
         final Vector2VectorFunc constraintFunc = (x1, arg) -> x1;
@@ -353,7 +353,7 @@ public class SlsqpTests
             .withMaxIterations(defaultMaxIter)
             .build();
 
-        final OptimizeResult result = slsqp.optimize(x);
+        final OptimizeResult result = slsqp.minimize(x);
 
         final double[] resX = result.x;
         final double[] expected = {
@@ -369,7 +369,7 @@ public class SlsqpTests
     }
 
     @Test
-    public void testLargerMatrixWithBounds()
+    public void test4DVectorWithBounds()
     {
         final double[] x = new double[]{0.84, 1.3, -0.992, 0.18};
 
@@ -406,7 +406,7 @@ public class SlsqpTests
             .withMaxIterations(defaultMaxIter)
             .build();
 
-        final OptimizeResult result = slsqp.optimize(x);
+        final OptimizeResult result = slsqp.minimize(x);
         final double[] resX = result.x;
         final double[] expected = {1.00000000e+00, -1.33226763e-15, -1.33226763e-15, -4.99600361e-16};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
@@ -453,7 +453,7 @@ public class SlsqpTests
             .withMaxIterations(defaultMaxIter)
             .build();
 
-        final OptimizeResult result = slsqp.optimize(x);
+        final OptimizeResult result = slsqp.minimize(x);
         final double[] resX = result.x;
         final double[] expected = {-2.38418578e-08, -2.38418574e-08};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
@@ -462,7 +462,7 @@ public class SlsqpTests
     }
 
     @Test
-    public void testNoConstraints()
+    public void testUnconstrained()
     {
         final double[] x = new double[]{-1.4, 0.9};
 
@@ -478,7 +478,7 @@ public class SlsqpTests
             .withMaxIterations(defaultMaxIter)
             .build();
 
-        final OptimizeResult result = slsqp.optimize(x);
+        final OptimizeResult result = slsqp.minimize(x);
         final double[] resX = result.x;
         final double[] expected = {1, 0.5};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
