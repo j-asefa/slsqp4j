@@ -26,7 +26,7 @@ task generateJniHeaders(type: Exec) {
     group "Build"
     description "Generates the JNI headers."
     commandLine 'javac' ,'-h', slsqpHeadersDir, compFile, '-d', classOutputDir
-    dependsOn classes, prepareC
+    dependsOn prepareC
 }
 
 task compileC(type: Exec) {
@@ -63,5 +63,5 @@ sourceSets {
     }
 }
 
-build.dependsOn 'copySharedLibraries'
+compileJava.dependsOn 'copySharedLibraries'
 test.dependsOn 'copySharedLibraries'
