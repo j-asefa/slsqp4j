@@ -18,7 +18,6 @@ subprojects {
     apply plugin: 'checkstyle'
     apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'org.junit.platform.gradle.plugin'
-    apply plugin: 'jacoco'
     apply plugin: 'checkstyle'
     apply plugin: 'maven-publish'
 
@@ -64,35 +63,6 @@ subprojects {
     checkstyle {
         toolVersion = checkstyleVersion
         configDir = file("$rootDir/config/checkstyle")
-    }
-
-    jacoco {
-        toolVersion = '0.8.3'
-        applyTo junitPlatformTest
-    }
-
-    junitPlatformTest {
-        jacoco {
-            destinationFile = file("$buildDir/jacoco/test.exec")
-        }
-    }
-
-    jacocoTestReport {
-        reports {
-            xml.enabled false
-            csv.enabled false
-            html.destination file("${buildDir}/jacoco/html")
-        }
-    }
-
-    jacocoTestCoverageVerification {
-        violationRules {
-            rule {
-                limit {
-                    minimum = 0.85
-                }
-            }
-        }
     }
 
     sourceCompatibility = 1.8

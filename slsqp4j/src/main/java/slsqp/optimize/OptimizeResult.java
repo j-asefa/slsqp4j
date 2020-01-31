@@ -1,6 +1,6 @@
 package slsqp.optimize;
 
-public class OptimizeResult
+class OptimizeResult
 {
     public final double[] x;
     public final double fx;
@@ -10,7 +10,7 @@ public class OptimizeResult
     public final boolean success;
     public double[][] a;
 
-    public OptimizeResult(
+    OptimizeResult(
         double[] x,
         double fx,
         double[] jac,

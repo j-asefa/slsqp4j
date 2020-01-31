@@ -97,7 +97,7 @@ public final class NativeUtils
         double[] x,
         double[] xl,
         double[] xu,
-        double[] fx,
+        double fx,
         double[] c,
         double[] g,
         double[][] a,
@@ -125,7 +125,7 @@ public final class NativeUtils
         int[] n2,
         int[] n3)
     {
-        slsqp(m, meq, la, x.length, x, xl, xu, fx[0], c, g, a, acc, majiter, mode, w, w.length, jw, jw.length,
+        slsqp(m, meq, la, x.length, x, xl, xu, fx, c, g, a, acc, majiter, mode, w, w.length, jw, jw.length,
             alpha, f0, gs, h1, h2, h3, h4, t, t0, tol, iexact, incons, ireset, itermx, line, n1, n2, n3);
     }
 }
