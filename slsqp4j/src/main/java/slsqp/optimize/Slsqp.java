@@ -282,7 +282,7 @@ public final class Slsqp
                 }
             }
 
-            NativeUtils.slsqp(m, meq, la, x, xl, xu, new double[] {fx}, c, g, a, acc, majIter, mode, w, jw,
+            NativeUtils.slsqp(m, meq, la, x, xl, xu, fx, c, g, a, acc, majIter, mode, w, jw,
                 alpha, f0, gs, h1, h2, h3, h4, t, t0, tol,
                 iexact, incons, ireset, itermx, line,
                 n1, n2, n3);
@@ -414,7 +414,7 @@ public final class Slsqp
                 }
             }
 
-            NativeUtils.slsqp(m, meq, la, x, xl, xu, new double[] {fx}, c, g, a, acc, majIter, mode, w, jw,
+            NativeUtils.slsqp(m, meq, la, x, xl, xu, fx, c, g, a, acc, majIter, mode, w, jw,
                 alpha, f0, gs, h1, h2, h3, h4, t, t0, tol,
                 iexact, incons, ireset, itermx, line,
                 n1, n2, n3);
