@@ -46,13 +46,13 @@ public final class Slsqp
             return this;
         }
 
-        public SlsqpBuilder addConstraint(ScalarConstraint scalarConstraint)
+        public SlsqpBuilder addScalarConstraint(ScalarConstraint scalarConstraint)
         {
             this.scalarConstraints.add(scalarConstraint);
             return this;
         }
 
-        public SlsqpBuilder addConstraint(VectorConstraint vectorConstraint)
+        public SlsqpBuilder addVectorConstraint(VectorConstraint vectorConstraint)
         {
             this.vectorConstraints.add(vectorConstraint);
             return this;

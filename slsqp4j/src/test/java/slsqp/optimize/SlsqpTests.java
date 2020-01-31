@@ -40,7 +40,7 @@ public class SlsqpTests
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(objectiveFunc)
             .withBounds(bounds)
-            .addConstraint(constraint)
+            .addScalarConstraint(constraint)
             .withTolerance(tolerance)
             .withMaxIterations(maxIter)
             .build();
@@ -73,7 +73,7 @@ public class SlsqpTests
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(objectiveFunc)
             .withBounds(bounds)
-            .addConstraint(constraint)
+            .addScalarConstraint(constraint)
             .withTolerance(tolerance)
             .withMaxIterations(maxIter)
             .build();
@@ -97,7 +97,7 @@ public class SlsqpTests
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
-            .addConstraint(constraint)
+            .addScalarConstraint(constraint)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
@@ -123,7 +123,7 @@ public class SlsqpTests
 
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(objectiveFunction)
-            .addConstraint(constraint)
+            .addScalarConstraint(constraint)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
@@ -156,7 +156,7 @@ public class SlsqpTests
 
         final Slsqp slsqp1 = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(objectiveFunction, -1)
-            .addConstraint(constraint1)
+            .addScalarConstraint(constraint1)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
@@ -172,7 +172,7 @@ public class SlsqpTests
 
         final Slsqp slsqp2 = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(objectiveFunction, -1)
-            .addConstraint(constraint2)
+            .addScalarConstraint(constraint2)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
@@ -195,7 +195,7 @@ public class SlsqpTests
 
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(new TestUtil.Fun(), -1)
-            .addConstraint(constraint)
+            .addVectorConstraint(constraint)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
@@ -220,7 +220,7 @@ public class SlsqpTests
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
-            .addConstraint(constraint)
+            .addVectorConstraint(constraint)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
@@ -245,7 +245,7 @@ public class SlsqpTests
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
-            .addConstraint(constraint)
+            .addVectorConstraint(constraint)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
@@ -271,7 +271,7 @@ public class SlsqpTests
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
-            .addConstraint(constraint)
+            .addVectorConstraint(constraint)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
@@ -306,7 +306,7 @@ public class SlsqpTests
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
             .withBounds(bounds)
-            .addConstraint(constraint)
+            .addVectorConstraint(constraint)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
@@ -348,7 +348,7 @@ public class SlsqpTests
 
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(objectiveFunction, -1)
-            .addConstraint(constraint)
+            .addVectorConstraint(constraint)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
@@ -401,14 +401,14 @@ public class SlsqpTests
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(objectiveFunction, -1)
             .withBounds(bounds)
-            .addConstraint(constraint)
+            .addVectorConstraint(constraint)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
         final double[] resX = result.x;
-        final double[] expected = {1.00000000e+00, -1.33226763e-15, -1.33226763e-15, -4.99600361e-16};
+        final double[] expected = {1.0, -1.33226763e-15, -1.33226763e-15, -4.99600361e-16};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[1] - expected[1]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[2] - expected[2]) < TestUtil.ERROR);
@@ -446,16 +446,16 @@ public class SlsqpTests
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
             .withBounds(bounds)
-            .addConstraint(constraint1)
-            .addConstraint(constraint2)
-            .addConstraint(constraint3)
+            .addVectorConstraint(constraint1)
+            .addVectorConstraint(constraint2)
+            .addVectorConstraint(constraint3)
             .withTolerance(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
         final double[] resX = result.x;
-        final double[] expected = {-2.38418578e-08, -2.38418574e-08};
+        final double[] expected = {-2.38418578e-8, -2.38418574e-8};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[1] - expected[1]) < TestUtil.ERROR);
         assertTrue(result.success);
