@@ -83,15 +83,17 @@ public final class Slsqp
                 throw new IllegalStateException("cannot specify both vector and scalar constraints");
             }
             final Slsqp slsqp = new Slsqp();
-            slsqp.objectiveFunc = this.objectiveFunc;
-            slsqp.objectiveFuncJacobian = this.objectiveFuncJacobian;
             slsqp.bounds = this.bounds;
             slsqp.scalarConstraints = this.scalarConstraints;
             slsqp.vectorConstraints = this.vectorConstraints;
             slsqp.tolerance = this.tolerance;
             slsqp.maxIterations = this.maxIterations;
             slsqp.callBackFunc = this.callBackFunc;
-            slsqp.objectiveFunctionArgs = this.objectiveFunctionArgs;
+            slsqp.wrappedObjectiveFunction =
+                new WrappedVector2ScalarFunction(objectiveFunc, objectiveFuncJacobian, objectiveFunctionArgs);
+
+            slsqp.majIter = new int[] {maxIterations};
+            slsqp.acc = new double[] {tolerance};
             return slsqp;
         }
     }
@@ -100,15 +102,17 @@ public final class Slsqp
     {
     }
 
-    private Vector2ScalarFunc objectiveFunc;
-    private Vector2VectorFunc objectiveFuncJacobian;
     private double[][] bounds;
     private Set<ScalarConstraint> scalarConstraints;
     private Set<VectorConstraint> vectorConstraints;
     private double tolerance;
     private int maxIterations;
     private CallBackFunc callBackFunc;
-    private double[] objectiveFunctionArgs;
+    private WrappedVector2ScalarFunction wrappedObjectiveFunction;
+    private int[] majIter = new int[] {maxIterations};
+    private double[] acc = new double[] {tolerance};
+
+
 
     private final double[] alpha = new double[]{0};
     private final double[] f0 = new double[]{0};
@@ -144,9 +148,6 @@ public final class Slsqp
 
     private OptimizeResult minimizeWithVectorConstraints(double[] x)
     {
-        final WrappedVector2ScalarFunction wrappedObjectiveFunction =
-            new WrappedVector2ScalarFunction(objectiveFunc, objectiveFuncJacobian, objectiveFunctionArgs);
-
         final int n = x.length;
 
         final int nPlus1 = n + 1;
@@ -181,21 +182,14 @@ public final class Slsqp
 
         final double[] w = new double[lenW];
         final int[] jw = new int[mineq];
-
-        final int[] majIter = new int[] {maxIterations};
-        int majIterPrev = 0;
-        final double[] acc = new double[] {tolerance};
-
-        double fx = 0;
-
         final double[] g = new double[nPlus1];
-
         final double[] c = new double[la];
 
         // Note that Fortran expects arrays to be laid out in column-major order.
         final double[][] a = new double[nPlus1][la];
 
-        double[] fprime;
+        double fx = 0;
+        int majIterPrev = 0;
         while (true)
         {
             if (mode[0] == 0 || mode[0] == 1)
@@ -228,7 +222,7 @@ public final class Slsqp
 
             if (mode[0] == 0 || mode[0] == -1)
             {
-                fprime = wrappedObjectiveFunction.getJacobian(x);
+                double[] fprime = wrappedObjectiveFunction.getJacobian(x);
                 System.arraycopy(fprime, 0, g, 0, n);
                 g[n] = 0;
                 int i = 0;
@@ -304,9 +298,6 @@ public final class Slsqp
 
     private OptimizeResult minimizeWithScalarConstraints(double[] x)
     {
-        final WrappedVector2ScalarFunction wrappedObjectiveFunction =
-            new WrappedVector2ScalarFunction(objectiveFunc, objectiveFuncJacobian, objectiveFunctionArgs);
-
         final int n = x.length;
 
         final int nPlus1 = n + 1;
@@ -332,9 +323,6 @@ public final class Slsqp
         final double[] w = new double[lenW];
         final int[] jw = new int[mineq];
 
-        final int[] majIter = new int[] {maxIterations};
-        int majIterPrev = 0;
-        final double[] acc = new double[] {tolerance};
 
         double fx = 0;
         final int la = Math.max(1, m);
@@ -344,8 +332,8 @@ public final class Slsqp
 
         // Note that Fortran expects arrays to be laid out in column-major order.
         final double[][] a = new double[nPlus1][la];
-        double[] fprime;
 
+        int majIterPrev = 0;
         while (true)
         {
             if (mode[0] == 0 || mode[0] == 1)
@@ -378,8 +366,7 @@ public final class Slsqp
 
             if (mode[0] == 0 || mode[0] == -1)
             {
-                fprime = wrappedObjectiveFunction.getJacobian(x);
-
+                double[] fprime = wrappedObjectiveFunction.getJacobian(x);
                 System.arraycopy(fprime, 0, g, 0, n);
                 g[n] = 0;
                 int i = 0;
