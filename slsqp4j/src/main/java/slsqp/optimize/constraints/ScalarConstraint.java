@@ -39,6 +39,14 @@ public final class ScalarConstraint
 
         public ScalarConstraint build()
         {
+            if (this.constraintType == null)
+            {
+                throw new IllegalStateException("must specify a constraint type");
+            }
+            if (this.constraintFunc == null)
+            {
+                throw new IllegalStateException("must specify a constraint function");
+            }
             final ScalarConstraint scalarConstraint = new ScalarConstraint();
             scalarConstraint.constraintType = this.constraintType;
             scalarConstraint.constraintFunc = this.constraintFunc;

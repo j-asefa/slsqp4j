@@ -8,6 +8,7 @@ import slsqp.optimize.functions.Vector2MatrixFunc;
 import slsqp.optimize.functions.Vector2ScalarFunc;
 import slsqp.optimize.functions.Vector2VectorFunc;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SlsqpTests
@@ -401,8 +402,6 @@ public class SlsqpTests
             .withObjectiveFunction(objectiveFunction, -1)
             .withBounds(bounds)
             .addVectorConstraint(constraint)
-            .withTolerance(defaultTol)
-            .withMaxIterations(defaultMaxIter)
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
@@ -473,8 +472,6 @@ public class SlsqpTests
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
             .withBounds(bounds)
-            .withTolerance(defaultTol)
-            .withMaxIterations(defaultMaxIter)
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
@@ -483,5 +480,27 @@ public class SlsqpTests
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[1] - expected[1]) < TestUtil.ERROR);
         assertTrue(result.success);
+    }
+
+    @Test
+    public void testBuild()
+    {
+        final VectorConstraint constraint = new VectorConstraint.VectorConstraintBuilder()
+            .withConstraintType(ConstraintType.EQ)
+            .withConstraintFunction(new TestUtil.Fecon())
+            .build();
+
+        final ScalarConstraint scalarConstraint = new ScalarConstraint.ScalarConstraintBuilder()
+            .withConstraintFunction((x12, arg) -> 0)
+            .withConstraintType(ConstraintType.EQ)
+            .build();
+
+        final Slsqp.SlsqpBuilder slsqpBuilder = new Slsqp.SlsqpBuilder()
+            .withObjectiveFunction(new TestUtil.Fun())
+            .withJacobian(new TestUtil.Jac())
+            .addVectorConstraint(constraint)
+            .addScalarConstraint(scalarConstraint);
+
+        assertThrows(IllegalStateException.class, slsqpBuilder::build);
     }
 }

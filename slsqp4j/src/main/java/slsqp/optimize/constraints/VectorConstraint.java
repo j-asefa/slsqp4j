@@ -42,6 +42,14 @@ public final class VectorConstraint
 
         public VectorConstraint build()
         {
+            if (this.constraintType == null)
+            {
+                throw new IllegalStateException("must specify a constraint type");
+            }
+            if (this.constraintFunc == null)
+            {
+                throw new IllegalStateException("must specify a constraint function");
+            }
             final VectorConstraint vectorConstraint = new VectorConstraint();
             vectorConstraint.constraintType = this.constraintType;
             vectorConstraint.constraintFunc = this.constraintFunc;

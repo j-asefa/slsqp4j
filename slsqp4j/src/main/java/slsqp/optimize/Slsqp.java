@@ -17,13 +17,18 @@ public final class Slsqp
 {
     public static class SlsqpBuilder
     {
+        private static final double DEFAULT_TOL = 1.0E-6;
+        private static final int DEFAULT_MAX_ITER = 100;
+
         private Vector2ScalarFunc objectiveFunc;
         private Vector2VectorFunc objectiveFuncJacobian;
         private double[][] bounds;
-        private Set<ScalarConstraint> scalarConstraints = new HashSet<>();
-        private Set<VectorConstraint> vectorConstraints = new HashSet<>();
-        private double tolerance;
-        private int maxIterations;
+        private Set<ScalarConstraint> scalarEqualityConstraints = new HashSet<>();
+        private Set<ScalarConstraint> scalarInequalityConstraints = new HashSet<>();
+        private Set<VectorConstraint> vectorEqualityConstraints = new HashSet<>();
+        private Set<VectorConstraint> vectorInequalityConstraints = new HashSet<>();
+        private double tolerance = DEFAULT_TOL;
+        private int maxIterations = DEFAULT_MAX_ITER;
         private CallBackFunc callBackFunc;
         private double[] objectiveFunctionArgs;
 
@@ -46,15 +51,29 @@ public final class Slsqp
             return this;
         }
 
-        public SlsqpBuilder addScalarConstraint(ScalarConstraint scalarConstraint)
+        public SlsqpBuilder addScalarConstraint(ScalarConstraint constraint)
         {
-            this.scalarConstraints.add(scalarConstraint);
+            if (constraint.getConstraintType() == ConstraintType.EQ)
+            {
+                this.scalarEqualityConstraints.add(constraint);
+            }
+            else
+            {
+                this.scalarInequalityConstraints.add(constraint);
+            }
             return this;
         }
 
-        public SlsqpBuilder addVectorConstraint(VectorConstraint vectorConstraint)
+        public SlsqpBuilder addVectorConstraint(VectorConstraint constraint)
         {
-            this.vectorConstraints.add(vectorConstraint);
+            if (constraint.getConstraintType() == ConstraintType.EQ)
+            {
+                this.vectorEqualityConstraints.add(constraint);
+            }
+            else
+            {
+                this.vectorInequalityConstraints.add(constraint);
+            }
             return this;
         }
 
@@ -78,14 +97,26 @@ public final class Slsqp
 
         public Slsqp build()
         {
-            if (!this.scalarConstraints.isEmpty() && !this.vectorConstraints.isEmpty())
+            if (this.objectiveFunc == null)
+            {
+                throw new IllegalStateException("must specify an objective function");
+            }
+            if (!this.scalarEqualityConstraints.isEmpty() &&
+                (!this.vectorEqualityConstraints.isEmpty() || !this.vectorInequalityConstraints.isEmpty()))
+            {
+                throw new IllegalStateException("cannot specify both vector and scalar constraints");
+            }
+            else if (!this.scalarInequalityConstraints.isEmpty() &&
+                (!this.vectorEqualityConstraints.isEmpty() || !this.vectorInequalityConstraints.isEmpty()))
             {
                 throw new IllegalStateException("cannot specify both vector and scalar constraints");
             }
             final Slsqp slsqp = new Slsqp();
             slsqp.bounds = this.bounds;
-            slsqp.scalarConstraints = this.scalarConstraints;
-            slsqp.vectorConstraints = this.vectorConstraints;
+            slsqp.scalarEqualityConstraints = this.scalarEqualityConstraints;
+            slsqp.scalarInequalityConstraints = this.scalarInequalityConstraints;
+            slsqp.vectorEqualityConstraints = this.vectorEqualityConstraints;
+            slsqp.vectorInequalityConstraints = this.vectorInequalityConstraints;
             slsqp.tolerance = this.tolerance;
             slsqp.maxIterations = this.maxIterations;
             slsqp.callBackFunc = this.callBackFunc;
@@ -103,16 +134,16 @@ public final class Slsqp
     }
 
     private double[][] bounds;
-    private Set<ScalarConstraint> scalarConstraints;
-    private Set<VectorConstraint> vectorConstraints;
+    private Set<ScalarConstraint> scalarEqualityConstraints;
+    private Set<ScalarConstraint> scalarInequalityConstraints;
+    private Set<VectorConstraint> vectorEqualityConstraints;
+    private Set<VectorConstraint> vectorInequalityConstraints;
     private double tolerance;
     private int maxIterations;
     private CallBackFunc callBackFunc;
     private WrappedVector2ScalarFunction wrappedObjectiveFunction;
     private int[] majIter = new int[] {maxIterations};
     private double[] acc = new double[] {tolerance};
-
-
 
     private final double[] alpha = new double[]{0};
     private final double[] f0 = new double[]{0};
@@ -136,7 +167,7 @@ public final class Slsqp
 
     public OptimizeResult minimize(double[] x)
     {
-        if (this.vectorConstraints.isEmpty())
+        if (this.vectorEqualityConstraints.isEmpty() && this.vectorInequalityConstraints.isEmpty())
         {
             return minimizeWithScalarConstraints(x);
         }
@@ -159,17 +190,17 @@ public final class Slsqp
 
         clip(x, xl, xu);
 
-        int m = 0;
-        int meq = 0;
+        final int meq = vectorEqualityConstraints.size();
 
+        int m = 0;
         // get the number of constraints
-        for (final VectorConstraint constraint : vectorConstraints)
+        for (final VectorConstraint constraint : vectorEqualityConstraints)
         {
             m += constraint.apply(x).length;
-            if (constraint.getConstraintType() == ConstraintType.EQ)
-            {
-                meq++;
-            }
+        }
+        for (final VectorConstraint constraint : vectorInequalityConstraints)
+        {
+            m += constraint.apply(x).length;
         }
         final int la = Math.max(1, m);
 
@@ -196,28 +227,8 @@ public final class Slsqp
             {
                 // calculate the value of the objective function
                 fx = wrappedObjectiveFunction.apply(x);
-
-                int constraintIndex = 0;
-                // first get the equality constraints
-                for (final VectorConstraint constraint : vectorConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.EQ)
-                    {
-                        final double[] constraintVec = constraint.apply(x);
-                        System.arraycopy(constraintVec, 0, c, constraintIndex, constraintVec.length);
-                        constraintIndex += constraintVec.length;
-                    }
-                }
-                // then get the inequality constraints
-                for (final VectorConstraint constraint : vectorConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.INEQ)
-                    {
-                        final double[] constraintVec = constraint.apply(x);
-                        System.arraycopy(constraintVec, 0, c, constraintIndex, constraintVec.length);
-                        constraintIndex += constraintVec.length;
-                    }
-                }
+                final int inequalityStartIndex = copyVectorConstraints(x, c, vectorEqualityConstraints, 0);
+                copyVectorConstraints(x, c, vectorInequalityConstraints, inequalityStartIndex);
             }
 
             if (mode[0] == 0 || mode[0] == -1)
@@ -225,55 +236,8 @@ public final class Slsqp
                 final double[] fprime = wrappedObjectiveFunction.getJacobian(x);
                 System.arraycopy(fprime, 0, g, 0, n);
                 g[n] = 0;
-                int i = 0;
-                for (final VectorConstraint constraint : vectorConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.EQ)
-                    {
-                        final double[][] constraintJac = constraint.getJacobian(x);
-
-                        // copy the constraint jacobian matrix into the array a
-                        for (int l = 0; l < constraintJac[0].length; l++)
-                        {
-                            for (int j = 0; j < constraintJac.length; j++)
-                            {
-                                if (constraintJac[j].length > 1)
-                                {
-                                    a[j][i] = constraintJac[j][l]; // a is in column-major order
-                                }
-                                else
-                                {
-                                    a[j][i] = constraintJac[j][0];
-                                }
-                            }
-                            i++;
-                        }
-                    }
-                }
-                for (final VectorConstraint constraint : vectorConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.INEQ)
-                    {
-                        final double[][] constraintJac = constraint.getJacobian(x);
-
-                        // copy the constraint jacobian matrix into the array a
-                        for (int l = 0; l < constraintJac[0].length; l++)
-                        {
-                            for (int j = 0; j < constraintJac.length; j++)
-                            {
-                                if (constraintJac[j].length > 1)
-                                {
-                                    a[j][i] = constraintJac[j][l]; // a is in column-major order
-                                }
-                                else
-                                {
-                                    a[j][i] = constraintJac[j][0];
-                                }
-                            }
-                            i++;
-                        }
-                    }
-                }
+                final int inequalityStartIndex = copyVectorConstraintJacobians(x, a, vectorEqualityConstraints, 0);
+                copyVectorConstraintJacobians(x, a, vectorInequalityConstraints, inequalityStartIndex);
             }
 
             NativeUtils.slsqp(m, meq, la, x, xl, xu, fx, c, g, a, acc, majIter, mode, w, jw,
@@ -309,10 +273,8 @@ public final class Slsqp
 
         clip(x, xl, xu);
 
-        final int m = scalarConstraints.size();
-        final int meq = (int)scalarConstraints.stream().filter(
-            p -> p.getConstraintType() == ConstraintType.EQ
-        ).count();
+        final int m = scalarEqualityConstraints.size() + scalarInequalityConstraints.size();
+        final int meq = scalarEqualityConstraints.size();
 
         final int mineq = m - meq + nPlus1 + nPlus1;
         final int lenW = (3 * nPlus1 + m) * (nPlus1 + 1) +
@@ -338,28 +300,8 @@ public final class Slsqp
             {
                 // calculate the value of the objective function
                 fx = wrappedObjectiveFunction.apply(x);
-
-                int constraintIndex = 0;
-                // first get the equality constraints
-                for (final ScalarConstraint constraint : scalarConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.EQ)
-                    {
-                        final double constraintVal = constraint.apply(x);
-                        c[constraintIndex] = constraintVal;
-                        constraintIndex++;
-                    }
-                }
-                // then get the inequality constraints
-                for (final ScalarConstraint constraint : scalarConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.INEQ)
-                    {
-                        final double constraintVal = constraint.apply(x);
-                        c[constraintIndex] = constraintVal;
-                        constraintIndex++;
-                    }
-                }
+                final int inequalityStartIndex = copyScalarConstraints(x, c, scalarEqualityConstraints, 0);
+                copyScalarConstraints(x, c, scalarInequalityConstraints, inequalityStartIndex);
             }
 
             if (mode[0] == 0 || mode[0] == -1)
@@ -367,36 +309,8 @@ public final class Slsqp
                 final double[] fprime = wrappedObjectiveFunction.getJacobian(x);
                 System.arraycopy(fprime, 0, g, 0, n);
                 g[n] = 0;
-                int i = 0;
-                for (final ScalarConstraint constraint : scalarConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.EQ)
-                    {
-                        final double[] constraintJac = constraint.getJacobian(x);
-
-                        // copy the constraint jacobian matrix into the array a
-                        for (int j = 0; j < constraintJac.length; j++)
-                        {
-                            a[j][i] = constraintJac[j];
-                        }
-                        i++;
-                    }
-                }
-
-                for (final ScalarConstraint constraint : scalarConstraints)
-                {
-                    if (constraint.getConstraintType() == ConstraintType.INEQ)
-                    {
-                        final double[] constraintJac = constraint.getJacobian(x);
-
-                        // copy the constraint jacobian matrix into the array a
-                        for (int j = 0; j < constraintJac.length; j++)
-                        {
-                            a[j][i] = constraintJac[j];
-                        }
-                        i++;
-                    }
-                }
+                final int inequalityStartIndex = copyScalarConstraintJacobians(x, a, scalarEqualityConstraints, 0);
+                copyScalarConstraintJacobians(x, a, scalarInequalityConstraints, inequalityStartIndex);
             }
 
             NativeUtils.slsqp(m, meq, la, x, xl, xu, fx, c, g, a, acc, majIter, mode, w, jw,
@@ -417,6 +331,73 @@ public final class Slsqp
             majIterPrev = majIter[0];
         }
         return new OptimizeResult(x, fx, g, majIter[0], mode[0], mode[0] == 0, a);
+    }
+
+    private int copyVectorConstraintJacobians(double[] x, double[][] a, Set<VectorConstraint> constraints, int index)
+    {
+        for (final VectorConstraint constraint : constraints)
+        {
+            index += copyVectorConstraintJacobian(constraint, x, a, index);
+        }
+        return index;
+    }
+
+    private int copyVectorConstraintJacobian(VectorConstraint constraint, double[] x, double[][] a, int i)
+    {
+        final double[][] constraintJac = constraint.getJacobian(x);
+        int l;
+        for (l = 0; l < constraintJac[0].length; l++)
+        {
+            for (int j = 0; j < constraintJac.length; j++)
+            {
+                if (constraintJac[j].length > 1)
+                {
+                    a[j][i] = constraintJac[j][l]; // a is in column-major order
+                }
+                else
+                {
+                    a[j][i] = constraintJac[j][0];
+                }
+            }
+            i++;
+        }
+        return l;
+    }
+
+    private int copyVectorConstraints(double[] x, double[] c, Set<VectorConstraint> constraints, int index)
+    {
+        for (final VectorConstraint constraint : constraints)
+        {
+            final double[] constraintVec = constraint.apply(x);
+            System.arraycopy(constraintVec, 0, c, index, constraintVec.length);
+            index += constraintVec.length;
+        }
+        return index;
+    }
+
+    private int copyScalarConstraintJacobians(double[] x, double[][] a, Set<ScalarConstraint> constraints, int index)
+    {
+        for (final ScalarConstraint constraint : constraints)
+        {
+            final double[] constraintJac = constraint.getJacobian(x);
+            for (int j = 0; j < constraintJac.length; j++)
+            {
+                a[j][index] = constraintJac[j];
+            }
+            index++;
+        }
+        return index;
+    }
+
+    private int copyScalarConstraints(double[] x, double[] c, Set<ScalarConstraint> constraints, int index)
+    {
+        for (final ScalarConstraint constraint : constraints)
+        {
+            final double constraintVal = constraint.apply(x);
+            c[index] = constraintVal;
+            index++;
+        }
+        return index;
     }
 
     private void computeBounds(int n, double[][] bounds, double[] xl, double[] xu)
