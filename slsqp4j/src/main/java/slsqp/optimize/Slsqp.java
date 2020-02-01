@@ -222,7 +222,7 @@ public final class Slsqp
 
             if (mode[0] == 0 || mode[0] == -1)
             {
-                double[] fprime = wrappedObjectiveFunction.getJacobian(x);
+                final double[] fprime = wrappedObjectiveFunction.getJacobian(x);
                 System.arraycopy(fprime, 0, g, 0, n);
                 g[n] = 0;
                 int i = 0;
@@ -323,16 +323,14 @@ public final class Slsqp
         final double[] w = new double[lenW];
         final int[] jw = new int[mineq];
 
-
-        double fx = 0;
         final int la = Math.max(1, m);
         final double[] c = new double[la];
-
         final double[] g = new double[nPlus1];
 
         // Note that Fortran expects arrays to be laid out in column-major order.
         final double[][] a = new double[nPlus1][la];
 
+        double fx = 0;
         int majIterPrev = 0;
         while (true)
         {
@@ -366,7 +364,7 @@ public final class Slsqp
 
             if (mode[0] == 0 || mode[0] == -1)
             {
-                double[] fprime = wrappedObjectiveFunction.getJacobian(x);
+                final double[] fprime = wrappedObjectiveFunction.getJacobian(x);
                 System.arraycopy(fprime, 0, g, 0, n);
                 g[n] = 0;
                 int i = 0;

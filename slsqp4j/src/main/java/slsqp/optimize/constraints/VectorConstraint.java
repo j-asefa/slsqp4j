@@ -68,7 +68,8 @@ public final class VectorConstraint
         }
         else
         {
-            return jacobian.apply(x, args);
+            // Fortran expects matrices to be laid out in column major order
+            return Jacobian.transpose(jacobian.apply(x, args));
         }
     }
 

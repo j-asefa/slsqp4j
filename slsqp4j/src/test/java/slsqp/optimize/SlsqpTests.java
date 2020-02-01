@@ -293,8 +293,7 @@ public class SlsqpTests
         final double[] upperBounds = new double[] {1, 0.8};
         final double[][] bounds = new double[][] {lowerBounds, upperBounds};
 
-        final Vector2MatrixFunc constraintJac = (x1, arg) ->
-            Jacobian.transpose(new double[][] {new TestUtil.FprimeEcon().apply(x1, arg)});
+        final Vector2MatrixFunc constraintJac = (x1, arg) -> new double[][] {new TestUtil.FprimeEcon().apply(x1, arg)};
 
         final VectorConstraint constraint = new VectorConstraint.VectorConstraintBuilder()
             .withConstraintType(ConstraintType.EQ)
