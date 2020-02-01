@@ -313,8 +313,8 @@ public class SlsqpTests
         final OptimizeResult result = slsqp.minimize(x);
         final double[] resX = result.x;
         final double[] expected = {0.8, 0.8};
-        assertTrue(Math.abs(resX[0] - expected[0]) < 1.0E-3);
-        assertTrue(Math.abs(resX[1] - expected[1]) < 1.0E-3);
+        assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
+        assertTrue(Math.abs(resX[1] - expected[1]) < TestUtil.ERROR);
         assertTrue(-0.8 <= resX[0] && resX[0] <= 1);
         assertTrue(-1 <= resX[1] && resX[1] <= 0.8);
         assertTrue(result.success);
