@@ -13,6 +13,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ This module implements the Sequential Least Squares Programming optimization
+ algorithm (SLSQP), originally developed by Dieter Kraft.
+ See http://www.netlib.org/toms/733
+ */
+
 public final class Slsqp
 {
     public static class SlsqpBuilder
