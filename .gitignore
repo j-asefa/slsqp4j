@@ -6,5 +6,4 @@ core
 *.log
 *.class
 *.o
-*.so
 *.iml
