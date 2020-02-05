@@ -47,7 +47,7 @@ task buildJniLib(type: Exec) {
 
     group "Build"
     description "Builds the JNI library."
-    commandLine 'gcc', '-shared', '-o', output, c_obj, fortran_obj, '-L/usr/lib/gcc/x86_64-linux-gnu/9/', '-lgfortran'
+    commandLine 'gcc', '-shared', '-o', output, c_obj, fortran_obj
     dependsOn compileFortran, compileC, prepareLibs
 }
 
