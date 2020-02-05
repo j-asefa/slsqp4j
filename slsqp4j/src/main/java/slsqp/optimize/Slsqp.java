@@ -390,8 +390,7 @@ public final class Slsqp
     private int copyVectorConstraintJacobian(VectorConstraint constraint, double[] x, double[][] a, int i)
     {
         final double[][] constraintJac = constraint.getJacobian(x);
-        int l;
-        for (l = 0; l < constraintJac[0].length; l++)
+        for (int l = 0; l < constraintJac[0].length; l++)
         {
             for (int j = 0; j < constraintJac.length; j++)
             {
@@ -406,7 +405,7 @@ public final class Slsqp
             }
             i++;
         }
-        return l;
+        return constraintJac[0].length;
     }
 
     private int copyVectorConstraints(double[] x, double[] c, Set<VectorConstraint> constraints, int index)
@@ -439,8 +438,7 @@ public final class Slsqp
         for (final ScalarConstraint constraint : constraints)
         {
             final double constraintVal = constraint.apply(x);
-            c[index] = constraintVal;
-            index++;
+            c[index++] = constraintVal;
         }
         return index;
     }
