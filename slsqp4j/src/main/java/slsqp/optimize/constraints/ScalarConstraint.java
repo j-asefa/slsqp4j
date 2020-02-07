@@ -43,6 +43,9 @@ import slsqp.optimize.Jacobian;
 import slsqp.optimize.functions.Vector2ScalarFunc;
 import slsqp.optimize.functions.Vector2VectorFunc;
 
+/**
+ * A scalar-valued constraint function.
+ */
 public final class ScalarConstraint
 {
     private ConstraintType constraintType;

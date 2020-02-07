@@ -44,6 +44,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Utility class for interacting with shared native libraries
+ */
 public final class NativeUtils
 {
 

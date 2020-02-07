@@ -43,6 +43,9 @@ import slsqp.optimize.functions.Vector2MatrixFunc;
 import slsqp.optimize.functions.Vector2VectorFunc;
 import slsqp.optimize.Jacobian;
 
+/**
+ * A vector-valued constraint function.
+ */
 public final class VectorConstraint
 {
     private double[] args;
