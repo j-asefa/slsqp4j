@@ -70,7 +70,7 @@ public final class Slsqp
 {
     public static class SlsqpBuilder
     {
-        private static final double DEFAULT_TOL = 1.0E-6;
+        private static final double DEFAULT_ACCURACY = 1.0E-6;
         private static final int DEFAULT_MAX_ITER = 100;
 
         private Vector2ScalarFunc objectiveFunc;
@@ -80,7 +80,7 @@ public final class Slsqp
         private Set<ScalarConstraint> scalarInequalityConstraints = new HashSet<>();
         private Set<VectorConstraint> vectorEqualityConstraints = new HashSet<>();
         private Set<VectorConstraint> vectorInequalityConstraints = new HashSet<>();
-        private double tolerance = DEFAULT_TOL;
+        private double accuracy = DEFAULT_ACCURACY;
         private int maxIterations = DEFAULT_MAX_ITER;
         private CallBackFunc callBackFunc;
         private double[] objectiveFunctionArgs;
@@ -125,6 +125,12 @@ public final class Slsqp
             return this;
         }
 
+        /**
+         * Add a {@link ScalarConstraint} to this builder.
+         *
+         * @param constraint scalar constraint to include in this optimization problem.
+         * @return this builder.
+         */
         public SlsqpBuilder addScalarConstraint(ScalarConstraint constraint)
         {
             if (constraint.getConstraintType() == ConstraintType.EQ)
@@ -138,6 +144,12 @@ public final class Slsqp
             return this;
         }
 
+        /**
+         * Add a {@link VectorConstraint} to this builder.
+         *
+         * @param constraint vector constraint to include in this optimization problem.
+         * @return this builder.
+         */
         public SlsqpBuilder addVectorConstraint(VectorConstraint constraint)
         {
             if (constraint.getConstraintType() == ConstraintType.EQ)
@@ -151,24 +163,47 @@ public final class Slsqp
             return this;
         }
 
-        public SlsqpBuilder withTolerance(double tolerance)
+        /**
+         * Set the desired accuracy for this problem. Defaults to {@link #DEFAULT_ACCURACY}.
+         *
+         * @param accuracy desired accuracy for the minimization problem.
+         * @return this builder.
+         */
+        public SlsqpBuilder withAccuracy(double accuracy)
         {
-            this.tolerance = tolerance;
+            this.accuracy = accuracy;
             return this;
         }
 
+        /**
+         * Set the maximum number of iterations to perform.
+         *
+         * @param maxIterations maximum number of iterations to perform.
+         * @return this builder.
+         */
         public SlsqpBuilder withMaxIterations(int maxIterations)
         {
             this.maxIterations = maxIterations;
             return this;
         }
 
+        /**
+         * Set a callback function to be called on every major iteration of the solver.
+         *
+         * @param callBackFunc callback function to call on major iterations.
+         * @return this builder.
+         */
         public SlsqpBuilder withCallBackFunction(CallBackFunc callBackFunc)
         {
             this.callBackFunc = callBackFunc;
             return this;
         }
 
+        /**
+         * Build an instance of a {@link Slsqp}.
+         *
+         * @return a new {@link Slsqp} with the properties specified in this builder.
+         */
         public Slsqp build()
         {
             if (this.objectiveFunc == null)
@@ -191,14 +226,14 @@ public final class Slsqp
             slsqp.scalarInequalityConstraints = this.scalarInequalityConstraints;
             slsqp.vectorEqualityConstraints = this.vectorEqualityConstraints;
             slsqp.vectorInequalityConstraints = this.vectorInequalityConstraints;
-            slsqp.tolerance = this.tolerance;
+            slsqp.tolerance = this.accuracy;
             slsqp.maxIterations = this.maxIterations;
             slsqp.callBackFunc = this.callBackFunc;
             slsqp.wrappedObjectiveFunction =
                 new WrappedVector2ScalarFunction(objectiveFunc, objectiveFuncJacobian, objectiveFunctionArgs);
 
             slsqp.majIter = new int[] {maxIterations};
-            slsqp.acc = new double[] {tolerance};
+            slsqp.acc = new double[] {accuracy};
             return slsqp;
         }
 
@@ -211,7 +246,7 @@ public final class Slsqp
             this.scalarInequalityConstraints.clear();
             this.vectorEqualityConstraints.clear();
             this.vectorInequalityConstraints.clear();
-            this.tolerance = DEFAULT_TOL;
+            this.accuracy = DEFAULT_ACCURACY;
             this.maxIterations = DEFAULT_MAX_ITER;
             this.callBackFunc = null;
             this.objectiveFunctionArgs = null;
@@ -254,6 +289,12 @@ public final class Slsqp
     private final int[] n3 = new int[]{0};
     private final int[] mode = new int[]{0};
 
+    /**
+     * Minimize the objective function specified in this instance of {@link Slsqp} subject to the specified constraints.
+     *
+     * @param x initial guess for the independent variables of the problem.
+     * @return an instance of {@link OptimizeResult} with the current state of the problem.
+     */
     public OptimizeResult minimize(double[] x)
     {
         if (this.vectorEqualityConstraints.isEmpty() && this.vectorInequalityConstraints.isEmpty())

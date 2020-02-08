@@ -81,7 +81,7 @@ public class SlsqpTests
             .withObjectiveFunction(objectiveFunc)
             .withBounds(bounds)
             .addScalarConstraint(constraint)
-            .withTolerance(tolerance)
+            .withAccuracy(tolerance)
             .withMaxIterations(maxIter)
             .build();
 
@@ -114,7 +114,7 @@ public class SlsqpTests
             .withObjectiveFunction(objectiveFunc)
             .withBounds(bounds)
             .addScalarConstraint(constraint)
-            .withTolerance(tolerance)
+            .withAccuracy(tolerance)
             .withMaxIterations(maxIter)
             .build();
 
@@ -138,7 +138,7 @@ public class SlsqpTests
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
             .addScalarConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
@@ -164,7 +164,7 @@ public class SlsqpTests
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(objectiveFunction)
             .addScalarConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
@@ -197,7 +197,7 @@ public class SlsqpTests
         final Slsqp slsqp1 = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(objectiveFunction, -1)
             .addScalarConstraint(constraint1)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
@@ -213,7 +213,7 @@ public class SlsqpTests
         final Slsqp slsqp2 = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(objectiveFunction, -1)
             .addScalarConstraint(constraint2)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
         result = slsqp2.minimize(x);
@@ -236,7 +236,7 @@ public class SlsqpTests
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .addVectorConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
@@ -261,7 +261,7 @@ public class SlsqpTests
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
             .addVectorConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
@@ -286,7 +286,7 @@ public class SlsqpTests
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
             .addVectorConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
@@ -312,7 +312,7 @@ public class SlsqpTests
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
             .addVectorConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
@@ -346,7 +346,7 @@ public class SlsqpTests
             .withJacobian(new TestUtil.Jac())
             .withBounds(bounds)
             .addVectorConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
@@ -388,7 +388,7 @@ public class SlsqpTests
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(objectiveFunction, -1)
             .addVectorConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
@@ -486,7 +486,7 @@ public class SlsqpTests
             .addVectorConstraint(constraint1)
             .addVectorConstraint(constraint2)
             .addVectorConstraint(constraint3)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
