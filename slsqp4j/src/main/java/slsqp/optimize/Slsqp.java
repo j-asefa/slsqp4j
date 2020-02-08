@@ -53,11 +53,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- This module implements the Sequential Least Squares Programming optimization
- algorithm (SLSQP), originally developed by Dieter Kraft.
- See http://www.netlib.org/toms/733
+ * This module implements the Sequential Least Squares Programming optimization
+ * algorithm (SLSQP), originally developed by Dieter Kraft.
+ * See http://www.netlib.org/toms/733
+ *
+ * An instance of {@link Slsqp} corresponds to an instance of the Slsqp solver. A reference to an Slsqp instance
+ * is constructed using the {@link SlsqpBuilder} in order to specify parameters, some of which may be optional.
+ *
+ * Once an instance of {@link Slsqp} is constructed, calls to {@link #minimize(double[])} can occur repeatedly. It is
+ * expected that users will call {@link #minimize(double[])} iteratively within their own code until some error level is
+ * satisfied or a value of true is returned by {@link OptimizeResult#success()}.
+ *
+ * Instances of {@link Slsqp} are not thread safe.
  */
-
 public final class Slsqp
 {
     public static class SlsqpBuilder
@@ -77,6 +85,13 @@ public final class Slsqp
         private CallBackFunc callBackFunc;
         private double[] objectiveFunctionArgs;
 
+        /**
+         * Set the objective function for this problem to minimize.
+         *
+         * @param objectiveFunc objective function.
+         * @param objectiveFunctionArgs arguments, if any, to the objective function.
+         * @return this builder.
+         */
         public SlsqpBuilder withObjectiveFunction(Vector2ScalarFunc objectiveFunc, double... objectiveFunctionArgs)
         {
             this.objectiveFunc = objectiveFunc;
@@ -84,12 +99,26 @@ public final class Slsqp
             return this;
         }
 
+        /**
+         * Set the analytical Jacobian of this objective function, if any. If no analytical Jacobian is specified,
+         * numerical approximation is performed during optimization.
+         *
+         * @param objectiveFuncJacobian analytical jacobian of the objective function specified in
+         * {@link #withObjectiveFunction(Vector2ScalarFunc, double...)}
+         * @return this builder.
+         */
         public SlsqpBuilder withJacobian(Vector2VectorFunc objectiveFuncJacobian)
         {
             this.objectiveFuncJacobian = objectiveFuncJacobian;
             return this;
         }
 
+        /**
+         *
+         *
+         * @param bounds
+         * @return
+         */
         public SlsqpBuilder withBounds(double[][] bounds)
         {
             this.bounds = bounds;
@@ -171,6 +200,21 @@ public final class Slsqp
             slsqp.majIter = new int[] {maxIterations};
             slsqp.acc = new double[] {tolerance};
             return slsqp;
+        }
+
+        public void reset()
+        {
+            this.objectiveFunc = null;
+            this.objectiveFuncJacobian = null;
+            this.bounds = null;
+            this.scalarEqualityConstraints.clear();
+            this.scalarInequalityConstraints.clear();
+            this.vectorEqualityConstraints.clear();
+            this.vectorInequalityConstraints.clear();
+            this.tolerance = DEFAULT_TOL;
+            this.maxIterations = DEFAULT_MAX_ITER;
+            this.callBackFunc = null;
+            this.objectiveFunctionArgs = null;
         }
     }
 
@@ -302,7 +346,7 @@ public final class Slsqp
 
             majIterPrev = majIter[0];
         }
-        return new OptimizeResult(x, fx, g, majIter[0], mode[0], mode[0] == 0, a);
+        return new OptimizeResult(x, majIter[0], mode[0], mode[0] == 0);
     }
 
     private OptimizeResult minimizeWithScalarConstraints(double[] x)
@@ -375,7 +419,7 @@ public final class Slsqp
 
             majIterPrev = majIter[0];
         }
-        return new OptimizeResult(x, fx, g, majIter[0], mode[0], mode[0] == 0, a);
+        return new OptimizeResult(x, majIter[0], mode[0], mode[0] == 0);
     }
 
     private int copyVectorConstraintJacobians(double[] x, double[][] a, Set<VectorConstraint> constraints, int index)

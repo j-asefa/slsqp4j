@@ -60,6 +60,13 @@ public final class VectorConstraint
         private Vector2MatrixFunc jacobian;
         private double[] args;
 
+        /**
+         * Set the constraint function and any arguments it takes.
+         *
+         * @param constraintFunc constraint function.
+         * @param args arguments, if any, to the constraint function.
+         * @return this builder.
+         */
         public VectorConstraint.VectorConstraintBuilder withConstraintFunction(
             Vector2VectorFunc constraintFunc,
             double... args
@@ -70,18 +77,37 @@ public final class VectorConstraint
             return this;
         }
 
+        /**
+         * Set the type of this constraint - equality or inequality. See {@link ConstraintType}
+         *
+         * @param constraintType type of this constraint.
+         * @return this builder.
+         */
         public VectorConstraint.VectorConstraintBuilder withConstraintType(ConstraintType constraintType)
         {
             this.constraintType = constraintType;
             return this;
         }
 
+        /**
+         * Set the analytical Jacobian of this constraint function, if any. If no analytical Jacobian is specified,
+         * numerical approximation is performed on calls to {@link VectorConstraint#getJacobian(double[])}.
+         *
+         * @param jacobian analytical jacobian of the constraint function specified in
+         * {@link #withConstraintFunction(Vector2VectorFunc, double...)}
+         * @return this builder.
+         */
         public VectorConstraint.VectorConstraintBuilder withJacobian(Vector2MatrixFunc jacobian)
         {
             this.jacobian = jacobian;
             return this;
         }
 
+        /**
+         * Build an instance of a {@link VectorConstraint}.
+         *
+         * @return a new {@link VectorConstraint} with the properties specified in this builder.
+         */
         public VectorConstraint build()
         {
             if (this.constraintType == null)
@@ -105,11 +131,24 @@ public final class VectorConstraint
     {
     }
 
+    /**
+     * Get the type of this constraint - equality or inequality. See {@link ConstraintType}
+     *
+     * @return the type of this constraint.
+     */
     public ConstraintType getConstraintType()
     {
         return constraintType;
     }
 
+    /**
+     * Returns the Jacobian of this constraint function, evaluated at x. If an analytical Jacobian was included
+     * in the builder, returns the analytical Jacobian, otherwise it returns the approximate Jacobian via
+     * {@link Jacobian#approxJacobian(double[], Vector2VectorFunc, double...)}
+     *
+     * @param x point at which to evaluate the jacobian of this function.
+     * @return m x n matrix consisting of the Jacobian of this constraint function, evaluated at x.
+     */
     public double[][] getJacobian(double[] x)
     {
         if (jacobian == null)
@@ -123,6 +162,12 @@ public final class VectorConstraint
         }
     }
 
+    /**
+     * Apply this constraint function at point x.
+     *
+     * @param x vector-valued point at which to apply this constraint function.
+     * @return the vector-valued output of applying this constraint function to input x.
+     */
     public double[] apply(double[] x)
     {
         return constraintFunc.apply(x, args);

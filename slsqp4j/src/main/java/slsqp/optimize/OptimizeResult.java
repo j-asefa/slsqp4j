@@ -39,32 +39,81 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package slsqp.optimize;
 
+/**
+ * An {@link OptimizeResult} represents the result of applying {@link Slsqp#minimize(double[])}. This class contains
+ * public variables that provide information about the current state of the Slsqp optimizer.
+ */
 public class OptimizeResult
 {
-    public final double[] x;
-    public final double fx;
-    public final double[] jac;
-    public final int numIters;
-    public final int exitMode;
-    public final boolean success;
-    public double[][] a;
+    private final double[] resultVec;
+    private final int numIters;
+    private final int exitMode;
+    private final boolean success;
 
-    public OptimizeResult(
-        double[] x,
-        double fx,
-        double[] jac,
+    OptimizeResult(
+        double[] resultVec,
         int numIters,
         int exitMode,
-        boolean success,
-        double[][] a
+        boolean success
     )
     {
-        this.x = x;
-        this.fx = fx;
-        this.jac = jac;
+        this.resultVec = resultVec;
         this.numIters = numIters;
         this.exitMode = exitMode;
         this.success = success;
-        this.a = a;
+    }
+
+    /**
+     * Get the point at which the objective function is minimized, if one exists.
+     * Must check that {@link #success()} returns true.
+     *
+     * @return minima, if it exists, of the objective function minimized by the Slsqp solver.
+     */
+    public double[] resultVec()
+    {
+        return resultVec;
+    }
+
+    /**
+     * Get the exit mode of the Slsqp solver. Useful for determining the state of the solver and for debugging.
+     *
+     *     Exit modes are defined as follows ::
+     *         -1 : Gradient evaluation required (g & a)
+     *          0 : Optimization terminated successfully
+     *          1 : Function evaluation required (f & c)
+     *          2 : More equality constraints than independent variables
+     *          3 : More than 3*n iterations in LSQ subproblem
+     *          4 : Inequality constraints incompatible
+     *          5 : Singular matrix E in LSQ subproblem
+     *          6 : Singular matrix C in LSQ subproblem
+     *          7 : Rank-deficient equality constraint subproblem HFTI
+     *          8 : Positive directional derivative for linesearch
+     *          9 : Iteration limit exceeded
+     *
+     * @return the exit mode of the Slsqp solver.
+     */
+    public int exitMode()
+    {
+        return exitMode;
+    }
+
+    /**
+     * Get the number of iterations the Slsqp solver has performed.
+     *
+     * @return number of iterations the solver has performed.
+     */
+    public int numIters()
+    {
+        return numIters;
+    }
+
+    /**
+     * Did the optimizer complete successfully? A value of true corresponds to an {@link #exitMode()} return value of 0.
+     *
+     * @return true if the Slsqp solver completed successfully false otherwise.
+     */
+    public boolean success()
+    {
+        return success;
     }
 }

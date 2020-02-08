@@ -15,7 +15,7 @@ task compileFortran(type: Exec) {
     def obj = file("${buildDir}/fortran/slsqp.o")
     group "Build"
     description "Compiles the Fortran sources."
-    commandLine 'gfortran-9', '-fPIC', '-o', obj, '-c', src
+    commandLine 'gfortran', '-fPIC', '-o', obj, '-c', src
     dependsOn prepareFortran
 }
 

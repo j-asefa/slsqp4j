@@ -39,7 +39,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package slsqp.optimize.constraints;
 
+/**
+ * Specifies the type of constraint represented by a {@link ScalarConstraint} or {@link VectorConstraint}.
+ */
 public enum ConstraintType
 {
-    EQ, INEQ
+    /**
+     * Equality constraints are of the type f(x) = 0.
+     */
+    EQ,
+
+    /**
+     * Inequality constraints are of the type f(x) >= 0.
+     */
+    INEQ
 }
