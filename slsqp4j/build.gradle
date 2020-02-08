@@ -19,16 +19,6 @@ task compileFortran(type: Exec) {
     dependsOn prepareFortran
 }
 
-task generateJniHeaders(type: Exec) {
-    def compFile = file("src/main/java/slsqp/optimize/util/NativeUtils.java")
-    def slsqpHeadersDir = file("${buildDir}/c/slsqp-headers")
-    def classOutputDir = file("${buildDir}/classes/java/main/slsqp/optimize")
-    group "Build"
-    description "Generates the JNI headers."
-    commandLine 'javac' ,'-h', slsqpHeadersDir, compFile, '-d', classOutputDir
-    dependsOn prepareC
-}
-
 task compileC(type: Exec) {
     def src = file("src/jni/c/slsqp.c")
     def obj = file("${buildDir}/c/slsqp.o")
@@ -37,7 +27,7 @@ task compileC(type: Exec) {
     description "Compiles the C sources."
     commandLine 'gcc', '-fPIC', '-c', '-o', obj, '-I', System.properties['java.home'] + "/include",
         '-I', System.properties['java.home'] + "/include/linux", src
-    dependsOn generateJniHeaders
+    dependsOn prepareC
 }
 
 task buildJniLib(type: Exec) {
