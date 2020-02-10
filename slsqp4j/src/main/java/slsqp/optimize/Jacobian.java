@@ -42,10 +42,22 @@ package slsqp.optimize;
 import slsqp.optimize.functions.Vector2ScalarFunc;
 import slsqp.optimize.functions.Vector2VectorFunc;
 
+/**
+ * Utility class for calculating the approximate jacobian of {@link Vector2ScalarFunc} functions and
+ * {@link Vector2VectorFunc} functions using forward differences.
+ */
 public class Jacobian
 {
     public static double epsilon = Math.sqrt(Math.ulp((double)1)); // 1.4901161193847656e-08
 
+    /**
+     * Approximate the Jacobian of <code>func</code> using forward differences.
+     *
+     * @param x the input to <code>func</code> at which to calculate the Jacobian.
+     * @param func the function for which to calculate the Jacobian.
+     * @param arg any arguments the function takes.
+     * @return a numerical approximation of the Jacobian of <code>func</code>, using forward differences.
+     */
     public static double[][] approxJacobian(double[] x, Vector2VectorFunc func, double... arg)
     {
         final int n = x.length;
@@ -87,6 +99,14 @@ public class Jacobian
         return jac;
     }
 
+    /**
+     * Approximate the Jacobian of <code>func</code> using forward differences.
+     *
+     * @param x the input to <code>func</code> at which to calculate the Jacobian.
+     * @param func the function for which to calculate the Jacobian.
+     * @param arg any arguments the function takes.
+     * @return a numerical approximation of the Jacobian of <code>func</code>, using forward differences.
+     */
     public static double[] approxJacobian(double[] x, Vector2ScalarFunc func, double... arg)
     {
         final int n = x.length;
@@ -126,14 +146,20 @@ public class Jacobian
         return jac;
     }
 
-    public static double[][] transpose(double[][] arr)
+    /**
+     * Transpose the given matrix.
+     *
+     * @param mat the matrix to transpose.
+     * @return the transpose of mat.
+     */
+    public static double[][] transpose(double[][] mat)
     {
-        final double[][] temp = new double[arr[0].length][arr.length];
-        for (int i = 0; i < arr.length; i++)
+        final double[][] temp = new double[mat[0].length][mat.length];
+        for (int i = 0; i < mat.length; i++)
         {
-            for (int j = 0; j < arr[0].length; j++)
+            for (int j = 0; j < mat[0].length; j++)
             {
-                temp[j][i] = arr[i][j];
+                temp[j][i] = mat[i][j];
             }
         }
         return temp;

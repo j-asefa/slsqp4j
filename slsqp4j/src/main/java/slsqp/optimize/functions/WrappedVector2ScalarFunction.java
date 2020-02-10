@@ -41,6 +41,10 @@ package slsqp.optimize.functions;
 
 import slsqp.optimize.Jacobian;
 
+/**
+ * A wrapper around a {@link Vector2ScalarFunc} that provides access to the function and its
+ * jacobian.
+ */
 public class WrappedVector2ScalarFunction
 {
     private final Vector2ScalarFunc func;

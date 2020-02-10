@@ -43,6 +43,9 @@ import slsqp.optimize.Jacobian;
 import slsqp.optimize.functions.Vector2ScalarFunc;
 import slsqp.optimize.functions.Vector2VectorFunc;
 
+/**
+ * A scalar-valued constraint function.
+ */
 public final class ScalarConstraint
 {
     private ConstraintType constraintType;
@@ -57,6 +60,13 @@ public final class ScalarConstraint
         private Vector2VectorFunc jacobian;
         private double[] args;
 
+        /**
+         * Set the constraint function and any arguments it takes.
+         *
+         * @param constraintFunc constraint function.
+         * @param args arguments, if any, to the constraint function.
+         * @return this builder.
+         */
         public ScalarConstraintBuilder withConstraintFunction(Vector2ScalarFunc constraintFunc, double... args)
         {
             this.constraintFunc = constraintFunc;
@@ -64,18 +74,37 @@ public final class ScalarConstraint
             return this;
         }
 
+        /**
+         * Set the type of this constraint - equality or inequality. See {@link ConstraintType}
+         *
+         * @param constraintType type of this constraint.
+         * @return this builder.
+         */
         public ScalarConstraintBuilder withConstraintType(ConstraintType constraintType)
         {
             this.constraintType = constraintType;
             return this;
         }
 
+        /**
+         * Set the analytical Jacobian of this constraint function, if any. If no analytical Jacobian is specified,
+         * numerical approximation is performed on calls to {@link ScalarConstraint#getJacobian(double[])}.
+         *
+         * @param jacobian analytical jacobian of the constraint function specified in
+         * {@link #withConstraintFunction(Vector2ScalarFunc, double...)}
+         * @return this builder.
+         */
         public ScalarConstraintBuilder withJacobian(Vector2VectorFunc jacobian)
         {
             this.jacobian = jacobian;
             return this;
         }
 
+        /**
+         * Build an instance of a {@link ScalarConstraint}.
+         *
+         * @return a new {@link ScalarConstraint} with the properties specified in this builder.
+         */
         public ScalarConstraint build()
         {
             if (this.constraintType == null)
@@ -99,11 +128,24 @@ public final class ScalarConstraint
     {
     }
 
+    /**
+     * Get the type of this constraint - equality or inequality. See {@link ConstraintType}
+     *
+     * @return the type of this constraint.
+     */
     public ConstraintType getConstraintType()
     {
         return constraintType;
     }
 
+    /**
+     * Returns the Jacobian of this constraint function, evaluated at x. If an analytical Jacobian was included
+     * in the builder, returns the analytical Jacobian, otherwise it returns the approximate Jacobian via
+     * {@link Jacobian#approxJacobian(double[], Vector2ScalarFunc, double...)}
+     *
+     * @param x point at which to evaluate the jacobian of this function.
+     * @return n x 1 vector consisting of the Jacobian of this constraint function, evaluated at x.
+     */
     public double[] getJacobian(double[] x)
     {
         if (jacobian == null)
@@ -116,6 +158,12 @@ public final class ScalarConstraint
         }
     }
 
+    /**
+     * Apply this constraint function at point x.
+     *
+     * @param x vector-valued point at which to apply this constraint function.
+     * @return the value of this constraint function applied at point x.
+     */
     public double apply(double[] x)
     {
         return constraintFunc.apply(x, args);

@@ -81,15 +81,15 @@ public class SlsqpTests
             .withObjectiveFunction(objectiveFunc)
             .withBounds(bounds)
             .addScalarConstraint(constraint)
-            .withTolerance(tolerance)
+            .withAccuracy(tolerance)
             .withMaxIterations(maxIter)
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
 
-        assertTrue(Math.abs(result.x[0] - 2.5) < TestUtil.ERROR);
-        assertTrue(Math.abs(result.x[1] - 2.5) < TestUtil.ERROR);
-        assertTrue(result.success);
+        assertTrue(Math.abs(result.resultVec()[0] - 2.5) < TestUtil.ERROR);
+        assertTrue(Math.abs(result.resultVec()[1] - 2.5) < TestUtil.ERROR);
+        assertTrue(result.success());
     }
 
 
@@ -114,14 +114,14 @@ public class SlsqpTests
             .withObjectiveFunction(objectiveFunc)
             .withBounds(bounds)
             .addScalarConstraint(constraint)
-            .withTolerance(tolerance)
+            .withAccuracy(tolerance)
             .withMaxIterations(maxIter)
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
-        assertTrue(Math.abs(result.x[0] - 1.99840144e-14) < TestUtil.ERROR);
-        assertTrue(Math.abs(result.x[1] - 5) < TestUtil.ERROR);
-        assertTrue(result.success);
+        assertTrue(Math.abs(result.resultVec()[0] - 1.99840144e-14) < TestUtil.ERROR);
+        assertTrue(Math.abs(result.resultVec()[1] - 5) < TestUtil.ERROR);
+        assertTrue(result.success());
     }
 
     @Test
@@ -138,15 +138,15 @@ public class SlsqpTests
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
             .addScalarConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
         final double[] expected = {1, 1};
-        assertTrue(Math.abs(result.x[0] - expected[0]) < TestUtil.ERROR);
-        assertTrue(Math.abs(result.x[1] - expected[1]) < TestUtil.ERROR);
-        assertTrue(result.success);
+        assertTrue(Math.abs(result.resultVec()[0] - expected[0]) < TestUtil.ERROR);
+        assertTrue(Math.abs(result.resultVec()[1] - expected[1]) < TestUtil.ERROR);
+        assertTrue(result.success());
     }
 
     @Test
@@ -164,15 +164,15 @@ public class SlsqpTests
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(objectiveFunction)
             .addScalarConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
-        final double[] resX = result.x;
+        final double[] resX = result.resultVec();
         final double[] expected = {1};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
-        assertTrue(result.success);
+        assertTrue(result.success());
     }
 
     @Test
@@ -197,30 +197,30 @@ public class SlsqpTests
         final Slsqp slsqp1 = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(objectiveFunction, -1)
             .addScalarConstraint(constraint1)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
         OptimizeResult result = slsqp1.minimize(x);
 
-        double[] resX = result.x;
+        double[] resX = result.resultVec();
         double[] expected = {0};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
-        assertTrue(result.success);
+        assertTrue(result.success());
 
         x = new double[] {-10};
 
         final Slsqp slsqp2 = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(objectiveFunction, -1)
             .addScalarConstraint(constraint2)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
         result = slsqp2.minimize(x);
-        resX = result.x;
+        resX = result.resultVec();
         expected = new double[]{2};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
-        assertTrue(result.success);
+        assertTrue(result.success());
     }
 
     // Vector tests
@@ -236,16 +236,16 @@ public class SlsqpTests
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .addVectorConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
         final OptimizeResult result = slsqp.minimize(new double[] {-1, 1});
-        final double[] resX = result.x;
+        final double[] resX = result.resultVec();
         final double[] expected = {1, 1};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[1] - expected[1]) < TestUtil.ERROR);
-        assertTrue(result.success);
+        assertTrue(result.success());
     }
 
     @Test
@@ -261,16 +261,16 @@ public class SlsqpTests
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
             .addVectorConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
-        final double[] resX = result.x;
+        final double[] resX = result.resultVec();
         final double[] expected = {1, 1};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[1] - expected[1]) < TestUtil.ERROR);
-        assertTrue(result.success);
+        assertTrue(result.success());
     }
 
     @Test
@@ -286,16 +286,16 @@ public class SlsqpTests
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
             .addVectorConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
-        final double[] resX = result.x;
+        final double[] resX = result.resultVec();
         final double[] expected = {2, 1};
         assertTrue(Math.abs(resX[0] - expected[0]) < 1.0E-3);
         assertTrue(Math.abs(resX[1] - expected[1]) < 1.0E-3);
-        assertTrue(result.success);
+        assertTrue(result.success());
     }
 
     @Test
@@ -312,16 +312,16 @@ public class SlsqpTests
             .withObjectiveFunction(new TestUtil.Fun(), -1)
             .withJacobian(new TestUtil.Jac())
             .addVectorConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
-        final double[] resX = result.x;
+        final double[] resX = result.resultVec();
         final double[] expected = {2, 1};
         assertTrue(Math.abs(resX[0] - expected[0]) < 1.0E-3);
         assertTrue(Math.abs(resX[1] - expected[1]) < 1.0E-3);
-        assertTrue(result.success);
+        assertTrue(result.success());
     }
 
     @Test
@@ -346,18 +346,18 @@ public class SlsqpTests
             .withJacobian(new TestUtil.Jac())
             .withBounds(bounds)
             .addVectorConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
-        final double[] resX = result.x;
+        final double[] resX = result.resultVec();
         final double[] expected = {0.8, 0.8};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[1] - expected[1]) < TestUtil.ERROR);
         assertTrue(-0.8 <= resX[0] && resX[0] <= 1);
         assertTrue(-1 <= resX[1] && resX[1] <= 0.8);
-        assertTrue(result.success);
+        assertTrue(result.success());
     }
 
     @Test
@@ -388,13 +388,13 @@ public class SlsqpTests
         final Slsqp slsqp = new Slsqp.SlsqpBuilder()
             .withObjectiveFunction(objectiveFunction, -1)
             .addVectorConstraint(constraint)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
 
-        final double[] resX = result.x;
+        final double[] resX = result.resultVec();
         final double[] expected = {
             81869346598383174108963135153684611072.0000000000000000000000000000000000000,
             57919931473235792828070634541023232.0000000000000000000000000000000000000000000000000000000,
@@ -404,7 +404,7 @@ public class SlsqpTests
         assertTrue(Math.abs(resX[1] - expected[1]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[2] - expected[2]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[3] - expected[3]) < TestUtil.ERROR);
-        assertTrue(result.success);
+        assertTrue(result.success());
     }
 
     @Test
@@ -444,13 +444,13 @@ public class SlsqpTests
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
-        final double[] resX = result.x;
+        final double[] resX = result.resultVec();
         final double[] expected = {1.0, -1.33226763e-15, -1.33226763e-15, -4.99600361e-16};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[1] - expected[1]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[2] - expected[2]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[3] - expected[3]) < TestUtil.ERROR);
-        assertTrue(result.success);
+        assertTrue(result.success());
     }
 
     @Test
@@ -486,16 +486,16 @@ public class SlsqpTests
             .addVectorConstraint(constraint1)
             .addVectorConstraint(constraint2)
             .addVectorConstraint(constraint3)
-            .withTolerance(defaultTol)
+            .withAccuracy(defaultTol)
             .withMaxIterations(defaultMaxIter)
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
-        final double[] resX = result.x;
+        final double[] resX = result.resultVec();
         final double[] expected = {-2.38418578e-8, -2.38418574e-8};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[1] - expected[1]) < TestUtil.ERROR);
-        assertTrue(result.success);
+        assertTrue(result.success());
     }
 
     @Test
@@ -514,11 +514,11 @@ public class SlsqpTests
             .build();
 
         final OptimizeResult result = slsqp.minimize(x);
-        final double[] resX = result.x;
+        final double[] resX = result.resultVec();
         final double[] expected = {1, 0.5};
         assertTrue(Math.abs(resX[0] - expected[0]) < TestUtil.ERROR);
         assertTrue(Math.abs(resX[1] - expected[1]) < TestUtil.ERROR);
-        assertTrue(result.success);
+        assertTrue(result.success());
     }
 
     @Test

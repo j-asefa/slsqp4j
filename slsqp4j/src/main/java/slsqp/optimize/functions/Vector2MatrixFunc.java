@@ -39,6 +39,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package slsqp.optimize.functions;
 
+/**
+ * A function that takes a vector as argument and produces an vector of vectors.
+ */
 @FunctionalInterface
 public interface Vector2MatrixFunc
 {

@@ -39,6 +39,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package slsqp.optimize.functions;
 
+/**
+ * A function that takes a vector-valued argument and produces a scalar-valued result.
+ */
 @FunctionalInterface
 public interface Vector2ScalarFunc
 {
