@@ -25,7 +25,7 @@ final Slsqp slsqp = new Slsqp.SlsqpBuilder()
 The builder accepts an objective function, as well as a Jacobian, some constraints, bounds, an error tolerance, and a maximum number
 of iterations for the Slsqp solver to perform. Some of these parameters are optional. For example, the Slsqp solver can 
 solve unconstrained and unbounded problems. For a complete list of the builder parameters consult the documentation in 
-[Slsqp.java](./slsqp4j/src/main/java/slsqp/optimize/Slsqp.java).
+[Slsqp.java](./slsqp4j/src/main/java/slsqp4j/optimize/Slsqp.java).
 
 Below is a side-by-side comparison showing Slsqp4j's API vs. SciPy's `optimize` api.
 <table>
