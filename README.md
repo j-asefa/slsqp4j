@@ -7,7 +7,7 @@ The bulk of the solving is done in `slsqp.f90` which was written by Dieter Kraft
 & <a href="#ref2">[2]</a>. 
 
 ## Installing
-To use slsqp4j you will need to install both gcc and gfortran. 
+Slsqp4j depends on both gcc and gfortran. 
 This can be done with the command `sudo apt install gcc gfortran`. Additionally, your `JAVA_HOME`  must point to your JDK install directory. 
 
 ### Gradle
