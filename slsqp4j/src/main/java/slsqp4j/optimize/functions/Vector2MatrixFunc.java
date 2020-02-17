@@ -37,20 +37,13 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package slsqp.optimize.constraints;
+package slsqp4j.optimize.functions;
 
 /**
- * Specifies the type of constraint represented by a {@link ScalarConstraint} or {@link VectorConstraint}.
+ * A function that takes a vector as argument and produces an vector of vectors.
  */
-public enum ConstraintType
+@FunctionalInterface
+public interface Vector2MatrixFunc
 {
-    /**
-     * Equality constraints are of the type f(x) = 0.
-     */
-    EQ,
-
-    /**
-     * Inequality constraints are of the type f(x) >= 0.
-     */
-    INEQ
+    double[][] apply(double[] x, double... arg);
 }

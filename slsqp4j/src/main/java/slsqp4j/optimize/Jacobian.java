@@ -37,10 +37,10 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package slsqp.optimize;
+package slsqp4j.optimize;
 
-import slsqp.optimize.functions.Vector2ScalarFunc;
-import slsqp.optimize.functions.Vector2VectorFunc;
+import slsqp4j.optimize.functions.Vector2ScalarFunc;
+import slsqp4j.optimize.functions.Vector2VectorFunc;
 
 /**
  * Utility class for calculating the approximate jacobian of {@link Vector2ScalarFunc} functions and

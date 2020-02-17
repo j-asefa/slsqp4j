@@ -37,27 +37,27 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package slsqp.optimize.constraints;
+package slsqp4j.optimize.constraints;
 
-import slsqp.optimize.functions.Vector2MatrixFunc;
-import slsqp.optimize.functions.Vector2VectorFunc;
-import slsqp.optimize.Jacobian;
+import slsqp4j.optimize.Jacobian;
+import slsqp4j.optimize.functions.Vector2ScalarFunc;
+import slsqp4j.optimize.functions.Vector2VectorFunc;
 
 /**
- * A vector-valued constraint function.
+ * A scalar-valued constraint function.
  */
-public final class VectorConstraint
+public final class ScalarConstraint
 {
-    private double[] args;
     private ConstraintType constraintType;
-    private Vector2VectorFunc constraintFunc;
-    private Vector2MatrixFunc jacobian;
+    private Vector2ScalarFunc constraintFunc;
+    private Vector2VectorFunc jacobian;
+    private double[] args;
 
-    public static class VectorConstraintBuilder
+    public static class ScalarConstraintBuilder
     {
         private ConstraintType constraintType;
-        private Vector2VectorFunc constraintFunc;
-        private Vector2MatrixFunc jacobian;
+        private Vector2ScalarFunc constraintFunc;
+        private Vector2VectorFunc jacobian;
         private double[] args;
 
         /**
@@ -67,10 +67,7 @@ public final class VectorConstraint
          * @param args arguments, if any, to the constraint function.
          * @return this builder.
          */
-        public VectorConstraint.VectorConstraintBuilder withConstraintFunction(
-            Vector2VectorFunc constraintFunc,
-            double... args
-        )
+        public ScalarConstraintBuilder withConstraintFunction(Vector2ScalarFunc constraintFunc, double... args)
         {
             this.constraintFunc = constraintFunc;
             this.args = args;
@@ -83,7 +80,7 @@ public final class VectorConstraint
          * @param constraintType type of this constraint.
          * @return this builder.
          */
-        public VectorConstraint.VectorConstraintBuilder withConstraintType(ConstraintType constraintType)
+        public ScalarConstraintBuilder withConstraintType(ConstraintType constraintType)
         {
             this.constraintType = constraintType;
             return this;
@@ -91,24 +88,24 @@ public final class VectorConstraint
 
         /**
          * Set the analytical Jacobian of this constraint function, if any. If no analytical Jacobian is specified,
-         * numerical approximation is performed on calls to {@link VectorConstraint#getJacobian(double[])}.
+         * numerical approximation is performed on calls to {@link ScalarConstraint#getJacobian(double[])}.
          *
          * @param jacobian analytical jacobian of the constraint function specified in
-         * {@link #withConstraintFunction(Vector2VectorFunc, double...)}
+         * {@link #withConstraintFunction(Vector2ScalarFunc, double...)}
          * @return this builder.
          */
-        public VectorConstraint.VectorConstraintBuilder withJacobian(Vector2MatrixFunc jacobian)
+        public ScalarConstraintBuilder withJacobian(Vector2VectorFunc jacobian)
         {
             this.jacobian = jacobian;
             return this;
         }
 
         /**
-         * Build an instance of a {@link VectorConstraint}.
+         * Build an instance of a {@link ScalarConstraint}.
          *
-         * @return a new {@link VectorConstraint} with the properties specified in this builder.
+         * @return a new {@link ScalarConstraint} with the properties specified in this builder.
          */
-        public VectorConstraint build()
+        public ScalarConstraint build()
         {
             if (this.constraintType == null)
             {
@@ -118,16 +115,16 @@ public final class VectorConstraint
             {
                 throw new IllegalStateException("must specify a constraint function");
             }
-            final VectorConstraint vectorConstraint = new VectorConstraint();
-            vectorConstraint.constraintType = this.constraintType;
-            vectorConstraint.constraintFunc = this.constraintFunc;
-            vectorConstraint.jacobian = this.jacobian;
-            vectorConstraint.args = this.args;
-            return vectorConstraint;
+            final ScalarConstraint scalarConstraint = new ScalarConstraint();
+            scalarConstraint.constraintType = this.constraintType;
+            scalarConstraint.constraintFunc = this.constraintFunc;
+            scalarConstraint.jacobian = this.jacobian;
+            scalarConstraint.args = this.args;
+            return scalarConstraint;
         }
     }
 
-    private VectorConstraint()
+    private ScalarConstraint()
     {
     }
 
@@ -144,12 +141,12 @@ public final class VectorConstraint
     /**
      * Returns the Jacobian of this constraint function, evaluated at x. If an analytical Jacobian was included
      * in the builder, returns the analytical Jacobian, otherwise it returns the approximate Jacobian via
-     * {@link Jacobian#approxJacobian(double[], Vector2VectorFunc, double...)}
+     * {@link Jacobian#approxJacobian(double[], Vector2ScalarFunc, double...)}
      *
      * @param x point at which to evaluate the jacobian of this function.
-     * @return m x n matrix consisting of the Jacobian of this constraint function, evaluated at x.
+     * @return n x 1 vector consisting of the Jacobian of this constraint function, evaluated at x.
      */
-    public double[][] getJacobian(double[] x)
+    public double[] getJacobian(double[] x)
     {
         if (jacobian == null)
         {
@@ -157,8 +154,7 @@ public final class VectorConstraint
         }
         else
         {
-            // Fortran expects matrices to be laid out in column major order
-            return Jacobian.transpose(jacobian.apply(x, args));
+            return jacobian.apply(x, args);
         }
     }
 
@@ -166,9 +162,9 @@ public final class VectorConstraint
      * Apply this constraint function at point x.
      *
      * @param x vector-valued point at which to apply this constraint function.
-     * @return the vector-valued output of applying this constraint function to input x.
+     * @return the value of this constraint function applied at point x.
      */
-    public double[] apply(double[] x)
+    public double apply(double[] x)
     {
         return constraintFunc.apply(x, args);
     }
