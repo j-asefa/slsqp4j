@@ -1,12 +1,10 @@
 # slsqp4j
 
-Slsqp4j is a Java wrapper around the popular `SLSQP` optimizer for constrained nonlinear optimization problems. Slsqp4j has
-a similar API to Scipy, in order to ease the translation problems from Python to the JVM. 
+Slsqp4j is a Java wrapper around the popular `SLSQP` optimizer for constrained nonlinear optimization problems. Slsqp4j's API
+mimics Scipy's, in order to ease the translation problems from Python to the JVM. 
 
 The bulk of the solving is done in `slsqp.f90` which was written by Dieter Kraft and described in <a href="#ref1">[1]</a> 
 & <a href="#ref2">[2]</a>. 
-
-
 
 ## Installing
 To use slsqp4j you will need to install both gcc and gfortran. 
@@ -25,9 +23,10 @@ final Slsqp slsqp = new Slsqp.SlsqpBuilder()
     .build();
 ```
 
-The builder accepts an objective function, as well as a Jacobian, some constraints, bounds, error tolerance, and a maximum number
-of iterations for the Slsqp solver to perform. Some of these parameters are optional. The Slsqp solver can 
-solve unconstrained and unbounded problems.
+The builder accepts an objective function, as well as a Jacobian, some constraints, bounds, an error tolerance, and a maximum number
+of iterations for the Slsqp solver to perform. Some of these parameters are optional. For example, the Slsqp solver can 
+solve unconstrained and unbounded problems. For a complete list of the builder parameters consult the documentation in 
+[Slsqp.java](./slsqp4j/src/main/java/slsqp/optimize/Slsqp.java).
 
 Below is a side-by-side comparison showing Slsqp4j's API vs. Scipy's `optimize` api.
 <table>
@@ -89,6 +88,13 @@ res = minimize(self.fun, [-1.4, 0.9], method='SLSQP',
 
 The API is slightly more verbose than the Scipy one due to Java's type safety, however the similarities should be apparent. 
 For more usage examples refer to `SlsqpTests.java` in the `test` directory.
+
+Since the `SLSQP` algorithm is iterative, it is assumed that an instance of `Slsqp`
+will not be shared among threads, thus an instance of `Slsqp` is *not* thread-safe. Rather, an instance of `Slsqp` should 
+be constructed once, with the parameters of the optimization problem given to the builder, and then repeated calls
+to `slsqp.optimize()` should be made until a value of `true` is returned by a call to `success()` on the returned 
+`OptimizeResult` instance.
+
 
 ## License
 Slsqp4j is released under the [BSD license](https://github.com/skew-markets/slsqp4j/blob/master/LICENSE.txt).
