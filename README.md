@@ -1,18 +1,21 @@
 # slsqp4j
 
-Slsqp4j is a Java wrapper around the popular `SLSQP` optimizer included in Scipy. The bulk of the solving
-is done by the code written in `slsqp.f90` which was originally written by Dieter Kraft and described in <a href="#ref1">[1]</a> 
-& <a href="#ref2">[2]</a>.
+Slsqp4j is a Java wrapper around the popular `SLSQP` optimizer for constrained nonlinear optimization problems. Slsqp4j has
+a similar API to Scipy, in order to ease the translation problems from Python to the JVM. 
 
-### Building
-To build slsqp4j you will need to install both gcc and gfortran. 
-This can be done with the command 
+The bulk of the solving is done in `slsqp.f90` which was written by Dieter Kraft and described in <a href="#ref1">[1]</a> 
+& <a href="#ref2">[2]</a>. 
 
-`sudo apt install gcc gfortran`
 
-Additionally, your `JAVA_HOME`  must point to your JDK install directory. 
 
-### Usage
+## Installing
+To use slsqp4j you will need to install both gcc and gfortran. 
+This can be done with the command `sudo apt install gcc gfortran`. Additionally, your `JAVA_HOME`  must point to your JDK install directory. 
+
+### Gradle
+
+
+## Usage
 To use Slslqp4j you must construct an instance of an `Slsqp4j` object. You do this using the Builder pattern:
 ```
 final Slsqp slsqp = new Slsqp.SlsqpBuilder()
@@ -25,7 +28,6 @@ final Slsqp slsqp = new Slsqp.SlsqpBuilder()
 The builder accepts an objective function, as well as a Jacobian, some constraints, bounds, error tolerance, and a maximum number
 of iterations for the Slsqp solver to perform. Some of these parameters are optional. The Slsqp solver can 
 solve unconstrained and unbounded problems.
-
 
 Below is a side-by-side comparison showing Slsqp4j's API vs. Scipy's `optimize` api.
 <table>
@@ -86,11 +88,12 @@ res = minimize(self.fun, [-1.4, 0.9], method='SLSQP',
 </table>
 
 The API is slightly more verbose than the Scipy one due to Java's type safety, however the similarities should be apparent. 
+For more usage examples refer to `SlsqpTests.java` in the `test` directory.
 
-### License
+## License
 Slsqp4j is released under the [BSD license](https://github.com/skew-markets/slsqp4j/blob/master/LICENSE.txt).
 
-### References
+## References
 <ol>
 <li id="ref1">Dieter Kraft, "A software package for sequential quadratic
 programming", Technical Report DFVLR-FB 88-28, Institut für
