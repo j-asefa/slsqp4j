@@ -1,7 +1,6 @@
 # slsqp4j
 
-Slsqp4j is a Java wrapper around the popular `SLSQP` optimizer for constrained nonlinear optimization problems. Slsqp4j's API
-mimics Scipy's, in order to ease the translation problems from Python to the JVM. 
+Slsqp4j is a Java wrapper around the popular `SLSQP` nonlinear optimizer included in SciPy. It provides an API that mimics SciPy's, in order to ease the translation of problems from Python to the JVM. 
 
 The bulk of the solving is done in `slsqp.f90` which was written by Dieter Kraft and described in <a href="#ref1">[1]</a> 
 & <a href="#ref2">[2]</a>. 
@@ -28,14 +27,14 @@ of iterations for the Slsqp solver to perform. Some of these parameters are opti
 solve unconstrained and unbounded problems. For a complete list of the builder parameters consult the documentation in 
 [Slsqp.java](./slsqp4j/src/main/java/slsqp/optimize/Slsqp.java).
 
-Below is a side-by-side comparison showing Slsqp4j's API vs. Scipy's `optimize` api.
+Below is a side-by-side comparison showing Slsqp4j's API vs. SciPy's `optimize` api.
 <table>
 <tr>
 <th>
 Slsqp4j
 </th>
 <th>
-Scipy
+SciPy
 </th>
 </tr>
 
