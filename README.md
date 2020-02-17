@@ -11,7 +11,7 @@ Slsqp4j depends on both gcc and gfortran.
 This can be done with the command `sudo apt install gcc gfortran`. Additionally, your `JAVA_HOME`  must point to your JDK install directory. 
 
 ### Gradle
-
+TODO: gradle installation
 
 ## Usage
 To use Slslqp4j you must construct an instance of an `Slsqp4j` object. You do this using the Builder pattern:
