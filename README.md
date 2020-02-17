@@ -89,11 +89,7 @@ res = minimize(self.fun, [-1.4, 0.9], method='SLSQP',
 The API is slightly more verbose than the Scipy one due to Java's type safety, however the similarities should be apparent. 
 For more usage examples refer to `SlsqpTests.java` in the `test` directory.
 
-Since the `SLSQP` algorithm is iterative, it is assumed that an instance of `Slsqp`
-will not be shared among threads, thus an instance of `Slsqp` is *not* thread-safe. Rather, an instance of `Slsqp` should 
-be constructed once, with the parameters of the optimization problem given to the builder, and then repeated calls
-to `slsqp.optimize()` should be made until a value of `true` is returned by a call to `success()` on the returned 
-`OptimizeResult` instance.
+Since the `SLSQP` algorithm is iterative, it is assumed that an instance of `Slsqp` will not be shared among threads, thus instances are *not* thread-safe. Rather, an instance of `Slsqp` should be constructed once, with the parameters of the optimization problem given to the builder, and then repeated calls to `slsqp.optimize()` should be made until a value of `true` is returned on a call to `success()` on the returned `OptimizeResult` instance.
 
 
 ## License
