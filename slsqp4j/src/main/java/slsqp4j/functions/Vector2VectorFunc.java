@@ -37,41 +37,13 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package slsqp4j.optimize.functions;
-
-import slsqp4j.optimize.Jacobian;
+package slsqp4j.functions;
 
 /**
- * A wrapper around a {@link Vector2ScalarFunc} that provides access to the function and its
- * jacobian.
+ * A function that takes a vector-valued argument and produces a vector-valued result.
  */
-public class WrappedVector2ScalarFunction
+@FunctionalInterface
+public interface Vector2VectorFunc
 {
-    private final Vector2ScalarFunc func;
-    private final double[] arg;
-    private final Vector2VectorFunc jacobian;
-
-    public WrappedVector2ScalarFunction(Vector2ScalarFunc func, Vector2VectorFunc jacobian, double... arg)
-    {
-        this.func = func;
-        this.jacobian = jacobian;
-        this.arg = arg;
-    }
-
-    public double apply(double[] x)
-    {
-        return func.apply(x, arg);
-    }
-
-    public double[] getJacobian(double[] x)
-    {
-        if (jacobian == null)
-        {
-            return Jacobian.approxJacobian(x, this.func, arg);
-        }
-        else
-        {
-            return jacobian.apply(x, arg);
-        }
-    }
+    double[] apply(double[] x, double... arg);
 }

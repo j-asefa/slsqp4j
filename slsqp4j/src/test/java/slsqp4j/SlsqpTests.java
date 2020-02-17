@@ -37,15 +37,15 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package slsqp4j.optimize;
+package slsqp4j;
 
 import org.junit.jupiter.api.Test;
-import slsqp4j.optimize.constraints.ConstraintType;
-import slsqp4j.optimize.constraints.ScalarConstraint;
-import slsqp4j.optimize.constraints.VectorConstraint;
-import slsqp4j.optimize.functions.Vector2MatrixFunc;
-import slsqp4j.optimize.functions.Vector2ScalarFunc;
-import slsqp4j.optimize.functions.Vector2VectorFunc;
+import slsqp4j.constraints.ConstraintType;
+import slsqp4j.constraints.ScalarConstraint;
+import slsqp4j.constraints.VectorConstraint;
+import slsqp4j.functions.Vector2MatrixFunc;
+import slsqp4j.functions.Vector2ScalarFunc;
+import slsqp4j.functions.Vector2VectorFunc;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;

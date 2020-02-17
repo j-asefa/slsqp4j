@@ -37,13 +37,14 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package slsqp4j.optimize.functions;
+package slsqp4j.functions;
 
 /**
- * A function that takes a vector-valued argument and produces a scalar-valued result.
+ * A function that takes a vector-valued argument and produces no result.
  */
 @FunctionalInterface
-public interface Vector2ScalarFunc
+public interface CallBackFunc
 {
-    double apply(double[] x, double... arg);
+    void callback(double[] x);
 }
+
