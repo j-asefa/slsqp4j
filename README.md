@@ -2,16 +2,6 @@
 
 Slsqp4j is a Java wrapper around the popular `SLSQP` nonlinear optimizer included in SciPy. It provides an API that mimics SciPy's, in order to ease the translation of problems from Python to the JVM. 
 
-The bulk of the solving is done in `slsqp.f90` which was written by Dieter Kraft and described in <a href="#ref1">[1]</a> 
-& <a href="#ref2">[2]</a>. 
-
-## Installing
-Slsqp4j depends on both gcc and gfortran. 
-You can install both with the command `sudo apt install gcc gfortran`. Additionally, your `JAVA_HOME`  must point to your JDK install directory. 
-
-### Gradle
-TODO: gradle installation
-
 ## Usage
 To use Slslqp4j you must construct an instance of an `Slsqp4j` object. You do this using the Builder pattern:
 ```
@@ -90,6 +80,15 @@ For more usage examples refer to `SlsqpTests.java` in the `test` directory.
 
 Since the `SLSQP` algorithm is iterative, it is assumed that an instance of `Slsqp` will not be shared among threads, thus instances are *not* thread-safe. Rather, an instance of `Slsqp` should be constructed once, with the parameters of the optimization problem given to the builder, and then repeated calls to `slsqp.optimize()` should be made until a value of `true` is returned on a call to `success()` on the returned `OptimizeResult` instance.
 
+The bulk of the solving is done in `slsqp.f90` which was written by Dieter Kraft and described in <a href="#ref1">[1]</a> 
+& <a href="#ref2">[2]</a>. 
+
+## Installing
+Slsqp4j depends on both gcc and gfortran. 
+You can install both with the command `sudo apt install gcc gfortran`. Additionally, your `JAVA_HOME`  must point to your JDK install directory. 
+
+### Gradle
+TODO: gradle installation
 
 ## License
 Slsqp4j is released under the [BSD license](https://github.com/skew-markets/slsqp4j/blob/master/LICENSE.txt).
