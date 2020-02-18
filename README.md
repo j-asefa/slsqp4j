@@ -55,16 +55,14 @@ final VectorConstraint constraint3 = new VectorConstraint.VectorConstraintBuilde
     .build();<br>
 final double[] lowerBounds = new double[] {-0.8, -1};
 final double[] upperBounds = new double[] {1, 0.8};
-final double[][] bounds = new double[][] {lowerBounds, upperBounds};<br>
 final Slsqp slsqp = new Slsqp.SlsqpBuilder()
     .withObjectiveFunction(new Fun(), -1)
     .withJacobian(new Jac())
-    .withBounds(bounds)
+    .withLowerBounds(lowerBounds)
+    .withUpperBounds(upperBounds)
     .addVectorConstraint(constraint1)
     .addVectorConstraint(constraint2)
     .addVectorConstraint(constraint3)
-    .withAccuracy(defaultTol)
-    .withMaxIterations(defaultMaxIter)
     .build();
 final OptimizeResult result = slsqp.minimize(new double[]{-1.4, 0.9});
 </pre>
@@ -77,7 +75,7 @@ constraints = [
     {'type': 'ineq', 'fun': self.f_ieqcon2},
 ] 
 res = minimize(self.fun, [-1.4, 0.9], method='SLSQP',
-       jac=self.jac, args=(-1.0, ),
+       jac=self.jac, args=(-1.0, ), constraints=constraints,
        bounds=[(-0.8, 1.), (-1, 0.8)])
 
 </pre>
