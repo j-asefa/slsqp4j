@@ -75,7 +75,8 @@ constraints = [
     {'type': 'ineq', 'fun': self.f_ieqcon2},
 ] 
 res = minimize(self.fun, [-1.4, 0.9], method='SLSQP',
-       jac=self.jac, args=(-1.0, ), constraints=constraints,
+       jac=self.jac, args=(-1.0, ), 
+       constraints=constraints,
        bounds=[(-0.8, 1.), (-1, 0.8)])
 
 </pre>
