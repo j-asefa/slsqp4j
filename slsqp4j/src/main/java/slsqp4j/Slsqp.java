@@ -75,7 +75,8 @@ public final class Slsqp
 
         private Vector2ScalarFunc objectiveFunc;
         private Vector2VectorFunc objectiveFuncJacobian;
-        private double[][] bounds;
+        private double[] lowerBounds;
+        private double[] upperBounds;
         private Set<ScalarConstraint> scalarEqualityConstraints = new HashSet<>();
         private Set<ScalarConstraint> scalarInequalityConstraints = new HashSet<>();
         private Set<VectorConstraint> vectorEqualityConstraints = new HashSet<>();
@@ -114,14 +115,28 @@ public final class Slsqp
         }
 
         /**
+         * Add bounds to this optimization problem. Bounds should contain the array of lower bounds for this problem,
+         * while bounds[1]
          *
-         *
-         * @param bounds
-         * @return
+         * @param lowerBounds array of lower and upper bound arrays.
+         * @return this builder.
          */
-        public SlsqpBuilder withBounds(double[][] bounds)
+        public SlsqpBuilder withLowerBounds(double[] lowerBounds)
         {
-            this.bounds = bounds;
+            this.lowerBounds = lowerBounds;
+            return this;
+        }
+
+        /**
+         * Add bounds to this optimization problem. Bounds should contain the array of lower bounds for this problem,
+         * while bounds[1]
+         *
+         * @param upperBounds array of lower and upper bound arrays.
+         * @return this builder.
+         */
+        public SlsqpBuilder withUpperBounds(double[] upperBounds)
+        {
+            this.upperBounds = upperBounds;
             return this;
         }
 
@@ -221,7 +236,8 @@ public final class Slsqp
                 throw new IllegalStateException("cannot specify both vector and scalar constraints");
             }
             final Slsqp slsqp = new Slsqp();
-            slsqp.bounds = this.bounds;
+            slsqp.lowerBounds = this.lowerBounds;
+            slsqp.upperBounds = this.upperBounds;
             slsqp.scalarEqualityConstraints = this.scalarEqualityConstraints;
             slsqp.scalarInequalityConstraints = this.scalarInequalityConstraints;
             slsqp.vectorEqualityConstraints = this.vectorEqualityConstraints;
@@ -241,7 +257,8 @@ public final class Slsqp
         {
             this.objectiveFunc = null;
             this.objectiveFuncJacobian = null;
-            this.bounds = null;
+            this.lowerBounds = null;
+            this.upperBounds = null;
             this.scalarEqualityConstraints.clear();
             this.scalarInequalityConstraints.clear();
             this.vectorEqualityConstraints.clear();
@@ -257,7 +274,8 @@ public final class Slsqp
     {
     }
 
-    private double[][] bounds;
+    private double[] lowerBounds;
+    private double[] upperBounds;
     private Set<ScalarConstraint> scalarEqualityConstraints;
     private Set<ScalarConstraint> scalarInequalityConstraints;
     private Set<VectorConstraint> vectorEqualityConstraints;
@@ -316,7 +334,7 @@ public final class Slsqp
         final double[] xl = new double[n]; // lower bounds
         final double[] xu = new double[n]; // upper bounds
 
-        computeBounds(n, bounds, xl, xu);
+        computeBounds(n, lowerBounds, upperBounds, xl, xu);
 
         clip(x, xl, xu);
 
@@ -399,7 +417,7 @@ public final class Slsqp
         final double[] xl = new double[n]; // lower bounds
         final double[] xu = new double[n]; // upper bounds
 
-        computeBounds(n, bounds, xl, xu);
+        computeBounds(n, lowerBounds, upperBounds, xl, xu);
 
         clip(x, xl, xu);
 
@@ -528,17 +546,27 @@ public final class Slsqp
         return index;
     }
 
-    private void computeBounds(int n, double[][] bounds, double[] xl, double[] xu)
+    private void computeBounds(int n, double[] lowerBounds, double[] upperBounds, double[] xl, double[] xu)
     {
-        if (bounds == null)
+        if (lowerBounds == null && upperBounds == null)
         {
             Arrays.fill(xl, Double.NaN);
             Arrays.fill(xu, Double.NaN);
         }
+        else if (lowerBounds == null)
+        {
+            Arrays.fill(xl, Double.NaN);
+            System.arraycopy(upperBounds, 0, xu, 0, n);
+        }
+        else if (upperBounds == null)
+        {
+            System.arraycopy(lowerBounds, 0, xl, 0, n);
+            Arrays.fill(xu, Double.NaN);
+        }
         else
         {
-            System.arraycopy(bounds[0], 0, xl, 0, n);
-            System.arraycopy(bounds[1], 0, xu, 0, n);
+            System.arraycopy(lowerBounds, 0, xl, 0, n);
+            System.arraycopy(upperBounds, 0, xu, 0, n);
         }
         for (int i = 0; i < n; i++)
         {
