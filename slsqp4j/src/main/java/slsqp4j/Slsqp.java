@@ -115,10 +115,15 @@ public final class Slsqp
         }
 
         /**
-         * Add bounds to this optimization problem. Bounds should contain the array of lower bounds for this problem,
-         * while bounds[1]
+         * Add lower bounds for the decision variables of this problem. The upper and lower bounds should be
+         * positionally aligned, i.e. the lower bound value in <code>lowerBounds[0]</code> should have a corresponding
+         * upper bound in <code>upperBounds[0]</code>, the lower bound value in <code>lowerBounds[1]</code> should have a
+         * corresponding upper bound in <code>upperBounds[1]</code> etc.
          *
-         * @param lowerBounds array of lower and upper bound arrays.
+         * If there is no corresponding lower bound for a given decision variable, a value of
+         * {@link Double#NaN } should be included at the relevant position.
+         *
+         * @param lowerBounds array of lower bounds.
          * @return this builder.
          */
         public SlsqpBuilder withLowerBounds(double[] lowerBounds)
@@ -128,10 +133,15 @@ public final class Slsqp
         }
 
         /**
-         * Add bounds to this optimization problem. Bounds should contain the array of lower bounds for this problem,
-         * while bounds[1]
+         * Add upper bounds on the decision variables of this problem. The upper and lower bounds should be
+         * positionally aligned, i.e. the lower bound value in <code>lowerBounds[0]</code> should have a corresponding
+         * upper bound in <code>upperBounds[0]</code>, the lower bound value in <code>lowerBounds[1]</code> should have a
+         * corresponding upper bound in <code>upperBounds[1]</code> etc.
          *
-         * @param upperBounds array of lower and upper bound arrays.
+         * If there is no corresponding upper for a given decision variable, a value of
+         * {@link Double#NaN } should be included at the relevant position.
+         *
+         * @param upperBounds array of upper bounds.
          * @return this builder.
          */
         public SlsqpBuilder withUpperBounds(double[] upperBounds)
@@ -234,6 +244,11 @@ public final class Slsqp
                 (!this.vectorEqualityConstraints.isEmpty() || !this.vectorInequalityConstraints.isEmpty()))
             {
                 throw new IllegalStateException("cannot specify both vector and scalar constraints");
+            }
+            if ((this.lowerBounds != null && this.upperBounds != null) &&
+                (lowerBounds.length != upperBounds.length))
+            {
+                throw new IllegalStateException("upper bounds and lower bounds must have the same dimension");
             }
             final Slsqp slsqp = new Slsqp();
             slsqp.lowerBounds = this.lowerBounds;
