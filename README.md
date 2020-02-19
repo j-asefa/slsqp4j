@@ -111,7 +111,7 @@ res = minimize(self.fun, [-1.4, 0.9], method='SLSQP',
 </table>
 
 The API is slightly more verbose than the Scipy one due to Java's type safety, however the similarities should be apparent. 
-For more usage examples refer to `SlsqpTests.java` in the `test` directory. For a complete list of the `SlsqpBuilder` 
+For more usage examples refer to the tests in [SlsqpTests.java](./slsqp4j/src/test/java/slsqp4j/SlsqpTests.java). For a complete list of the `SlsqpBuilder` 
 parameters consult the documentation in [Slsqp.java](./slsqp4j/src/main/java/slsqp4j/Slsqp.java).
 
 ### Thread Safety
