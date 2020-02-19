@@ -52,8 +52,15 @@ final Slsqp slsqp = new Slsqp.SlsqpBuilder()
     .addVectorConstraint(constraint)
     .build();
 ```
+Then simply call `optimize` passing in an initial guess vector:
+```
+final OptimizeResult result = slsqp.minimize(new double[]{-1.4, 0.9});
+```
 
-Below is a side-by-side comparison showing the construction of a `Slsqp` object vs. SciPy's `optimize` api.
+The returned `OptimizeResult` contains information about the state of the solver. If `result.success()` returns true,
+the solver is complete and the vector contained in `result.resultVec()` is the point at which the function is minimized.
+
+Below is a side-by-side comparison showing the complete usage of Slsqp4j's API vs. SciPy's `optimize` API.
 <table>
 <tr>
 <th>
