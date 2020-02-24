@@ -37,41 +37,20 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package slsqp4j.functions;
-
-import slsqp4j.Jacobian;
+package com.skew.slsqp4j.constraints;
 
 /**
- * A wrapper around a {@link Vector2ScalarFunc} that provides access to the function and its
- * jacobian.
+ * Specifies the type of constraint represented by a {@link ScalarConstraint} or {@link VectorConstraint}.
  */
-public class WrappedVector2ScalarFunction
+public enum ConstraintType
 {
-    private final Vector2ScalarFunc func;
-    private final double[] arg;
-    private final Vector2VectorFunc jacobian;
+    /**
+     * Equality constraints are of the type f(x) = 0.
+     */
+    EQ,
 
-    public WrappedVector2ScalarFunction(Vector2ScalarFunc func, Vector2VectorFunc jacobian, double... arg)
-    {
-        this.func = func;
-        this.jacobian = jacobian;
-        this.arg = arg;
-    }
-
-    public double apply(double[] x)
-    {
-        return func.apply(x, arg);
-    }
-
-    public double[] getJacobian(double[] x)
-    {
-        if (jacobian == null)
-        {
-            return Jacobian.approxJacobian(x, this.func, arg);
-        }
-        else
-        {
-            return jacobian.apply(x, arg);
-        }
-    }
+    /**
+     * Inequality constraints are of the type f(x) >= 0.
+     */
+    INEQ
 }

@@ -37,20 +37,14 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package slsqp4j.constraints;
+package com.skew.slsqp4j.functions;
 
 /**
- * Specifies the type of constraint represented by a {@link ScalarConstraint} or {@link VectorConstraint}.
+ * A function that takes a vector-valued argument and produces no result.
  */
-public enum ConstraintType
+@FunctionalInterface
+public interface CallBackFunc
 {
-    /**
-     * Equality constraints are of the type f(x) = 0.
-     */
-    EQ,
-
-    /**
-     * Inequality constraints are of the type f(x) >= 0.
-     */
-    INEQ
+    void callback(double[] x);
 }
+

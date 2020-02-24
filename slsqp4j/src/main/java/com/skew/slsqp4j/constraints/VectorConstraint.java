@@ -37,11 +37,11 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package slsqp4j.constraints;
+package com.skew.slsqp4j.constraints;
 
-import slsqp4j.functions.Vector2MatrixFunc;
-import slsqp4j.functions.Vector2VectorFunc;
-import slsqp4j.Jacobian;
+import com.skew.slsqp4j.functions.Vector2MatrixFunc;
+import com.skew.slsqp4j.functions.Vector2VectorFunc;
+import com.skew.slsqp4j.Jacobian;
 
 /**
  * A vector-valued constraint function.

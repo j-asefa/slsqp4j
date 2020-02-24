@@ -37,13 +37,13 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package slsqp4j.functions;
+package com.skew.slsqp4j.functions;
 
 /**
- * A function that takes a vector-valued argument and produces a vector-valued result.
+ * A function that takes a vector as argument and produces an vector of vectors.
  */
 @FunctionalInterface
-public interface Vector2VectorFunc
+public interface Vector2MatrixFunc
 {
-    double[] apply(double[] x, double... arg);
+    double[][] apply(double[] x, double... arg);
 }

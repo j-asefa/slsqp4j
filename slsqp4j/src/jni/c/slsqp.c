@@ -83,7 +83,7 @@ extern void slsqp_(
     int *n3 // standard int -- value is returned to caller
 );
 
-JNIEXPORT jint JNICALL Java_slsqp4j_util_NativeUtils_slsqp(
+JNIEXPORT jint JNICALL Java_com_skew_slsqp4j_util_NativeUtils_slsqp(
       JNIEnv *env,         /* interface pointer */
       jclass cl,         /* "this" pointer */
       jint m, // standard int

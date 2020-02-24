@@ -37,16 +37,16 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package slsqp4j;
+package com.skew.slsqp4j;
 
-import slsqp4j.constraints.ConstraintType;
-import slsqp4j.constraints.ScalarConstraint;
-import slsqp4j.constraints.VectorConstraint;
-import slsqp4j.functions.CallBackFunc;
-import slsqp4j.functions.Vector2ScalarFunc;
-import slsqp4j.functions.Vector2VectorFunc;
-import slsqp4j.functions.WrappedVector2ScalarFunction;
-import slsqp4j.util.NativeUtils;
+import com.skew.slsqp4j.constraints.ConstraintType;
+import com.skew.slsqp4j.constraints.ScalarConstraint;
+import com.skew.slsqp4j.constraints.VectorConstraint;
+import com.skew.slsqp4j.functions.CallBackFunc;
+import com.skew.slsqp4j.functions.Vector2ScalarFunc;
+import com.skew.slsqp4j.functions.Vector2VectorFunc;
+import com.skew.slsqp4j.functions.WrappedVector2ScalarFunction;
+import com.skew.slsqp4j.util.NativeUtils;
 
 import java.util.Arrays;
 import java.util.HashSet;
