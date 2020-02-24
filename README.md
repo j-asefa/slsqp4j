@@ -44,7 +44,6 @@ Specify one or more constraints:
         .build();
 ```
  
- 
 To perform the optimization, you must construct an instance of an `Slsqp` object. You do this using the Builder pattern:
 ```
 final Slsqp slsqp = new Slsqp.SlsqpBuilder()
