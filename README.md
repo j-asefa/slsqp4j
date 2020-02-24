@@ -1,6 +1,6 @@
 # slsqp4j
 
-Slsqp4j is a Java wrapper around the popular `SLSQP` nonlinear optimizer included in SciPy. The API mimics Scipy's in order to ease the 
+Slsqp4j is a Java wrapper around the popular `SLSQP` nonlinear optimizer included in SciPy. The API mimics SciPy's in order to ease the 
 translation of problems from Python to the JVM. 
 
 The bulk of the solving is done in `slsqp.f90` which was written by Dieter Kraft and described in <a href="#ref1">[1]</a> 
@@ -15,7 +15,7 @@ TODO: gradle installation
 
 ## Usage
 Create an objective function that implements the `Vector2ScalarFunc` interface:
-```
+```Java
     public static class ObjectiveFunction implements Vector2ScalarFunc
     {
         @Override
@@ -28,7 +28,7 @@ Create an objective function that implements the `Vector2ScalarFunc` interface:
 ```
 
 Specify one or more constraints:
-```
+```Java
     public static final class VectorConstraintFunction implements Vector2VectorFunc
     {
         @Override
@@ -45,34 +45,28 @@ Specify one or more constraints:
 ```
  
 To perform the optimization, you must construct an instance of an `Slsqp` object. You do this using the Builder pattern:
-```
+```Java
 final Slsqp slsqp = new Slsqp.SlsqpBuilder()
     .withObjectiveFunction(new ObjectiveFunction())
     .addVectorConstraint(constraint)
     .build();
 ```
 Then simply call `optimize` passing in an initial guess vector:
-```
+```Java
 final OptimizeResult result = slsqp.minimize(new double[]{-1.4, 0.9});
 ```
 
 The returned `OptimizeResult` contains information about the state of the solver. If `result.success()` returns true,
 the solver is complete and the vector contained in `result.resultVec()` is the point at which the function is minimized.
 
-Below is a side-by-side comparison showing the complete usage of Slsqp4j's API vs. SciPy's `optimize` API.
+Below is a comparison showing the complete usage of Slsqp4j's API vs. SciPy's `optimize` API.
 <table>
-<tr>
 <th>
 Slsqp4j
 </th>
-<th>
-SciPy
-</th>
-</tr>
+</table>
 
-<tr>
-<td>
-<pre>
+```Java
 final VectorConstraint constraint1 = new VectorConstraint.VectorConstraintBuilder()
     .withConstraintType(ConstraintType.EQ)
     .withConstraintFunction(new ConstraintFunc1())
@@ -97,10 +91,15 @@ final Slsqp slsqp = new Slsqp.SlsqpBuilder()
     .addVectorConstraint(constraint3)
     .build();
 final OptimizeResult result = slsqp.minimize(new double[]{-1.4, 0.9});
-</pre>
-</td>
-<td>
-<pre>
+```
+
+<table>
+<th>
+SciPy
+</th>
+</table>
+
+```python
 constraints = [
     {'type': 'eq', 'fun': self.constraint_func1},
     {'type': 'eq', 'fun': self.constraint_func2},
@@ -110,13 +109,10 @@ res = minimize(self.fun, [-1.4, 0.9], method='SLSQP',
        jac=self.jac, args=(-1.0, ), 
        constraints=constraints,
        bounds=[(-0.8, 1.), (-1, 0.8)])
+```
 
-</pre>
-</td>
-</tr>
-</table>
 
-The API is slightly more verbose than the Scipy one due to Java's type safety, but the similarities should hopefully be apparent. 
+The API is slightly more verbose than SciPy's one due to Java's type safety, but the similarities should hopefully be apparent. 
 For more usage examples refer to the tests in [SlsqpTests.java](./slsqp4j/src/test/java/slsqp4j/SlsqpTests.java). For a complete list of the `SlsqpBuilder` 
 parameters consult the documentation in [Slsqp.java](./slsqp4j/src/main/java/slsqp4j/Slsqp.java).
 
