@@ -8,6 +8,7 @@ buildscript {
     dependencies {
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
         classpath 'com.github.jengelman.gradle.plugins:shadow:5.0.0'
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
     }
 }
 
@@ -20,6 +21,11 @@ subprojects {
     apply plugin: 'org.junit.platform.gradle.plugin'
     apply plugin: 'checkstyle'
     apply plugin: 'maven-publish'
+    apply plugin: 'com.bmuschko.nexus'
+
+    archivesBaseName = 'slsqp4j'
+    group = "com.skew.slsqp4j"
+    version = platformVersion
 
     repositories {
         maven {
@@ -58,6 +64,47 @@ subprojects {
                 project.shadow.component(publication)
             }
         }
+    }
+
+    modifyPom {
+        project {
+            name 'slsqp4j'
+            description 'A JVM wrapper for the popular SLSQP optimizer'
+            url 'https://github.com/skew-markets/slsqp4j'
+            inceptionYear '2020'
+
+            scm {
+                url 'https://github.com/skew-markets/slsqp4j'
+                connection 'scm:https://github.com/skew-markets/slsqp4j.git'
+                developerConnection 'scm:git://github.com/skew-markets/slsqp4j.git'
+            }
+
+            licenses {
+                license {
+                    name 'BSD 3-Clause "New" or "Revised" License'
+                    url 'https://spdx.org/licenses/BSD-3-Clause.html'
+                }
+            }
+
+            developers {
+                developer {
+                    id 'jamesasefa'
+                    name 'James Asefa'
+                    email 'james.asefa@skew.com'
+                }
+            }
+        }
+    }
+
+    extraArchive {
+        sources = true
+        javadoc = true
+    }
+
+    nexus {
+        sign = true
+        repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+        snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
     }
 
     checkstyle {
