@@ -13,7 +13,15 @@ You can install both with the command `sudo apt install gcc gfortran`. Additiona
 ### Gradle
 To use Slsqp4j, include in your build script:
 
-`compile "com.skew.slsqp4j:slsqp4j:0.1"`
+```
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "com.skew.slsqp4j:slsqp4j:0.1"
+}
+```
 
 NOTE: Currently Slsqp4j ships with a shared object file that was compiled on Ubuntu 18.04. Thus, currently, only Ubuntu 18.04 is supported.
 
