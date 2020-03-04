@@ -11,7 +11,11 @@ Slsqp4j depends on both gcc and gfortran.
 You can install both with the command `sudo apt install gcc gfortran`. Additionally, your `JAVA_HOME`  must point to your JDK install directory. 
 
 ### Gradle
-TODO: gradle installation
+To use Slsqp4j, include in your build script:
+
+`compile "com.skew.slsqp4j:slsqp4j:0.1"`
+
+NOTE: Currently Slsqp4j ships with a shared object file that was compiled on Ubuntu 18.04. Thus, currently, only Ubuntu 18.04 is supported.
 
 ## Usage
 Create an objective function that implements the `Vector2ScalarFunc` interface:
