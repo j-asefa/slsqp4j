@@ -23,7 +23,7 @@ dependencies {
 }
 ```
 
-NOTE: Slsqp4j ships with a shared object file that was compiled on Ubuntu 18.04. Thus, currently, only Ubuntu 18.04 is supported.
+*NOTE*: Slsqp4j ships with a shared object file that was compiled on Ubuntu 18.04. Thus, currently, only Ubuntu 18.04 is supported.
 
 ## Usage
 Create an objective function that implements the `Vector2ScalarFunc` interface:
