@@ -6,11 +6,13 @@ translation of problems from Python to the JVM.
 The bulk of the solving is done in `slsqp.f90` which was written by Dieter Kraft and described in <a href="#ref1">[1]</a> 
 & <a href="#ref2">[2]</a>.
 
-## Dependencies
-Slsqp4j depends on both gcc and gfortran. 
+## Building
+Building Slsqp4j depends on both gcc and gfortran. 
 You can install both with the command `sudo apt install gcc gfortran`. Additionally, your `JAVA_HOME`  must point to your JDK install directory. 
 
-### Gradle
+To build Slsqp4j, simply run `gradle clean build` in the project root directory.
+## Usage
+
 To use Slsqp4j, include in your build script:
 
 ```
@@ -25,7 +27,6 @@ dependencies {
 
 *NOTE*: Slsqp4j ships with a shared object file that was compiled on Ubuntu 18.04. Thus, currently, only Ubuntu 18.04 is supported.
 
-## Usage
 Create an objective function that implements the `Vector2ScalarFunc` interface:
 ```Java
     public static class ObjectiveFunction implements Vector2ScalarFunc
