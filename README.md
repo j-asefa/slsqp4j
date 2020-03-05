@@ -132,6 +132,9 @@ parameters consult the documentation in [Slsqp.java](./slsqp4j/src/main/java/com
 ### Thread Safety
 Since the `SLSQP` algorithm is iterative, it is assumed that an instance of `Slsqp` will not be shared among threads, thus instances are *not* thread-safe. Rather, an instance of `Slsqp` should be constructed once, with the parameters of the optimization problem given to the builder, and then repeated calls to `slsqp.optimize()` should be made until a value of `true` is returned on a call to `success()` on the returned `OptimizeResult` instance.
 
+## Tests
+The majority of the tests in [SlsqpTests.java](./slsqp4j/src/test/java/com/skew/slsqp4j/SlsqpTests.java) were ported from SciPy's SLSQP tests.
+
 ## License
 Slsqp4j is released under the [BSD license](https://github.com/skew-markets/slsqp4j/blob/master/LICENSE.txt).
 
