@@ -81,7 +81,7 @@ Slsqp4j
 
 ```Java
 final VectorConstraint constraint = new VectorConstraint.VectorConstraintBuilder()
-    .withConstraintType(ConstraintType.INEQ)
+    .withConstraintType(ConstraintType.EQ)
     .withConstraintFunction((x, arg) -> x[0] - x[1])
     .build();
 final Slsqp slsqp = new Slsqp.SlsqpBuilder()
