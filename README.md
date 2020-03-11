@@ -66,7 +66,7 @@ final Slsqp slsqp = new Slsqp.SlsqpBuilder()
 ```
 Then simply call `optimize` passing in an initial guess vector:
 ```Java
-final OptimizeResult result = slsqp.minimize(new double[]{-1.4, 0.9});
+final OptimizeResult result = slsqp.minimize(new double[] {1, -1});
 ```
 
 The returned `OptimizeResult` contains information about the state of the solver. If `result.success()` returns true,
@@ -80,30 +80,15 @@ Slsqp4j
 </table>
 
 ```Java
-final VectorConstraint constraint1 = new VectorConstraint.VectorConstraintBuilder()
-    .withConstraintType(ConstraintType.EQ)
-    .withConstraintFunction(new ConstraintFunc1())
-    .build();
-final VectorConstraint constraint2 = new VectorConstraint.VectorConstraintBuilder()
-    .withConstraintType(ConstraintType.EQ)
-    .withConstraintFunction(new ConstraintFunc2())
-    .build();
-final VectorConstraint constraint3 = new VectorConstraint.VectorConstraintBuilder()
+final VectorConstraint constraint = new VectorConstraint.VectorConstraintBuilder()
     .withConstraintType(ConstraintType.INEQ)
-    .withConstraintFunction(new ConstraintFunc3())
-    .build();<br>
-final double[] lowerBounds = new double[] {-0.8, -1};
-final double[] upperBounds = new double[] {1, 0.8};
-final Slsqp slsqp = new Slsqp.SlsqpBuilder()
-    .withObjectiveFunction(new Fun(), -1)
-    .withJacobian(new Jac())
-    .withLowerBounds(lowerBounds)
-    .withUpperBounds(upperBounds)
-    .addVectorConstraint(constraint1)
-    .addVectorConstraint(constraint2)
-    .addVectorConstraint(constraint3)
+    .withConstraintFunction((x, arg) -> x[0] - x[1])
     .build();
-final OptimizeResult result = slsqp.minimize(new double[]{-1.4, 0.9});
+final Slsqp slsqp = new Slsqp.SlsqpBuilder()
+    .withObjectiveFunction((x, arg) -> x[0] * x[1])
+    .addVectorConstraint(constraint)
+    .build();
+final OptimizeResult result = slsqp.minimize(new double[]{1, -1});
 ```
 
 <table>
@@ -113,15 +98,8 @@ SciPy
 </table>
 
 ```python
-constraints = [
-    {'type': 'eq', 'fun': self.constraint_func1},
-    {'type': 'eq', 'fun': self.constraint_func2},
-    {'type': 'ineq', 'fun': self.constraint_func3},
-] 
-res = minimize(self.fun, [-1.4, 0.9], method='SLSQP',
-       jac=self.jac, args=(-1.0, ), 
-       constraints=constraints,
-       bounds=[(-0.8, 1.), (-1, 0.8)])
+res = minimize(lambda d: d[0] * d[1], [1, -1], method='SLSQP', 
+        constraints={'type': 'ineq', 'fun': lambda x: x[0] - x[1]})
 ```
 
 
