@@ -8,9 +8,17 @@ The bulk of the solving is done in `slsqp.f90` which was written by Dieter Kraft
 
 ## Building
 Building Slsqp4j depends on both gcc and gfortran. 
+
+### Ubuntu
 You can install both with the command `sudo apt install gcc gfortran`. Additionally, your `JAVA_HOME`  must point to your JDK install directory. 
 
 To build Slsqp4j, simply run `gradle clean build` in the project root directory.
+
+### Mac OSX
+You can install both with the command `brew install gcc gfortran`. Additionally, your `JAVA_HOME`  must point to your JDK install directory. 
+
+To build Slsqp4j, simply run `gradle clean build` in the project root directory.
+
 ## Usage
 
 To use Slsqp4j, include in your build script:

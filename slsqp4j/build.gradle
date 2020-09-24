@@ -25,8 +25,10 @@ task compileC(type: Exec) {
 
     group "Build"
     description "Compiles the C sources."
-    commandLine 'gcc', '-fPIC', '-c', '-o', obj, '-I', System.properties['java.home'] + "/include",
-        '-I', System.properties['java.home'] + "/include/linux", src
+    logger.warn("Java home " + System.properties['java.home'] )
+    commandLine 'gcc-10', '-fPIC', '-c', '-o', obj, '-I', "/Library/Java/JavaVirtualMachines/jdk8/Contents/Home" + "/include",
+        '-I', "/Library/Java/JavaVirtualMachines/jdk8/Contents/Home" + "/include/darwin", src
+        // gcc-10 -fPIC -c -o build/c/slsqp.o -I /Library/Java/JavaVirtualMachines/jdk8/Contents/Home/include -I /Library/Java/JavaVirtualMachines/jdk8/Contents/Home/include/darwin src/jni/c/slsqp.c
     dependsOn prepareC
 }
 
@@ -37,7 +39,7 @@ task buildJniLib(type: Exec) {
 
     group "Build"
     description "Builds the JNI library."
-    commandLine 'gcc', '-shared', '-o', output, c_obj, fortran_obj
+    commandLine 'gcc-10', '-shared', '-lgfortran', '-L', '/usr/local/gfortran/lib/', '-o', output, c_obj, fortran_obj
     dependsOn compileFortran, compileC, prepareLibs
 }
 
