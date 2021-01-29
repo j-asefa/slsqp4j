@@ -15,9 +15,24 @@ You can install both with the command `sudo apt install gcc gfortran`. Additiona
 To build Slsqp4j, simply run `gradle clean build` in the project root directory.
 
 ### Mac OSX
-You can install both with the command `brew install gcc gfortran`. Additionally, your `JAVA_HOME`  must point to your JDK install directory. 
+This procedure has been tested with adoptopenjdk8 ( `brew tap AdoptOpenJDK/openjdk && brew install --cask adoptopenjdk8` ) on BigSur.
+
+You can install both with the command `brew install gradle gcc gfortran`. 
+
+Additionally, your `JAVA_HOME`  must point to your JDK real install directory (ie a path like
+`/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/` and not a path like
+`/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home` that doesn't contain the `include` library. 
 
 To build Slsqp4j, simply run `gradle clean build` in the project root directory.
+
+**Errors & solutions:**
+`/usr/local/Cellar/gcc/10.2.0/lib/gcc/10/gcc/x86_64-apple-darwin19/10.2.0/include-fixed/stdio.h:78:10: fatal error: _stdio.h: No such file or directory
+   78 | #include <_stdio.h>
+      |          ^~~~~~~~~~
+compilation terminated.`
+==> run `xcode-select --install`
+    Then run XCode and install additional components
+
 
 ## Usage
 

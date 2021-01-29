@@ -7,3 +7,4 @@ core
 *.class
 *.o
 *.iml
+slsqp4j/src/main/resources/libslsqp.so
