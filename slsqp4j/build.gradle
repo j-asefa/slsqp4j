@@ -15,7 +15,7 @@ task compileFortran(type: Exec) {
     def obj = file("${buildDir}/fortran/slsqp.o")
     group "Build"
     description "Compiles the Fortran sources."
-    commandLine 'gfortran', '-fPIC', '-o', obj, '-c', src
+    commandLine 'gfortran', '-fPIC', '-o', obj, '-c', src, '-fallow-argument-mismatch'
     dependsOn prepareFortran
 }
 
@@ -25,8 +25,20 @@ task compileC(type: Exec) {
 
     group "Build"
     description "Compiles the C sources."
-    commandLine 'gcc', '-fPIC', '-c', '-o', obj, '-I', System.properties['java.home'] + "/include",
-        '-I', System.properties['java.home'] + "/include/linux", src
+    logger.warn("Java home " + System.properties['java.home'] )
+    def os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem;
+    if (os.isLinux()) {
+        logger.info("Linux detected")
+        commandLine 'gcc', '-fPIC', '-c', '-o', obj, '-I', System.properties['java.home'] + "/include",
+                '-I', System.properties['java.home'] + "/include/linux", src
+    } else if (os.isMacOsX()) {
+        logger.info("MacOSX detected")
+        commandLine 'gcc-10', '-fPIC', '-c', '-o', obj, '-I', System.properties['java.home'] + "/../include",
+                '-I', System.properties['java.home'] + "/../include/darwin", src
+    } else {
+        logger.error("This OS is not yet supported " + os)
+    }
+        // gcc-10 -fPIC -c -o build/c/slsqp.o -I /Library/Java/JavaVirtualMachines/jdk8/Contents/Home/include -I /Library/Java/JavaVirtualMachines/jdk8/Contents/Home/include/darwin src/jni/c/slsqp.c
     dependsOn prepareC
 }
 
@@ -37,7 +49,16 @@ task buildJniLib(type: Exec) {
 
     group "Build"
     description "Builds the JNI library."
-    commandLine 'gcc', '-shared', '-o', output, c_obj, fortran_obj
+    def os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem;
+    if (os.isLinux()) {
+        logger.info("Linux detected")
+        commandLine 'gcc', '-shared', '-o', output, c_obj, fortran_obj
+    } else if (os.isMacOsX()) {
+        logger.info("MacOSX detected")
+        commandLine 'gcc-10', '-shared', '-lgfortran', '-L', '/usr/local/gfortran/lib/', '-o', output, c_obj, fortran_obj
+    } else {
+        logger.error("This OS is not yet supported " + os)
+    }
     dependsOn compileFortran, compileC, prepareLibs
 }
 

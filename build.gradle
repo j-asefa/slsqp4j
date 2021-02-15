@@ -28,42 +28,9 @@ subprojects {
     version = platformVersion
 
     repositories {
-        maven {
-            url AWS_REPO_SNAPSHOT_URL
-            credentials(AwsCredentials) {
-                accessKey AWS_ACCESS_KEY
-                secretKey AWS_SECRET_KEY
-            }
-        }
         mavenLocal()
         mavenCentral()
         jcenter()
-    }
-
-    publishing {
-        repositories {
-            maven {
-                url AWS_REPO_SNAPSHOT_URL
-                credentials(AwsCredentials) {
-                    accessKey AWS_ACCESS_KEY
-                    secretKey AWS_SECRET_KEY
-                }
-            }
-        }
-        publications {
-            shadow(MavenPublication) { publication ->
-                groupId platformGroupId
-                artifactId project.name
-                version platformVersion
-                project.shadow.component(publication)
-            }
-            latest(MavenPublication) { publication ->
-                groupId platformGroupId
-                artifactId project.name
-                version 'latest'
-                project.shadow.component(publication)
-            }
-        }
     }
 
     modifyPom {
@@ -98,7 +65,7 @@ subprojects {
 
     extraArchive {
         sources = true
-        javadoc = true
+        javadoc = false
     }
 
     nexus {
