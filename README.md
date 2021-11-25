@@ -33,6 +33,13 @@ compilation terminated.`
 ==> run `xcode-select --install`
     Then run XCode and install additional components
 
+### Windows
+
+(_Note: The following steps were performed using [scoop command-line installer](https://www.scoop.sh)._)
+
+You can install both with the command `scoop install mingw-winlibs`. Additionally, your `JAVA_HOME`  must point to your JDK install directory.
+
+To build Slsqp4j, simply run `gradle clean build` in the project root directory.
 
 ## Usage
 
