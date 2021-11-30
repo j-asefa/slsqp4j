@@ -20,6 +20,9 @@ jobs:
           key: ${{ runner.os }}-gradle-slsqp4j
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - name: "setup"
+        run: |
+          sudo apt install gfortran
       - name: "build and test"
         run: |
           ./gradlew build test --parallel --max-workers=4
