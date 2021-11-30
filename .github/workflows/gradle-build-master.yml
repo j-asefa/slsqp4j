@@ -22,7 +22,7 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: "setup"
         run: |
-          sudo apt install gfortran
+          alias gfortran="gfortran-9"
       - name: "build and test"
         run: |
           ./gradlew build test --parallel --max-workers=4
