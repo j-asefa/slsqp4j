@@ -1,13 +1,13 @@
-task prepareC(type: Exec) {
-    commandLine 'mkdir', '-p', "${buildDir}/c"
+task prepareC {
+    mkdir "${buildDir}/c"
 }
 
-task prepareFortran(type: Exec) {
-    commandLine 'mkdir', '-p', "${buildDir}/fortran"
+task prepareFortran {
+    mkdir "${buildDir}/fortran"
 }
 
-task prepareLibs(type: Exec) {
-    commandLine 'mkdir', '-p', "${buildDir}/libs"
+task prepareLibs {
+    mkdir "${buildDir}/libs"
 }
 
 task compileFortran(type: Exec) {
@@ -35,6 +35,10 @@ task compileC(type: Exec) {
         logger.info("MacOSX detected")
         commandLine 'gcc-10', '-fPIC', '-c', '-o', obj, '-I', System.properties['java.home'] + "/../include",
                 '-I', System.properties['java.home'] + "/../include/darwin", src
+    } else if (os.isWindows()) {
+        logger.info("Windows detected")
+        commandLine 'gcc', '-fPIC', '-c', '-o', obj, '-I', System.properties['java.home'] + "/include",
+                '-I', System.properties['java.home'] + "/include/win32", src
     } else {
         logger.error("This OS is not yet supported " + os)
     }
@@ -56,6 +60,9 @@ task buildJniLib(type: Exec) {
     } else if (os.isMacOsX()) {
         logger.info("MacOSX detected")
         commandLine 'gcc-10', '-shared', '-lgfortran', '-L', '/usr/local/gfortran/lib/', '-o', output, c_obj, fortran_obj
+    } else if (os.isWindows()) {
+        logger.info("Windows detected")
+        commandLine 'gcc', '-shared', '-o', output, c_obj, fortran_obj, getFortranLib()
     } else {
         logger.error("This OS is not yet supported " + os)
     }
@@ -76,3 +83,44 @@ sourceSets {
 
 compileJava.dependsOn 'copySharedLibraries'
 test.dependsOn 'copySharedLibraries'
+
+/**
+ * Windows-specific method to return the full path to the adequate fortran library.
+ * Only 'libgfortran-5.dll' is supported for now - available in GNU Fortran 11.2.0.
+ *
+ * @return full, absolute path to the libgfortran-5.dll, if found along with where gcc is located
+ */
+def getFortranLib() {
+    def filename = "libgfortran-5.dll"
+    def gccPath = locate("gcc")
+    def onlyPath = gccPath.substring(0, gccPath.lastIndexOf(File.separator))
+    return onlyPath + File.separator + filename
+}
+
+/**
+ * Windows-specific method to find where a given executable is located.
+ * For this to work, the executable must be located in one of the entries of the PATH environment variable.
+ *
+ * @param cmd a String with the name of the executable command
+ * @return a String with the full, absolute path to its location
+ */
+def locate(cmd) {
+
+    // fetch all locations where the given command is found - may be more than one
+    def outputStream = new ByteArrayOutputStream()
+    project.exec {
+        ignoreExitValue = true // properly checked manually below
+        commandLine "cmd", "/c", "where", "${cmd}"
+        standardOutput = outputStream
+    }
+
+    // fail the build if command is not found in PATH
+    def allLocations = outputStream.toString()
+    if (!allLocations?.trim()) {
+        throw new GradleException("'${cmd}' not found in your path")
+    }
+
+    // return the first entry, as it should correspond to the one that is in use by the system
+    return allLocations.split()[0]
+
+}
