@@ -43,20 +43,6 @@ To build Slsqp4j, simply run `gradle clean build` in the project root directory.
 
 ## Usage
 
-To use Slsqp4j, include in your build script:
-
-```
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    compile "com.skew.slsqp4j:slsqp4j:0.1"
-}
-```
-
-*NOTE*: Slsqp4j ships with a shared object file that was compiled on Ubuntu 18.04. Thus, currently, only Ubuntu 18.04 is supported.
-
 Create an objective function that implements the `Vector2ScalarFunc` interface:
 ```Java
     public static class ObjectiveFunction implements Vector2ScalarFunc
