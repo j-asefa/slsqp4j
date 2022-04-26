@@ -1,13 +1,34 @@
-task prepareC {
-    mkdir "${buildDir}/c"
+task prepareC(type: Exec) {
+    def os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem;
+    if (os.isWindows()) {
+        logger.info("Windows detected")
+        mkdir "${buildDir}/c"
+    } else {
+        logger.info("Unix detected")
+        commandLine 'mkdir', '-p', "${buildDir}/c"
+    }
 }
 
-task prepareFortran {
-    mkdir "${buildDir}/fortran"
+task prepareFortran(type: Exec) {
+    def os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem;
+    if (os.isWindows()) {
+        logger.info("Windows detected")
+        commandLine 'mkdir', '-p', "${buildDir}/fortran"
+    } else {
+        logger.info("Unix detected")
+        commandLine 'mkdir', '-p', "${buildDir}/fortran"
+    }
 }
 
-task prepareLibs {
-    mkdir "${buildDir}/libs"
+task prepareLibs(type: Exec) {
+    def os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem;
+    if (os.isWindows()) {
+        logger.info("Windows detected")
+        mkdir "${buildDir}/libs"
+    } else {
+        logger.info("Unix detected")
+        commandLine 'mkdir', '-p', "${buildDir}/libs"
+    }
 }
 
 task compileFortran(type: Exec) {
