@@ -353,18 +353,20 @@ public final class Slsqp
 
         clip(x, xl, xu);
 
-        final int meq = vectorEqualityConstraints.size();
-
         int m = 0;
         // get the number of constraints
         for (final VectorConstraint constraint : vectorEqualityConstraints)
         {
             m += constraint.apply(x).length;
         }
+
+        final int meq = m;
+
         for (final VectorConstraint constraint : vectorInequalityConstraints)
         {
             m += constraint.apply(x).length;
         }
+
         final int la = Math.max(1, m);
 
         final int mineq = m - meq + nPlus1 + nPlus1;
